@@ -47,7 +47,7 @@ class Simulator(ABC):
 
 
 class YarnSimulator(Simulator):
-    def __init__(self, yarn: Union[str, List[Dict]] = 'yarnScripts', type: str = 'yarn', jump_as_choice=True,
+    def __init__(self, yarn: Union[str, List[Dict]] = 'yarnScripts', file_type: str = 'yarn', jump_as_choice=True,
                  text_unk_macro=None):
         """
         Simulator
@@ -60,12 +60,12 @@ class YarnSimulator(Simulator):
         self.text_unk_macro = text_unk_macro
         self.graph_complete = None
 
-        if type == 'yarn':
+        if file_type == 'yarn':
             self.data = get_content_from_yarn(yarn)
-        elif type == 'json':
+        elif file_type == 'json':
             with open(yarn, 'r') as file:
                 self.data = json.load(file)
-        elif type == 'content':
+        elif file_type == 'content':
             self.data = yarn
         else:
             raise Exception("Type of content not allowed. Must be yarn, json or content")
@@ -98,7 +98,7 @@ class YarnSimulator(Simulator):
         :return: a tuple containing a networkx graph (nodes attr: state, text, reward; edges attr: action)
                 and a pydot graph
         """
-        simulator.restart()
+        self.restart()
         if simplified:
             return dfs(self, nx.DiGraph(), graphviz.Digraph(), set(), [], None, simplified)
 
@@ -108,7 +108,7 @@ class YarnSimulator(Simulator):
 
     def create_html(self, folder_path: str, use_bondage=False):
         """Creates the html files necessary to run in the browser. Restarts the simulator."""
-        simulator.restart()
+        self.restart()
         graph, _ = self.get_decision_graph(simplified=False)
         if use_bondage:
             create_bondage_html(self, f'{folder_path}/yarn.html')
@@ -121,7 +121,8 @@ def create_bondage_html(simulator: YarnSimulator, file_name: str):
         todo FIX: DOES NOT CORRECTLY SHOW TEXT AFTER OPTIONS ARE CHOSE
         Creates the html file to play the game. THE JS FOLDER MUST BE ALSO INCLUDED.
         It uses the bondage (https://github.com/hylyh/bondage.js), a javascript yarn parser
-        :param folder_path: path where the folder is going to be created
+        :param simulator: YarnSimulator from which to create html
+        :param file_name: name of the html file created
         """
     d = dominate.document()
     with d.head:
@@ -240,14 +241,14 @@ def yarn_to_json(simulator: YarnSimulator, json_file: str):
 
 
 if __name__ == '__main__':
-    simulator = YarnSimulator()
+    sim = YarnSimulator()
     os.environ["PATH"] += os.pathsep + 'C:\\Program Files\\Graphviz\\bin\\'
-    simulator.get_decision_graph(simplified=False)[1].render(filename='graph_decision', view=True,
-                                                             cleanup=True, format='svg')
-    simulator.get_decision_graph(simplified=True)[1].render(filename= 'graph_narrative', view=True,
-                                                            cleanup=True, format='svg')
-    simulator.create_html('.', use_bondage=False)
-    simulator.create_html('.', use_bondage=True)
+    sim.get_decision_graph(simplified=False)[1].render(filename='graph_decision', view=True,
+                                                       cleanup=True, format='svg')
+    sim.get_decision_graph(simplified=True)[1].render(filename='graph_narrative', view=True,
+                                                      cleanup=True, format='svg')
+    sim.create_html('.', use_bondage=False)
+    sim.create_html('.', use_bondage=True)
 
     # shortest_paths = BiDict(nx.single_source_shortest_path_length(graph,'Final'))
     #
