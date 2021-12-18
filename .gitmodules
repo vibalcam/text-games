@@ -1,0 +1,3 @@
+[submodule "yarnPygame"]
+	path = yarnPygame
+	url = https://github.com/vibalcam/yarn-pygame.git
