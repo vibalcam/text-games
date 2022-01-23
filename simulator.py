@@ -27,6 +27,7 @@ class Simulator(ABC):
 
     @abstractmethod
     def restart(self):
+        """Resets the simulator"""
         pass
 
     @abstractmethod
@@ -36,13 +37,22 @@ class Simulator(ABC):
 
     @abstractmethod
     def act(self, choice):
+        """
+        Transitions the story with the given choice
+        :param choice: choice taken
+        """
         pass
 
     def get_current_path(self):
+        """Get the current path taken (history of choices taken)"""
         raise NotImplementedError()
 
     @abstractmethod
     def is_finished(self):
+        """
+        Returns true if the simulation has finished
+        :return: bool
+        """
         pass
 
 
@@ -80,7 +90,12 @@ class YarnSimulator(Simulator):
     def read(self) -> Tuple[str, List, float]:
         return self.controller.message(), self.controller.choices(), 0.0
 
-    def act(self, choice: Union[int, str]):
+    def act(self, choice: Union[int, str]) -> Tuple[str, List, float]:
+        """
+        Transitions the story with the given choice
+        :param choice: choice taken
+        :return: state, choices and reward (if any) after the transition
+        """
         self.controller.transition(choice)
         return self.read()
 
