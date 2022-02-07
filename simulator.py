@@ -1,23 +1,16 @@
+import glob
+import json
 import os
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import List, Dict, Union, Tuple, Set
 
+import dominate
 import graphviz
 import networkx as nx
-from matplotlib import pyplot as plt
-import matplotlib.pyplot as plt
-import networkx as nx
-import pydot
-from helper import BiDict
-from networkx.drawing.nx_pydot import graphviz_layout
-import glob
+from dominate.tags import *
 
 from yarnPygame.src.yarn import YarnController
-
-import json
-from pathlib import Path
-import dominate
-from dominate.tags import *
 
 
 class Simulator(ABC):
@@ -36,7 +29,7 @@ class Simulator(ABC):
         pass
 
     @abstractmethod
-    def act(self, choice):
+    def transition(self, choice):
         """
         Transitions the story with the given choice
         :param choice: choice taken
@@ -58,17 +51,29 @@ class Simulator(ABC):
 
 class YarnSimulator(Simulator):
     def __init__(self, yarn: Union[str, List[Dict]] = 'yarnScripts', file_type: str = 'yarn', jump_as_choice=True,
-                 text_unk_macro=None):
+                 text_unk_macro=None, extras_separator: str = '__'):
         """
         Simulator
         :param yarn: path for the yarn files or the content of the yarn file (title, body...)
         :param type: file type of yarn. Either json, yarn (.txt, .yarn) or content
         :param jump_as_choice: whether to treat jumps as a choice with only one option (true) or as goto (false)
         :param text_unk_macro: placeholder when an unknown macro is encountered
+        :param extras_separator: token used to separate the extras from the text (ex. prueba_2, means it has reward 2)
         """
         self.jump_as_choice = jump_as_choice
         self.text_unk_macro = text_unk_macro
         self.graph_complete = None
+        self.extras_separator = extras_separator
+
+        # Initialized in self.restart()
+
+        # The choices made up until this moment
+        self.choices_history = []
+        # Dictionary with choices as keys and reward as values
+        self.choices = {}
+        # Last extras obtained
+        self.last_extras = ""
+        self.controller = None
 
         if file_type == 'yarn':
             self.data = get_content_from_yarn(yarn)
@@ -86,21 +91,29 @@ class YarnSimulator(Simulator):
         self.controller = YarnController(None, False, content=self.data,
                                          jump_as_choice=self.jump_as_choice,
                                          text_unk_macro=self.text_unk_macro)
+        self.choices_history = []
+        self.choices = {}
+        self.last_extras = ""
 
-    def read(self) -> Tuple[str, List, float]:
-        return self.controller.message(), self.controller.choices(), 0.0
+    def read(self) -> Tuple[str, List, str]:
+        self.choices = {k[0]: k[1].strip() if len(k) > 1 else "" for k in
+                        [c.split(self.extras_separator, 1) for c in self.controller.choices()]}
+        return self.controller.message(), list(self.choices.keys()), self.last_extras
 
-    def act(self, choice: Union[int, str]) -> Tuple[str, List, float]:
+    def transition(self, choice: Union[int, str]) -> Tuple[str, List, str]:
         """
         Transitions the story with the given choice
         :param choice: choice taken
         :return: state, choices and reward (if any) after the transition
         """
-        self.controller.transition(choice)
+        self.choices_history.append(choice)
+        self.last_extras = self.choices[choice]
+        self.controller.transition(
+            choice if self.last_extras == "" else f"{choice}{self.extras_separator}{self.last_extras}")
         return self.read()
 
     def get_current_path(self) -> List[str]:
-        return self.controller.locals["path"]
+        return self.choices_history
 
     def is_finished(self):
         return self.controller.finished
@@ -108,8 +121,8 @@ class YarnSimulator(Simulator):
     def get_decision_graph(self, simplified=False):
         """
         Returns the decision graph. Restarts the simulator.
-        :param simplified: if true it returns the complete decision graph,
-                            if false it returns the narrative of the story (the story line)
+        :param simplified: if true it returns the narrative of the story (the story line),
+                            if false it returns the complete decision graph
         :return: a tuple containing a networkx graph (nodes attr: state, text, reward; edges attr: action)
                 and a pydot graph
         """
@@ -185,19 +198,19 @@ def create_graph_html(graph: nx.DiGraph, folder_path: str):
 
 
 def dfs(simulator: YarnSimulator, graph: nx.DiGraph, dot: graphviz.Digraph, nodes_visited: Set, prev_path: List,
-        parent_node_title, simplified=False):
+        parent_node_title, simplified=False) -> Tuple[nx.DiGraph, graphviz.Digraph]:
     # todo make generic for simulator
-    (text, cur_actions, reward) = simulator.read()
+    (text, cur_actions, extras) = simulator.read()
     curr_node = simulator.controller.state
     curr_node_title_vars = f"{curr_node.title}_{simulator.controller.get_game_locals()}".replace(":", '=')
     curr_node_title = curr_node.title if parent_node_title is None or simplified else curr_node_title_vars
 
     # Add node and edge
     if curr_node_title not in graph.nodes:
-        graph.add_node(curr_node_title, state=curr_node, text=text, reward=reward)
+        graph.add_node(curr_node_title, state=curr_node, text=text)
         dot.node(curr_node_title, label=curr_node.title)
     if parent_node_title is not None and (parent_node_title, curr_node_title) not in graph.edges:
-        graph.add_edge(parent_node_title, curr_node_title, action=prev_path[-1])
+        graph.add_edge(parent_node_title, curr_node_title, action=prev_path[-1], extras=extras)
         dot.edge(parent_node_title, curr_node_title, label=prev_path[-1])
 
     # Check if already visited
@@ -214,12 +227,12 @@ def dfs(simulator: YarnSimulator, graph: nx.DiGraph, dot: graphviz.Digraph, node
             # curr_path.clear()
             for act in prev_path:
                 # curr_path.append(act)
-                simulator.controller.transition(act)
+                simulator.transition(act)
                 # (_, actions, _) = simulator.read()
 
         # (_, actions, _) = simulator.read()
         # curr_path.append(choice)
-        simulator.controller.transition(choice)
+        simulator.transition(choice)
         dfs(simulator, graph, dot, nodes_visited, simulator.get_current_path().copy(), curr_node_title,
             simplified=simplified)
 
@@ -260,10 +273,10 @@ if __name__ == '__main__':
     os.environ["PATH"] += os.pathsep + 'C:\\Program Files\\Graphviz\\bin\\'
     sim.get_decision_graph(simplified=False)[1].render(filename='graph_decision', view=True,
                                                        cleanup=True, format='svg')
-    sim.get_decision_graph(simplified=True)[1].render(filename='graph_narrative', view=True,
-                                                      cleanup=True, format='svg')
-    sim.create_html('.', use_bondage=False)
-    sim.create_html('.', use_bondage=True)
+    # sim.get_decision_graph(simplified=True)[1].render(filename='graph_narrative', view=True,
+    #                                                   cleanup=True, format='svg')
+    # sim.create_html('.', use_bondage=False)
+    # sim.create_html('.', use_bondage=True)
 
     # shortest_paths = BiDict(nx.single_source_shortest_path_length(graph,'Final'))
     #

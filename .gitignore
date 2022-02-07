@@ -1,2 +1,4 @@
 /venv/
 /yarnScripts/
+**/tmp/
+**/__pycache__/

@@ -1,0 +1,292 @@
+import pathlib
+from typing import List, Dict, Tuple, Optional
+
+import torch
+from transformers import BertTokenizerFast, BertModel
+
+from models.utils import load_dict, save_dict
+
+
+class StateActionModel(torch.nn.Module):
+    """
+    Model to be used to make decisions given a state and action
+    """
+
+    class LSTMSharedBlock(torch.nn.Module):
+        """
+        Block of the neural net to be repeated multiple times
+        """
+
+        class BertLSTM(torch.nn.LSTM):
+            """
+            LSTM wrapper to use in Bert Model
+            """
+
+            def forward(self, x, *args, **kwargs):
+                return super().forward(x)
+
+        def __init__(
+                self,
+                out_features: int,
+                sequence_length: int,
+                bert_name: str = "bert-base-multilingual-cased",
+                num_layers: int = 2,
+                dropout: float = 0,
+                bidirectional: bool = True,
+                hidden_size: int = 768,
+        ):
+            """
+            Initialization of a block that composes the classifier
+
+            :param:
+            :param:
+            :param:
+            :param:
+            :param:
+            :param:
+            """
+            super().__init__()
+
+            self.net = BertModel.from_pretrained(bert_name)
+
+            self.net.encoder = self.BertLSTM(
+                input_size=self.net.config.hidden_size,
+                hidden_size=hidden_size,
+                num_layers=num_layers,
+                batch_first=True,
+                dropout=dropout,
+                bidirectional=bidirectional,
+            )
+
+            self.net.pooler = torch.nn.Sequential(
+                torch.nn.Flatten(),
+                torch.nn.Linear(
+                    in_features=(sequence_length * hidden_size * (2 if bidirectional else 1)),
+                    out_features=out_features,
+                    bias=True,
+                ),
+                torch.nn.Tanh(),
+            )
+
+        def forward(self, x):
+            """
+            Method which runs the given input through the block
+            :param x: dict of torch.Tensor(B,sequence_length), output of the tokenizer
+            :return: torch.Tensor(B,out_features)
+            """
+            return self.net(**x, return_dict=False)[1]
+
+    class BertSharedBlock(torch.nn.Module):
+        """
+        Block of the neural net to be repeated multiple times
+        """
+
+        def __init__(self, out_size: int, bert_name="bert-base-multilingual-cased",
+                     hidden_post_bert: Optional[int] = None):
+            """
+            Initialization of a block that composes the classifier
+            """
+            super().__init__()
+
+            self.bert = BertModel.from_pretrained(bert_name)
+
+            # Can also use dropout
+            # num_extra_layers = max(num_layers - 2, 0)
+            bert_hidden = self.bert.config.hidden_size
+            layers = [
+                torch.nn.Linear(bert_hidden, bert_hidden if hidden_post_bert is None else hidden_post_bert),
+                torch.nn.ReLU(),
+                torch.nn.Linear(bert_hidden if hidden_post_bert is None else hidden_post_bert, out_size)
+            ]
+
+            self.net = torch.nn.Sequential(*layers)
+
+        def freeze_bert(self, freeze):
+            """
+            Used to freeze the BERT model in order to fine-tune it
+            :param freeze:
+            :return:
+            """
+            for param in self.bert.parameters():
+                param.requires_grad = not freeze
+
+        def forward(self, x):
+            """
+            Method which runs the given input through the block
+            :param x: dict of torch.Tensor(B,input_size), output of the tokenizer
+            :return: torch.Tensor(B,out_size)
+            """
+            z = self.bert(**x)
+            return self.net(z['pooler_output'])
+
+    class IndividualBlock(torch.nn.Module):
+        """
+        Block of the neural net to be repeated multiple times
+        """
+
+        def __init__(self, in_size: int, dim_layers: List[int]):
+            """
+            Initialization of a block that composes the classifier
+            Architecture is defined here
+            :param in_channels: number of channels in the input
+            :param out_channels: number of channels produced by the convolution
+            :param kernel_size: size of the convolving kernel
+            :param stride: stride of the convolution
+            :param residual: true if the network should have residual connections
+            :param conv_layers: number of convolutional layers (minimum 1)
+            """
+            super().__init__()
+
+            # Can also use dropout
+            k = dim_layers[0]
+            layers = [torch.nn.Linear(in_size, k), ]
+            for out_size in dim_layers[1:]:
+                layers.extend([
+                    torch.nn.ReLU(),
+                    # torch.nn.Dropout(0.1),
+                    torch.nn.Linear(k, out_size),
+                ])
+                k = out_size
+
+            self.net = torch.nn.Sequential(*layers)
+
+        def forward(self, x: torch.Tensor):
+            """
+            Method which runs the given input through the block
+            :param x: torch.Tensor(B,in_size)
+            :return: torch.Tensor(B,dim_layers[-1])
+            """
+            return self.net(x)
+
+    def __init__(
+            self,
+            shared_out_dim: int = 512,
+            state_layers: List[int] = [255, 125],
+            action_layers: List[int] = [255, 125],
+            out_features: int = 1,
+            lstm_model: bool = False,
+            bert_name: str = "bert-base-multilingual-cased",
+            max_sequence_length: Optional[int] = None,
+            **kwargs
+    ):
+        """
+        Initialization of the classifier
+        Architecture is defined here
+        """
+        super().__init__()
+
+        # tokenizer
+        self.tokenizer = BertTokenizerFast.from_pretrained(bert_name, padding_side='left')
+
+        # max_sequence_length
+        self.max_sequence_length = max_sequence_length
+        if max_sequence_length is None or max_sequence_length > self.tokenizer.model_max_length:
+            self.max_sequence_length = self.tokenizer.model_max_length
+
+        # shared block
+        self.lstm_model = lstm_model
+        if not lstm_model:
+            self.shared = self.BertSharedBlock(shared_out_dim, bert_name=bert_name)
+        else:
+            self.shared = self.LSTMSharedBlock(
+                out_features=shared_out_dim,
+                sequence_length=self.max_sequence_length,
+                bert_name=bert_name,
+                num_layers=2,
+                dropout=0.1,
+                bidirectional=False,
+                hidden_size=512,
+            )
+        # block for state
+        self.state = self.IndividualBlock(shared_out_dim, state_layers)
+        # block for action
+        self.action = self.IndividualBlock(shared_out_dim, action_layers)
+        # combine state and action, and output
+        self.output = torch.nn.Linear(state_layers[-1] + action_layers[-1], out_features)
+
+    def freeze_bert(self, freeze):
+        # only freeze for bert model, not lstm model
+        if not self.lstm_model:
+            self.shared.freeze_bert(freeze)
+
+    def predict(self, states: List[str], actions: List[str], device=None, threshold: float = 0.5) -> torch.Tensor:
+        """
+        Predicts the output given the states and actions
+        :param states: list of states
+        :param actions: list of actions
+        :param device: torch.device to use
+        :param threshold: level of certainty to output a 1 (if result > threshold -> 1, otherwise 0)
+        :return: torch tensor with the predictions
+        """
+        return (self.run(states, actions, device=device, return_percentages=True) > threshold).float()
+
+    def run(self, states: List[str], actions: List[str], device=None, return_percentages: bool = False) -> torch.Tensor:
+        """
+        Runs the model given a list of states and actions and returns the output of the model
+        (before sigmoid, THESE VALUES ARE NOT PERCENTAGES).
+        :param states: list of states
+        :param actions: list of actions
+        :param device: torch.device to use
+        :param return_percentages:
+        :return: torch tensor with the output of the model
+        """
+        states = self.tokenizer([k[-self.max_sequence_length:].split('\n', 1)[-1] for k in states],
+                                return_tensors='pt', padding='max_length', max_length=self.max_sequence_length)
+        actions = self.tokenizer([k[-self.max_sequence_length:].split('\n', 1)[-1] for k in actions],
+                                 return_tensors='pt', padding='max_length', max_length=self.max_sequence_length)
+        if device is not None:
+            states = {k: v.to(device) for k, v in states.items()}
+            actions = {k: v.to(device) for k, v in actions.items()}
+        return self(states, actions) if not return_percentages else torch.sigmoid(self(states, actions))
+
+    def forward(self, state: Dict[str, torch.Tensor], action: Dict[str, torch.Tensor]) -> torch.Tensor:
+        """
+        Method which runs the given input through the classifier
+        :param action: dict of torch.Tensor(B,input_size), output of the tokenizer
+        :param state: dict of torch.Tensor(B,input_size), output of the tokenizer
+        :return: torch.Tensor(B, out_features)
+        """
+        state = self.state(self.shared(state))
+        action = self.action(self.shared(action))
+        return self.output(torch.concat((state, action), 1))
+
+
+def save_model(model: torch.nn.Module, folder: str, model_name: str, param_dicts: Dict = None) -> None:
+    """
+    Saves the model so it can be loaded after
+    :param model_name: name of the model to be saved (non including extension)
+    :param folder: path of the folder where to save the model
+    :param param_dicts: dictionary of the model parameters that can later be used to load it
+    :param model: model to be saved
+    """
+    # create folder if it does not exist
+    folder_path = f"{folder}/{model_name}"
+    pathlib.Path(folder_path).mkdir(parents=True, exist_ok=True)
+    # save model
+    torch.save(model.state_dict(), f"{folder_path}/{model_name}.th")
+    # save dict
+    if param_dicts is not None:
+        save_dict(param_dicts, f"{folder_path}/{model_name}.dict")
+
+
+def load_model(folder_path: pathlib.Path) -> Tuple[torch.nn.Module, Dict]:
+    """
+    Loads a model that has been previously saved using its name (model th and dict must have that same name)
+    Only works for StateActionModel
+    :param folder_path: folder path of the model to be loaded
+    :return: the loaded model and the dictionary of parameters
+    """
+    path = f"{folder_path.absolute()}/{folder_path.name}"
+    dict_model = load_dict(f"{path}.dict")
+    return load_model_data(StateActionModel(**dict_model), f"{path}.th"), dict_model
+
+
+def load_model_data(model: torch.nn.Module, model_path: str) -> torch.nn.Module:
+    """
+    Loads a model than has been previously saved
+    :param model_path: path from where to load model
+    :param model: model into which to load the saved model
+    :return: the loaded model
+    """
+    model.load_state_dict(torch.load(model_path, map_location='cpu'))
+    return model
