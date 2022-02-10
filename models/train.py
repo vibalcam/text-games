@@ -5,7 +5,7 @@ import numpy as np
 import torch
 import torch.utils.tensorboard as tb
 
-from .models import StateActionModel, save_model
+from .models import StateActionModel, save_model, load_model
 from .utils import load_data, accuracy, save_dict
 
 
@@ -25,32 +25,36 @@ def train(args):
 
     # learning rates
     lr: int = args.lr
+    # lr: int = 1e-2
     # optimizer to use for training
     optimizer_name: str = "adamw"  # adam, adamw, sgd
     # number of epochs to train on
     n_epochs: int = args.n_epochs
     # size of batches to use
-    batch_size: int = args.batch_size
+    # batch_size: int = args.batch_size
+    batch_size: int = 8
     # number of workers (processes) to use for data loading
     num_workers: int = 0 if args.debug else args.num_workers
     # dimensions of the model to use (look at model for more detail)
-    # shared_out_dim:int = 512
+    # shared_out_dim:int = 125
     # state_layers:List[int] = [20]
     # action_layers:List[int] = [20]
-    shared_out_dim: int = 256
-    state_layers: List[int] = [100]
-    action_layers: List[int] = [100]
+    shared_out_dim: int = 50
+    state_layers: List[int] = [25]
+    action_layers: List[int] = [25]
+    lstm_model = True
     # output features
     out_features: int = 1
     # scheduler mode to use for the learning rate scheduler
     scheduler_mode: str = 'max_val_acc'  # min_loss, max_acc, max_val_acc
     # Name of the BERT model to use
     bert_name = "bert-base-multilingual-cased"
-    lstm_model = True
+    freeze_bert: bool = False
 
     # Tensorboard
     global_step = 0
-    name_model = f"{optimizer_name}/{scheduler_mode}/{batch_size}/{lstm_model}/{shared_out_dim},{state_layers},{action_layers}/{lr}/5"
+    name_model = f"{optimizer_name}/{scheduler_mode}/{batch_size}/{lstm_model}/" \
+                 f"{shared_out_dim},{state_layers},{action_layers}/{lr}/{bert_name}/{freeze_bert}"
     train_logger = tb.SummaryWriter(path.join(args.log_dir, 'train', name_model), flush_secs=1)
     valid_logger = tb.SummaryWriter(path.join(args.log_dir, 'valid', name_model), flush_secs=1)
 
@@ -111,7 +115,7 @@ def train(args):
 
         # Start training: train mode and freeze bert
         model.train()
-        model.freeze_bert(True)
+        model.freeze_bert(freeze_bert)
         for state, action, reward in loader_train:
             # To device
             # state, action, reward = state.to(device), action.to(device), reward.to(device)
@@ -176,44 +180,42 @@ def test(args) -> None:
     Prints the result and saves it in the dictionary files.
     :param args: ArgumentParser with args to run the training (goto main to see the options)
     """
+    from pathlib import Path
+
+    # set up variables
     device = torch.device('cuda' if torch.cuda.is_available() and not (args.cpu or args.debug) else 'cpu')
     print(device)
     batch_size: int = args.batch_size
     num_workers: int = 0 if args.debug else args.num_workers
-    model = None
-    # model = StateActionModel()
     runs = args.test
+    save = True
 
     # get model names from folder
-    model_names = list(pathlib.Path(args.save_path).glob('*.th'))
-
-    for p in model_names:
-        name = p.name.replace('.th', '')
-        print(f"Testing {name}")
+    model = None
+    for folder_path in Path(args.save_path).glob('*'):
+        print(f"Testing {folder_path.name}")
 
         # load model and data loader
         del model
-        model, dict_model = load_model_from_name(f"{args.save_path}/{name}")
-        model = model.to(device)
-        test_acc = []
-        model.eval()
+        model, dict_model = load_model(folder_path)
+        model = model.to(device).eval()
+        _, _, loader_test = load_data(
+            dataset_path=args.data_path,
+            num_workers=num_workers,
+            batch_size=batch_size,
+            drop_last=False,
+            random_seed=123,
+            tokenizer=model.tokenizer,
+            device=device,
+        )
 
+        # start testing
+        test_acc = []
         for k in range(runs):
             run_acc = []
-            _, _, loader_test = load_data(
-                dataset_path=args.data_path,
-                num_workers=num_workers,
-                batch_size=batch_size,
-                drop_last=False,
-                random_seed=123,
-                tokenizer=model.tokenizer,
-                device=device,
-            )
 
             with torch.no_grad():
                 for state, action, reward in loader_test:
-                    # To device
-                    # state, action, reward = state.to(device), action.to(device), reward.to(device)
                     pred = model(state, action)[:, 0]
                     run_acc.append(accuracy(pred, reward))
 
@@ -224,33 +226,30 @@ def test(args) -> None:
         test_acc = np.mean(test_acc)
         dict_result = {"test_acc": test_acc}
 
-        print(f"{name}: {dict_result}")
+        print(f"{folder_path.name}: {dict_result}")
         dict_model.update(dict_result)
-        save_dict(dict_model, f"{args.save_path}/{name}.dict")
+        if save:
+            save_dict(dict_model, f"{folder_path}/{folder_path.name}.dict")
 
 
 def show_examples(args):
-    import pathlib
+    from pathlib import Path
+
+    # set up variables
     device = torch.device('cuda' if torch.cuda.is_available() and not (args.cpu or args.debug) else 'cpu')
     print(device)
     num_workers: int = 0 if args.debug else args.num_workers
     num_examples = args.show_examples
-    model = None
 
     # get model names from folder
-    model_names = list(pathlib.Path(args.save_path).glob('*.th'))
-
-    for p in model_names:
-        name = p.name.replace('.th', '')
-        print(f"Show examples {name}")
+    model = None
+    for folder_path in Path(args.save_path).glob('*'):
+        print(f"Show examples {folder_path.name}")
 
         # load model and data loader
         del model
-        model, dict_model = load_model_from_name(f"{args.save_path}/{name}")
-        model: StateActionModel = model.to(device)
-        model.eval()
-
-        examples = []
+        model, dict_model = load_model(folder_path)
+        model = model.to(device).eval()
         _, _, loader_test = load_data(
             dataset_path=args.data_path,
             num_workers=num_workers,
@@ -260,6 +259,8 @@ def show_examples(args):
             tokenize=False,
         )
 
+        # start with examples
+        examples = []
         with torch.no_grad():
             for state, action, reward in loader_test:
                 # if number of examples reached, break
@@ -270,7 +271,7 @@ def show_examples(args):
                 examples.append((state, action, reward, pred.cpu().detach().numpy()))
 
         # write in file
-        with open(f"{args.save_path}/{name}.md", "w", encoding="utf-8") as file:
+        with open(f"{folder_path}/{folder_path.name}.md", "w", encoding="utf-8") as file:
             k = 1
             for state, action, reward, pred in examples:
                 file.write(f"# Example {k}\n\n")
@@ -299,8 +300,8 @@ if __name__ == '__main__':
     # args_parser.add_argument('-law', '--loss_age_weight', nargs='+', type=float, default=[1e-2],
     #                          help='weight for the age loss')
     # args_parser.add_argument('-opt', '--optimizers', type=str, nargs='+', default=["adam"], help='optimizer to use')
-    args_parser.add_argument('-n', '--n_epochs', default=20, type=int, help='number of epochs to train on')
-    args_parser.add_argument('-b', '--batch_size', default=1, type=int, help='size of batches to use')
+    args_parser.add_argument('-n', '--n_epochs', default=100, type=int, help='number of epochs to train on')
+    args_parser.add_argument('-b', '--batch_size', default=8, type=int, help='size of batches to use')
     args_parser.add_argument('-w', '--num_workers', default=2, type=int,
                              help='number of workers to use for data loading')
 
