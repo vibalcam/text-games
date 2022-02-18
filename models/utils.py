@@ -6,6 +6,7 @@ from torch.utils.data import Dataset, DataLoader
 
 from simulator import YarnSimulator
 
+# Labels for the actions
 LABELS = ['bad', 'good']
 
 
@@ -24,12 +25,15 @@ class StateActionDataset(Dataset):
             max_length: int = None,
             device=None,
     ):
-        # todo if tokenize is true then max_length makes sense and tokenizer has to have a value, device does not
         """
         Initializer for the dataset
         :param states: list of states (L)
         :param actions: list of actions (L)
         :param rewards: list of rewards (L)
+        :param tokenize: whether to tokenize the input
+        :param tokenizer: tokenizer. Only used if tokenize is true.
+        :param max_length: max length for tokenization. Only used if tokenize is true
+        :param device: the desired device of returned data. Only used if tokenize is true
         """
         # Check correct parameters
         if tokenize and tokenizer is None:
@@ -44,6 +48,8 @@ class StateActionDataset(Dataset):
             self.states = states
             self.actions = actions
             return
+
+        # todo do not cut, let tokenizer do the cutting
 
         # If none is given for max_length or it exceeds maximum, use max length from tokenizer
         if max_length is None or max_length > tokenizer.model_max_length:
@@ -191,3 +197,8 @@ def load_list(path: str) -> List:
         from ast import literal_eval
         loaded = list(literal_eval(file.read()))
     return loaded
+
+
+if __name__ == '__main__':
+    pass
+# todo load dataset and check length

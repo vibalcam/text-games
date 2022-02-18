@@ -14,7 +14,7 @@ class StateActionModel(torch.nn.Module):
 
     class LSTMSharedBlock(torch.nn.Module):
         """
-        Block of the neural net to be repeated multiple times
+        Shared block of the neural net
         """
 
         class BertLSTM(torch.nn.LSTM):
@@ -38,12 +38,13 @@ class StateActionModel(torch.nn.Module):
             """
             Initialization of a block that composes the classifier
 
-            :param:
-            :param:
-            :param:
-            :param:
-            :param:
-            :param:
+            :param out_features: number of output features
+            :param sequence_length: length of the input sequence
+            :param bert_name: name of bert model from HuggingFace
+            :param num_layers: number of layers of LSTM
+            :param dropout: dropout for LSTM
+            :param bidirectional: whether the LSTM should be bidirectional
+            :param hidden_size: hidden size of LSTM
             """
             super().__init__()
 
@@ -59,6 +60,7 @@ class StateActionModel(torch.nn.Module):
             )
 
             self.net.pooler = torch.nn.Sequential(
+                # todo average pooling instead of flatten, this also allows any input length
                 torch.nn.Flatten(),
                 torch.nn.Linear(
                     in_features=(sequence_length * hidden_size * (2 if bidirectional else 1)),
@@ -78,13 +80,16 @@ class StateActionModel(torch.nn.Module):
 
     class BertSharedBlock(torch.nn.Module):
         """
-        Block of the neural net to be repeated multiple times
+        Shared block of the neural net
         """
 
-        def __init__(self, out_size: int, bert_name="bert-base-multilingual-cased",
+        def __init__(self, out_features: int, bert_name="bert-base-multilingual-cased",
                      hidden_post_bert: Optional[int] = None):
             """
             Initialization of a block that composes the classifier
+            :param out_features: number of output features
+            :param bert_name: name of bert model from HuggingFace
+            :param hidden_post_bert: hidden size of linear layer after BERT encoder model
             """
             super().__init__()
 
@@ -96,7 +101,7 @@ class StateActionModel(torch.nn.Module):
             layers = [
                 torch.nn.Linear(bert_hidden, bert_hidden if hidden_post_bert is None else hidden_post_bert),
                 torch.nn.ReLU(),
-                torch.nn.Linear(bert_hidden if hidden_post_bert is None else hidden_post_bert, out_size)
+                torch.nn.Linear(bert_hidden if hidden_post_bert is None else hidden_post_bert, out_features)
             ]
 
             self.net = torch.nn.Sequential(*layers)
@@ -104,8 +109,7 @@ class StateActionModel(torch.nn.Module):
         def freeze_bert(self, freeze):
             """
             Used to freeze the BERT model in order to fine-tune it
-            :param freeze:
-            :return:
+            :param freeze: whether to freeze the BERT encoder
             """
             for param in self.bert.parameters():
                 param.requires_grad = not freeze
@@ -113,31 +117,27 @@ class StateActionModel(torch.nn.Module):
         def forward(self, x):
             """
             Method which runs the given input through the block
-            :param x: dict of torch.Tensor(B,input_size), output of the tokenizer
-            :return: torch.Tensor(B,out_size)
+            :param x: dict of torch.Tensor(B,sequence_length), output of the tokenizer
+            :return: torch.Tensor(B,out_features)
             """
             z = self.bert(**x)
             return self.net(z['pooler_output'])
 
     class IndividualBlock(torch.nn.Module):
         """
-        Block of the neural net to be repeated multiple times
+        Block of the neural net for individual layers
         """
 
         def __init__(self, in_size: int, dim_layers: List[int]):
             """
             Initialization of a block that composes the classifier
-            Architecture is defined here
-            :param in_channels: number of channels in the input
-            :param out_channels: number of channels produced by the convolution
-            :param kernel_size: size of the convolving kernel
-            :param stride: stride of the convolution
-            :param residual: true if the network should have residual connections
-            :param conv_layers: number of convolutional layers (minimum 1)
+            :param in_size: input size
+            :param dim_layers: output size of linear layers
             """
             super().__init__()
 
             # Can also use dropout
+            # todo add relu or tanh after linear
             k = dim_layers[0]
             layers = [torch.nn.Linear(in_size, k), ]
             for out_size in dim_layers[1:]:
@@ -167,11 +167,18 @@ class StateActionModel(torch.nn.Module):
             lstm_model: bool = False,
             bert_name: str = "bert-base-multilingual-cased",
             max_sequence_length: Optional[int] = None,
+            # agg_method:str='sum',
             **kwargs
     ):
         """
         Initialization of the classifier
-        Architecture is defined here
+        :param shared_out_dim: out dimension of shared layer
+        :param state_layers: layer dimensions of state individual block
+        :param action_layers: layer dimensions of action individual block
+        :param out_features: output features
+        :param lstm_model: whether to use LSTM model
+        :param bert_name: name of bert model from HuggingFace
+        :param max_sequence_length: maximum sequence length
         """
         super().__init__()
 
@@ -202,10 +209,15 @@ class StateActionModel(torch.nn.Module):
         # block for action
         self.action = self.IndividualBlock(shared_out_dim, action_layers)
         # combine state and action, and output
+        # todo allow for sum, not only concatenate
         self.output = torch.nn.Linear(state_layers[-1] + action_layers[-1], out_features)
 
     def freeze_bert(self, freeze):
-        # only freeze for bert model, not lstm model
+        """
+        Used to freeze the BERT model in order to fine-tune it.
+        Only freeze for bert model, not lstm model
+        :param freeze: whether to freeze the BERT encoder
+        """
         if not self.lstm_model:
             self.shared.freeze_bert(freeze)
 
@@ -227,7 +239,7 @@ class StateActionModel(torch.nn.Module):
         :param states: list of states
         :param actions: list of actions
         :param device: torch.device to use
-        :param return_percentages:
+        :param return_percentages: whether it should return percentages (using a sigmoid) or raw outputs
         :return: torch tensor with the output of the model
         """
         states = self.tokenizer([k[-self.max_sequence_length:].split('\n', 1)[-1] for k in states],
