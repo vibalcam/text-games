@@ -136,9 +136,9 @@ def load_data(dataset_path: str = '../yarnScripts', num_workers=0, batch_size=4,
         k,
         num_workers=num_workers,
         batch_size=batch_size,
-        shuffle=True,
-        drop_last=drop_last
-    ) for k in datasets)
+        shuffle=idx == 0,
+        drop_last=drop_last,
+    ) for idx, k in enumerate(datasets))
 
 
 def accuracy(predicted: torch.Tensor, label: torch.Tensor, mean: bool = True):

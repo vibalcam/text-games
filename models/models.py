@@ -137,9 +137,10 @@ class StateActionModel(torch.nn.Module):
             super().__init__()
 
             # Can also use dropout
-            # todo add relu or tanh after linear
             k = dim_layers[0]
-            layers = [torch.nn.Linear(in_size, k), ]
+            layers = [
+                torch.nn.Linear(in_size, k),
+            ]
             for out_size in dim_layers[1:]:
                 layers.extend([
                     torch.nn.ReLU(),

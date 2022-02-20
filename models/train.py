@@ -1,5 +1,5 @@
 from os import path
-from typing import List
+from typing import Dict
 
 import numpy as np
 import torch
@@ -9,81 +9,147 @@ from .models import StateActionModel, save_model, load_model
 from .utils import load_data, accuracy, save_dict
 
 
-def train(args):
+def train(
+        model: StateActionModel,
+        dict_model: Dict,
+        log_dir: str = './models/logs',
+        data_path: str = './yarnScripts',
+        save_path: str = './models/saved',
+        lr: float = 1e-3,
+        optimizer_name: str = "adamw",
+        n_epochs: int = 100,
+        batch_size: int = 8,
+        num_workers: int = 0,
+        scheduler_mode: str = 'max_val_acc',
+        debug_mode: bool = False,
+        steps_validate: int = 1,
+        use_cpu: bool = False,
+        freeze_bert: bool = True,
+
+        # # Parameters of the model to use (look at model for more detail)
+        # shared_out_dim: int = 50,
+        # state_layers: List[int] = [25],
+        # action_layers: List[int] = [25],
+        # lstm_model = True,
+        # out_features: int = 1,
+        # bert_name = "bert-base-multilingual-cased",
+        # freeze_bert: bool = False,
+):
     """
     Method that trains a given model
-    :param args: ArgumentParser with args to run the training (goto main to see the options)
+
+    :param model: model that will be trained
+    :param dict_model: dictionary of model parameters
+    :param log_dir: directory where the tensorboard log should be saved
+    :param data_path: directory where the data can be found
+    :param save_path: directory where the model will be saved
+    :param lr: learning rate for the training
+    :param optimizer_name: optimizer used for training. Can be adam, adamw, sgd
+    :param n_epochs: number of epochs of training
+    :param batch_size: size of batches to use
+    :param num_workers: number of workers (processes) to use for data loading
+    :param scheduler_mode: scheduler mode to use for the learning rate scheduler. Can be min_loss, max_acc, max_val_acc
+    :param use_cpu: whether to use the CPU for training
+    :param debug_mode: whether to use debug mode (cpu and 0 workers)
+    :param steps_validate: number of epoch after which to validate and save model (if conditions met)
+    :param freeze_bert: whether to freeze BERT during training
     """
+
     # cpu or gpu used for training if available (gpu much faster)
-    device = torch.device('cuda' if torch.cuda.is_available() and not (args.cpu or args.debug) else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() and not (use_cpu or debug_mode) else 'cpu')
     print(device)
 
+    # num_workers 0 if debug_mode
+    if debug_mode:
+        num_workers = 0
+
     # Number of epoch after which to validate and save model
-    steps_validate = 1
+    # steps_validate = 1
 
     # Hyperparameters
 
-    # learning rates
-    lr: int = args.lr
-    # lr: int = 1e-2
-    # optimizer to use for training
-    optimizer_name: str = "adamw"  # adam, adamw, sgd
-    # number of epochs to train on
-    n_epochs: int = args.n_epochs
-    # size of batches to use
-    # batch_size: int = args.batch_size
-    batch_size: int = 8
-    # number of workers (processes) to use for data loading
-    num_workers: int = 0 if args.debug else args.num_workers
-    # dimensions of the model to use (look at model for more detail)
-    # shared_out_dim:int = 125
-    # state_layers:List[int] = [20]
-    # action_layers:List[int] = [20]
-    shared_out_dim: int = 50
-    state_layers: List[int] = [25]
-    action_layers: List[int] = [25]
-    lstm_model = True
-    # output features
-    out_features: int = 1
-    # scheduler mode to use for the learning rate scheduler
-    scheduler_mode: str = 'max_val_acc'  # min_loss, max_acc, max_val_acc
-    # Name of the BERT model to use
-    bert_name = "bert-base-multilingual-cased"
-    freeze_bert: bool = False
+    # # learning rates
+    # lr: int = args.lr
+    # # lr: int = 1e-2
+    # # optimizer to use for training
+    # optimizer_name: str = "adamw"  # adam, adamw, sgd
+    # # number of epochs to train on
+    # n_epochs: int = args.n_epochs
+    # # size of batches to use
+    # # batch_size: int = args.batch_size
+    # batch_size: int = 8
+    # # number of workers (processes) to use for data loading
+    # num_workers: int = 0 if args.debug else args.num_workers
+    # # dimensions of the model to use (look at model for more detail)
+    # # shared_out_dim:int = 125
+    # # state_layers:List[int] = [20]
+    # # action_layers:List[int] = [20]
+    # shared_out_dim: int = 50
+    # state_layers: List[int] = [25]
+    # action_layers: List[int] = [25]
+    # lstm_model = True
+    # # output features
+    # out_features: int = 1
+    # # scheduler mode to use for the learning rate scheduler
+    # scheduler_mode: str = 'max_val_acc'  # min_loss, max_acc, max_val_acc
+    # # Name of the BERT model to use
+    # bert_name = "bert-base-multilingual-cased"
+    # freeze_bert: bool = False
+
+    # # Tensorboard
+    # global_step = 0
+    # name_model = f"{optimizer_name}/{scheduler_mode}/{batch_size}/{lstm_model}/" \
+    #              f"{shared_out_dim},{state_layers},{action_layers}/{lr}/{bert_name}/{freeze_bert}"
+    # train_logger = tb.SummaryWriter(path.join(log_dir, 'train', name_model), flush_secs=1)
+    # valid_logger = tb.SummaryWriter(path.join(log_dir, 'valid', name_model), flush_secs=1)
 
     # Tensorboard
     global_step = 0
-    name_model = f"{optimizer_name}/{scheduler_mode}/{batch_size}/{lstm_model}/" \
-                 f"{shared_out_dim},{state_layers},{action_layers}/{lr}/{bert_name}/{freeze_bert}"
-    train_logger = tb.SummaryWriter(path.join(args.log_dir, 'train', name_model), flush_secs=1)
-    valid_logger = tb.SummaryWriter(path.join(args.log_dir, 'valid', name_model), flush_secs=1)
+    name_model = '/'.join([
+        str(dict_model)[1:-1].replace(',', '/').replace("'", '').replace(' ', '').replace(':', '='),
+        str(lr),
+        optimizer_name,
+        str(batch_size),
+        scheduler_mode,
+    ])
+    train_logger = tb.SummaryWriter(path.join(log_dir, 'train', name_model), flush_secs=1)
+    valid_logger = tb.SummaryWriter(path.join(log_dir, 'valid', name_model), flush_secs=1)
 
     # Model
-    dict_model = dict(
-        # dictionary with model information
+    dict_model.update(dict(
         name=name_model,
-        shared_out_dim=shared_out_dim,
-        state_layers=state_layers,
-        action_layers=action_layers,
-        out_features=out_features,
-        lstm_model=lstm_model,
-        bert_name=bert_name,
         # metrics
         train_loss=None,
         train_acc=0,
         val_acc=0,
         epoch=0,
-    )
-    model = StateActionModel(**dict_model).to(device)
+    ))
+    model = model.to(device)
+    # dict_model = dict(
+    #     # dictionary with model information
+    #     name=name_model,
+    #     shared_out_dim=shared_out_dim,
+    #     state_layers=state_layers,
+    #     action_layers=action_layers,
+    #     out_features=out_features,
+    #     lstm_model=lstm_model,
+    #     bert_name=bert_name,
+    #     # metrics
+    #     train_loss=None,
+    #     train_acc=0,
+    #     val_acc=0,
+    #     epoch=0,
+    # )
+    # model = StateActionModel(**dict_model).to(device)
 
     # Loss
     loss = torch.nn.BCEWithLogitsLoss().to(device)  # sigmoid + BCELoss (good for 2 classes classification)
 
     # load train and test data
     loader_train, loader_valid, _ = load_data(
-        dataset_path=args.data_path,
-        num_workers=0,
-        batch_size=args.batch_size,
+        dataset_path=data_path,
+        num_workers=num_workers,
+        batch_size=batch_size,
         drop_last=False,
         random_seed=123,
         tokenizer=model.tokenizer,
@@ -106,7 +172,7 @@ def train(args):
     else:
         raise Exception("Optimizer not configured")
 
-    print(f"{args.log_dir}/{name_model}")
+    print(f"{log_dir}/{name_model}")
 
     for epoch in range(n_epochs):
         print(epoch)
@@ -171,28 +237,43 @@ def train(args):
             dict_model["val_acc"] = val_acc
             dict_model["epoch"] = epoch
             name_path = name_model.replace('/', '_')
-            save_model(model, args.save_path, name_path, param_dicts=dict_model)
+            save_model(model, save_path, name_path, param_dicts=dict_model)
 
 
-def test(args) -> None:
+def test(
+        data_path: str = './yarnScripts',
+        save_path: str = './models/saved',
+        n_runs: int = 3,
+        batch_size: int = 8,
+        num_workers: int = 0,
+        debug_mode: bool = False,
+        use_cpu: bool = False,
+        save: bool = True,
+) -> None:
     """
     Calculates the metric on the test set of the model given in args.
     Prints the result and saves it in the dictionary files.
-    :param args: ArgumentParser with args to run the training (goto main to see the options)
+
+    :param data_path: directory where the data can be found
+    :param save_path: directory where the model will be saved
+    :param n_runs: number of runs from which to take the mean
+    :param batch_size: size of batches to use
+    :param num_workers: number of workers (processes) to use for data loading
+    :param use_cpu: whether to use the CPU for training
+    :param debug_mode: whether to use debug mode (cpu and 0 workers)
+    :param save: whether to save the results in the model dict
     """
     from pathlib import Path
-
-    # set up variables
-    device = torch.device('cuda' if torch.cuda.is_available() and not (args.cpu or args.debug) else 'cpu')
+    # cpu or gpu used for training if available (gpu much faster)
+    device = torch.device('cuda' if torch.cuda.is_available() and not (use_cpu or debug_mode) else 'cpu')
     print(device)
-    batch_size: int = args.batch_size
-    num_workers: int = 0 if args.debug else args.num_workers
-    runs = args.test
-    save = True
+    # num_workers 0 if debug_mode
+    if debug_mode:
+        num_workers = 0
 
     # get model names from folder
     model = None
-    for folder_path in Path(args.save_path).glob('*'):
+    for folder_path in Path(save_path).glob('*'):
         print(f"Testing {folder_path.name}")
 
         # load model and data loader
@@ -200,7 +281,7 @@ def test(args) -> None:
         model, dict_model = load_model(folder_path)
         model = model.to(device).eval()
         _, _, loader_test = load_data(
-            dataset_path=args.data_path,
+            dataset_path=data_path,
             num_workers=num_workers,
             batch_size=batch_size,
             drop_last=False,
@@ -211,7 +292,7 @@ def test(args) -> None:
 
         # start testing
         test_acc = []
-        for k in range(runs):
+        for k in range(n_runs):
             run_acc = []
 
             with torch.no_grad():
@@ -232,18 +313,35 @@ def test(args) -> None:
             save_dict(dict_model, f"{folder_path}/{folder_path.name}.dict")
 
 
-def show_examples(args):
-    from pathlib import Path
+def show_examples(
+        data_path: str = './yarnScripts',
+        save_path: str = './models/saved',
+        num_examples: int = 20,
+        num_workers: int = 0,
+        debug_mode: bool = False,
+        use_cpu: bool = False,
+) -> None:
+    """
+    Show examples from the test set
 
-    # set up variables
-    device = torch.device('cuda' if torch.cuda.is_available() and not (args.cpu or args.debug) else 'cpu')
+    :param data_path: directory where the data can be found
+    :param save_path: directory where the model will be saved
+    :param num_examples: number of examples to show
+    :param num_workers: number of workers (processes) to use for data loading
+    :param use_cpu: whether to use the CPU for training
+    :param debug_mode: whether to use debug mode (cpu and 0 workers)
+    """
+    from pathlib import Path
+    # cpu or gpu used for training if available (gpu much faster)
+    device = torch.device('cuda' if torch.cuda.is_available() and not (use_cpu or debug_mode) else 'cpu')
     print(device)
-    num_workers: int = 0 if args.debug else args.num_workers
-    num_examples = args.show_examples
+    # num_workers 0 if debug_mode
+    if debug_mode:
+        num_workers = 0
 
     # get model names from folder
     model = None
-    for folder_path in Path(args.save_path).glob('*'):
+    for folder_path in Path(save_path).glob('*'):
         print(f"Show examples {folder_path.name}")
 
         # load model and data loader
@@ -251,7 +349,7 @@ def show_examples(args):
         model, dict_model = load_model(folder_path)
         model = model.to(device).eval()
         _, _, loader_test = load_data(
-            dataset_path=args.data_path,
+            dataset_path=data_path,
             num_workers=num_workers,
             batch_size=1,
             drop_last=False,
@@ -287,32 +385,69 @@ if __name__ == '__main__':
 
     args_parser = ArgumentParser()
 
-    args_parser.add_argument('--log_dir', default="./models/logs")
-    args_parser.add_argument('--data_path', default="./yarnScripts")
-    args_parser.add_argument('--save_path', default="./models/saved")
+    # args_parser.add_argument('--log_dir', default="./models/logs")
+    # args_parser.add_argument('--data_path', default="./yarnScripts")
+    # args_parser.add_argument('--save_path', default="./models/saved")
     args_parser.add_argument('-t', '--test', type=int, default=None,
                              help='the number of test runs that will be averaged to give the test result,'
                                   'if None, training mode')
     args_parser.add_argument('-ex', '--show_examples', type=int, default=None)
 
     # Hyper-parameters
-    args_parser.add_argument('-lr', type=float, default=1e-3, help='learning rates')
+    # args_parser.add_argument('-lr', type=float, default=1e-3, help='learning rates')
     # args_parser.add_argument('-law', '--loss_age_weight', nargs='+', type=float, default=[1e-2],
     #                          help='weight for the age loss')
     # args_parser.add_argument('-opt', '--optimizers', type=str, nargs='+', default=["adam"], help='optimizer to use')
-    args_parser.add_argument('-n', '--n_epochs', default=100, type=int, help='number of epochs to train on')
-    args_parser.add_argument('-b', '--batch_size', default=8, type=int, help='size of batches to use')
-    args_parser.add_argument('-w', '--num_workers', default=2, type=int,
-                             help='number of workers to use for data loading')
+    # args_parser.add_argument('-n', '--n_epochs', default=100, type=int, help='number of epochs to train on')
+    # args_parser.add_argument('-b', '--batch_size', default=8, type=int, help='size of batches to use')
+    # args_parser.add_argument('-w', '--num_workers', default=2, type=int,
+    #                          help='number of workers to use for data loading')
 
-    args_parser.add_argument('--cpu', action='store_true')
-    args_parser.add_argument('-d', '--debug', action='store_true')
+    # args_parser.add_argument('--cpu', action='store_true')
+    # args_parser.add_argument('-d', '--debug', action='store_true')
 
     args = args_parser.parse_args()
 
     if args.test is not None:
-        test(args)
+        test()
     elif args.show_examples is not None:
-        show_examples(args)
+        show_examples()
     else:
-        train(args)
+        # Model
+        bert_dict_model = dict(
+            shared_out_dim=125,
+            state_layers=[20],
+            action_layers=[20],
+            out_features=1,
+            lstm_model=False,
+            bert_name="bert-base-multilingual-cased",
+        )
+        # lstm_dict_model = dict(
+        #     shared_out_dim=50,
+        #     state_layers=[30],
+        #     action_layers=[30],
+        #     out_features=1,
+        #     lstm_model=True,
+        #     bert_name="bert-base-multilingual-cased",
+        # )
+        dict_model = bert_dict_model
+        model = StateActionModel(**dict_model)
+
+        # Training hyperparameters
+        train(
+            model=model,
+            dict_model=dict_model,
+            log_dir='./models/logs',
+            data_path='./yarnScripts',
+            save_path='./models/saved',
+            lr=1e-3,
+            optimizer_name="adamw",
+            n_epochs=100,
+            batch_size=8,
+            num_workers=0,
+            scheduler_mode='max_val_acc',
+            debug_mode=False,
+            steps_validate=1,
+            use_cpu=False,
+            freeze_bert=True,
+        )
