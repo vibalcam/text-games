@@ -25,15 +25,6 @@ def train(
         steps_validate: int = 1,
         use_cpu: bool = False,
         freeze_bert: bool = True,
-
-        # # Parameters of the model to use (look at model for more detail)
-        # shared_out_dim: int = 50,
-        # state_layers: List[int] = [25],
-        # action_layers: List[int] = [25],
-        # lstm_model = True,
-        # out_features: int = 1,
-        # bert_name = "bert-base-multilingual-cased",
-        # freeze_bert: bool = False,
 ):
     """
     Method that trains a given model
@@ -63,46 +54,6 @@ def train(
     if debug_mode:
         num_workers = 0
 
-    # Number of epoch after which to validate and save model
-    # steps_validate = 1
-
-    # Hyperparameters
-
-    # # learning rates
-    # lr: int = args.lr
-    # # lr: int = 1e-2
-    # # optimizer to use for training
-    # optimizer_name: str = "adamw"  # adam, adamw, sgd
-    # # number of epochs to train on
-    # n_epochs: int = args.n_epochs
-    # # size of batches to use
-    # # batch_size: int = args.batch_size
-    # batch_size: int = 8
-    # # number of workers (processes) to use for data loading
-    # num_workers: int = 0 if args.debug else args.num_workers
-    # # dimensions of the model to use (look at model for more detail)
-    # # shared_out_dim:int = 125
-    # # state_layers:List[int] = [20]
-    # # action_layers:List[int] = [20]
-    # shared_out_dim: int = 50
-    # state_layers: List[int] = [25]
-    # action_layers: List[int] = [25]
-    # lstm_model = True
-    # # output features
-    # out_features: int = 1
-    # # scheduler mode to use for the learning rate scheduler
-    # scheduler_mode: str = 'max_val_acc'  # min_loss, max_acc, max_val_acc
-    # # Name of the BERT model to use
-    # bert_name = "bert-base-multilingual-cased"
-    # freeze_bert: bool = False
-
-    # # Tensorboard
-    # global_step = 0
-    # name_model = f"{optimizer_name}/{scheduler_mode}/{batch_size}/{lstm_model}/" \
-    #              f"{shared_out_dim},{state_layers},{action_layers}/{lr}/{bert_name}/{freeze_bert}"
-    # train_logger = tb.SummaryWriter(path.join(log_dir, 'train', name_model), flush_secs=1)
-    # valid_logger = tb.SummaryWriter(path.join(log_dir, 'valid', name_model), flush_secs=1)
-
     # Tensorboard
     global_step = 0
     name_model = '/'.join([
@@ -125,22 +76,6 @@ def train(
         epoch=0,
     ))
     model = model.to(device)
-    # dict_model = dict(
-    #     # dictionary with model information
-    #     name=name_model,
-    #     shared_out_dim=shared_out_dim,
-    #     state_layers=state_layers,
-    #     action_layers=action_layers,
-    #     out_features=out_features,
-    #     lstm_model=lstm_model,
-    #     bert_name=bert_name,
-    #     # metrics
-    #     train_loss=None,
-    #     train_acc=0,
-    #     val_acc=0,
-    #     epoch=0,
-    # )
-    # model = StateActionModel(**dict_model).to(device)
 
     # Loss
     loss = torch.nn.BCEWithLogitsLoss().to(device)  # sigmoid + BCELoss (good for 2 classes classification)
@@ -183,9 +118,6 @@ def train(
         model.train()
         model.freeze_bert(freeze_bert)
         for state, action, reward in loader_train:
-            # To device
-            # state, action, reward = state.to(device), action.to(device), reward.to(device)
-
             # Compute loss and update parameters
             pred = model(state, action)[:, 0]
             loss_val = loss(pred, reward)
@@ -204,8 +136,6 @@ def train(
         model.eval()
         with torch.no_grad():
             for state, action, reward in loader_valid:
-                # To device
-                # state, action, reward = state.to(device), action.to(device), reward.to(device)
                 pred = model(state, action)[:, 0]
                 val_acc.append(accuracy(pred, reward))
 
@@ -382,36 +312,19 @@ def show_examples(
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
-
     args_parser = ArgumentParser()
 
-    # args_parser.add_argument('--log_dir', default="./models/logs")
-    # args_parser.add_argument('--data_path', default="./yarnScripts")
-    # args_parser.add_argument('--save_path', default="./models/saved")
     args_parser.add_argument('-t', '--test', type=int, default=None,
                              help='the number of test runs that will be averaged to give the test result,'
                                   'if None, training mode')
     args_parser.add_argument('-ex', '--show_examples', type=int, default=None)
 
-    # Hyper-parameters
-    # args_parser.add_argument('-lr', type=float, default=1e-3, help='learning rates')
-    # args_parser.add_argument('-law', '--loss_age_weight', nargs='+', type=float, default=[1e-2],
-    #                          help='weight for the age loss')
-    # args_parser.add_argument('-opt', '--optimizers', type=str, nargs='+', default=["adam"], help='optimizer to use')
-    # args_parser.add_argument('-n', '--n_epochs', default=100, type=int, help='number of epochs to train on')
-    # args_parser.add_argument('-b', '--batch_size', default=8, type=int, help='size of batches to use')
-    # args_parser.add_argument('-w', '--num_workers', default=2, type=int,
-    #                          help='number of workers to use for data loading')
-
-    # args_parser.add_argument('--cpu', action='store_true')
-    # args_parser.add_argument('-d', '--debug', action='store_true')
-
     args = args_parser.parse_args()
 
     if args.test is not None:
-        test()
+        test(n_runs=args.test)
     elif args.show_examples is not None:
-        show_examples()
+        show_examples(num_examples=args.show_examples)
     else:
         # Model
         bert_dict_model = dict(
