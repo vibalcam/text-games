@@ -141,20 +141,29 @@ def load_data(dataset_path: str = '../yarnScripts', num_workers=0, batch_size=4,
     ) for idx, k in enumerate(datasets))
 
 
-def accuracy(predicted: torch.Tensor, label: torch.Tensor, mean: bool = True):
+class Accuracy:
     """
-    Calculates the accuracy of the prediction and returns a numpy number.
-    It considers predicted to be class 1 if probability is higher than 0.5
-    :param mean: true to return the mean, false to return an array
-    :param predicted: the input prediction
-    :param label: the real label
-    :return: returns the accuracy of the prediction (between 0 and 1), in the cpu and detached as numpy
+    Calculates the accuracy of the predictions
     """
-    correct = ((predicted > 0).float() == label).float()
-    if mean:
-        return correct.mean().cpu().detach().numpy()
-    else:
-        return correct.cpu().detach().numpy()
+
+    def __init__(self) -> None:
+        self.correct = np.zeros(1, dtype=np.float32)
+        self.samples = np.zeros(1, dtype=np.float32)
+
+    def add(self, predicted: torch.Tensor, label: torch.Tensor):
+        """
+        Adds samples for the accuracy calculation
+        It considers predicted to be class 1 if probability is higher than 0.5
+        :param predicted: the input prediction
+        :param label: the real label
+        """
+        self.samples += predicted.numel()
+        correct = ((predicted > 0).float() == label).float().sum().cpu().detach().numpy()
+        self.correct += correct
+
+    @property
+    def accuracy(self):
+        return self.correct / self.samples
 
 
 def save_dict(d: Dict, path: str) -> None:

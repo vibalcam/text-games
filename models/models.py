@@ -282,7 +282,7 @@ def save_model(model: torch.nn.Module, folder: str, model_name: str, param_dicts
         save_dict(param_dicts, f"{folder_path}/{model_name}.dict")
 
 
-def load_model(folder_path: pathlib.Path) -> Tuple[torch.nn.Module, Dict]:
+def load_model(folder_path: pathlib.Path) -> Tuple[StateActionModel, Dict]:
     """
     Loads a model that has been previously saved using its name (model th and dict must have that same name)
     Only works for StateActionModel

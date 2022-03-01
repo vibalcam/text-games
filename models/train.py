@@ -6,7 +6,7 @@ import torch
 import torch.utils.tensorboard as tb
 
 from .models import StateActionModel, save_model, load_model
-from .utils import load_data, accuracy, save_dict
+from .utils import Accuracy, load_data, save_dict
 
 
 def train(
@@ -56,19 +56,30 @@ def train(
 
     # Tensorboard
     global_step = 0
+    # dictionary of training parameters
+    dict_param = {f"train_{k}": v for k, v in locals().items() if k in [
+        'lr',
+        'optimizer_name',
+        'batch_size',
+        'scheduler_mode',
+    ]}
+    # dict_param.update(dict(
+    #     train_self_loop=dataset.add_self_loop,
+    #     train_drop_edges=dataset.drop_edges,
+    # ))
+    # dictionary to set model name
+    name_dict = dict_model.copy()
+    name_dict.update(dict_param)
+    # model name
     name_model = '/'.join([
-        str(dict_model)[1:-1].replace(',', '/').replace("'", '').replace(' ', '').replace(':', '='),
-        str(lr),
-        optimizer_name,
-        str(batch_size),
-        scheduler_mode,
+        str(name_dict)[1:-1].replace(',', '/').replace("'", '').replace(' ', '').replace(':', '='),
     ])
     train_logger = tb.SummaryWriter(path.join(log_dir, 'train', name_model), flush_secs=1)
     valid_logger = tb.SummaryWriter(path.join(log_dir, 'valid', name_model), flush_secs=1)
 
     # Model
+    dict_model.update(dict_param)
     dict_model.update(dict(
-        name=name_model,
         # metrics
         train_loss=None,
         train_acc=0,
@@ -112,7 +123,7 @@ def train(
     for epoch in range(n_epochs):
         print(epoch)
         train_loss = []
-        train_acc = []
+        train_acc = Accuracy()
 
         # Start training: train mode and freeze bert
         model.train()
@@ -129,19 +140,19 @@ def train(
 
             # Add train loss and accuracy
             train_loss.append(loss_val.cpu().detach().numpy())
-            train_acc.append(accuracy(pred, reward))
+            train_acc.add(pred, reward)
 
         # Evaluate the model
-        val_acc = []
+        val_acc = Accuracy()
         model.eval()
         with torch.no_grad():
             for state, action, reward in loader_valid:
                 pred = model(state, action)[:, 0]
-                val_acc.append(accuracy(pred, reward))
+                val_acc.add(pred, reward)
 
         train_loss = np.mean(train_loss)
-        train_acc = np.mean(train_acc)
-        val_acc = np.mean(val_acc)
+        train_acc = train_acc.accuracy
+        val_acc = val_acc.accuracy
 
         # Step the scheduler to change the learning rate
         if scheduler_mode == "min_loss":
@@ -173,7 +184,7 @@ def train(
 def test(
         data_path: str = './yarnScripts',
         save_path: str = './models/saved',
-        n_runs: int = 3,
+        n_runs: int = 1,
         batch_size: int = 8,
         num_workers: int = 0,
         debug_mode: bool = False,
@@ -223,16 +234,15 @@ def test(
         # start testing
         test_acc = []
         for k in range(n_runs):
-            run_acc = []
+            run_acc = Accuracy()
 
             with torch.no_grad():
                 for state, action, reward in loader_test:
                     pred = model(state, action)[:, 0]
-                    run_acc.append(accuracy(pred, reward))
+                    run_acc.add(pred, reward)
 
-            run_acc = np.mean(run_acc)
-            print(f"Run {k}: {run_acc}")
-            test_acc.append(run_acc)
+            print(f"Run {k}: {run_acc.accuracy}")
+            test_acc.append(run_acc.accuracy)
 
         test_acc = np.mean(test_acc)
         dict_result = {"test_acc": test_acc}
@@ -355,7 +365,7 @@ if __name__ == '__main__':
             save_path='./models/saved',
             lr=1e-3,
             optimizer_name="adamw",
-            n_epochs=100,
+            n_epochs=70,
             batch_size=8,
             num_workers=0,
             scheduler_mode='max_val_acc',
