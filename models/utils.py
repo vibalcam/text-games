@@ -91,7 +91,7 @@ class StateActionDataset(Dataset):
 
 
 def load_data(dataset_path: str = '../yarnScripts', num_workers=0, batch_size=4, drop_last=False,
-              lengths=(0.8, 0.1, 0.1), random_seed: int = 123, **kwargs) -> Tuple[DataLoader, ...]:
+              lengths=(0.8, 0.1, 0.1), random_seed: int = 123, reward_key:str='r', **kwargs) -> Tuple[DataLoader, ...]:
     """
     Method used to load the dataset. It retrives the data with random shuffle
     :param dataset_path: path to the dataset
@@ -101,6 +101,8 @@ def load_data(dataset_path: str = '../yarnScripts', num_workers=0, batch_size=4,
     :param batch_size: size of each batch which is retrieved by the dataloader
     :param drop_last: whether to drop the last batch if it is smaller than batch_size
     :param lengths: tuple with percentage of train, validation and test samples
+    :param reward_key: attribute key for the reward
+
     :return: tuple of dataloader (same length as parameter lengths)
     """
 
@@ -110,12 +112,13 @@ def load_data(dataset_path: str = '../yarnScripts', num_workers=0, batch_size=4,
     states = []
     actions = []
     rewards = []
-    for p, n, attr in graph.edges(data=True):
-        if attr['extras'] == "":
+    for p, _, attr in graph.edges(data=True):
+        #todo change extras
+        if not attr['extras']:
             continue
         states.append(graph.nodes[p]['text'].strip())
         actions.append(attr['action'])
-        rewards.append(float(attr['extras']))
+        rewards.append(float(attr['extras'][reward_key]))
 
     # Shuffle the data
     data = list(zip(states, actions, rewards))

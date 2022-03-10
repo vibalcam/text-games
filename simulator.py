@@ -51,29 +51,31 @@ class Simulator(ABC):
 
 class YarnSimulator(Simulator):
     def __init__(self, yarn: Union[str, List[Dict]] = 'yarnScripts', file_type: str = 'yarn', jump_as_choice=True,
-                 text_unk_macro=None, extras_separator: str = '__'):
+                 text_unk_macro=None, extras_separator: str = '__', extras_separator_key:str = ':'):
         """
         Simulator
         :param yarn: path for the yarn files or the content of the yarn file (title, body...)
         :param type: file type of yarn. Either json, yarn (.txt, .yarn) or content
         :param jump_as_choice: whether to treat jumps as a choice with only one option (true) or as goto (false)
         :param text_unk_macro: placeholder when an unknown macro is encountered
-        :param extras_separator: token used to separate the extras from the text (ex. prueba_2, means it has reward 2)
+        :param extras_separator: token used to separate the extras from the text (ex. prueba__r:2, means it has reward 2)
+        :param extras_separator_key: token used to separate the key and value in extras
         """
         self.jump_as_choice = jump_as_choice
         self.text_unk_macro = text_unk_macro
-        self.graph_complete = None
+        self._graph_complete = None
         self.extras_separator = extras_separator
+        self.extras_separator_key = extras_separator_key
 
         # Initialized in self.restart()
+        self._controller = None
 
-        # The choices made up until this moment
-        self.choices_history = []
-        # Dictionary with choices as keys and reward as values
-        self.choices = {}
-        # Last extras obtained
-        self.last_extras = ""
-        self.controller = None
+        # # The choices made up until this moment
+        # self.choices_history = []
+        # # Dictionary with choices as keys and extras as values
+        # self.choices = {}
+        # # Last extras obtained
+        # self.last_extras = ""
 
         if file_type == 'yarn':
             self.data = get_content_from_yarn(yarn)
@@ -88,29 +90,52 @@ class YarnSimulator(Simulator):
         self.restart()
 
     def restart(self):
-        self.controller = YarnController(None, False, content=self.data,
+        self._controller = YarnController(None, False, content=self.data,
                                          jump_as_choice=self.jump_as_choice,
                                          text_unk_macro=self.text_unk_macro)
+        # list of choices taken
         self.choices_history = []
+        # choices with their respective information
         self.choices = {}
-        self.last_extras = ""
+        # list of choices presented
+        self.last_choices_list = []
+        # last extras received
+        self.last_extras = {}
 
-    def read(self) -> Tuple[str, List, str]:
-        self.choices = {k[0]: k[1].strip() if len(k) > 1 else "" for k in
-                        [c.split(self.extras_separator, 1) for c in self.controller.choices()]}
-        return self.controller.message(), list(self.choices.keys()), self.last_extras
+    def _parse_extras_dict(self, s:str) -> Dict[str, str]:
+        return dict([k.split(self.extras_separator_key) for k in s.split(self.extras_separator)])
 
-    def transition(self, choice: Union[int, str]) -> Tuple[str, List, str]:
+    def read(self) -> Tuple[str, List, Dict[str,str]]:
+        # create dict of choices and tuple of (choice full name, extras as dictionary of key values)
+        self.choices = {k[0]: (self.extras_separator.join(k), 
+                            self._parse_extras_dict(k[1].strip()) if len(k) > 1 else {}) 
+                        for k in [c.split(self.extras_separator, 1) for c in self.controller.choices()]}
+        
+        # create list of choices in order to assure order and use int for transition
+        self.last_choices_list = list(self.choices.keys())
+
+        return self.controller.message(), self.last_choices_list, self.last_extras
+
+    def transition(self, choice: Union[int, str]) -> Tuple[str, List, Dict[str,str]]:
         """
         Transitions the story with the given choice
         :param choice: choice taken
-        :return: state, choices and reward (if any) after the transition
+        :return: state, choices and extras (if any) after the transition
         """
+        # from int to str
+        if type(choice) == int:
+            choice = self.last_choices_list[choice]
+
         self.choices_history.append(choice)
-        self.last_extras = self.choices[choice]
-        self.controller.transition(
-            choice if self.last_extras == "" else f"{choice}{self.extras_separator}{self.last_extras}")
+        choice_dict = self.choices[choice]
+        self.last_extras = choice_dict[1]
+        self.controller.transition(choice_dict[0])
+            # choice if not self.last_extras else f"{choice}{self.extras_separator}{self.last_extras}")
         return self.read()
+
+    @property
+    def controller(self):
+        return self._controller
 
     def get_current_path(self) -> List[str]:
         return self.choices_history
@@ -123,16 +148,16 @@ class YarnSimulator(Simulator):
         Returns the decision graph. Restarts the simulator.
         :param simplified: if true it returns the narrative of the story (the story line),
                             if false it returns the complete decision graph
-        :return: a tuple containing a networkx graph (nodes attr: state, text, reward; edges attr: action)
+        :return: a tuple containing a networkx graph (nodes attr: state, text, extras; edges attr: action)
                 and a pydot graph
         """
         self.restart()
         if simplified:
             return dfs(self, nx.DiGraph(), graphviz.Digraph(), set(), [], None, simplified)
 
-        if self.graph_complete is None:
-            self.graph_complete = dfs(self, nx.DiGraph(), graphviz.Digraph(), set(), [], None, simplified)
-        return self.graph_complete
+        if self._graph_complete is None:
+            self._graph_complete = dfs(self, nx.DiGraph(), graphviz.Digraph(), set(), [], None, simplified)
+        return self._graph_complete
 
     def create_html(self, folder_path: str, use_bondage=False):
         """Creates the html files necessary to run in the browser. Restarts the simulator."""

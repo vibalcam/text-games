@@ -2,7 +2,7 @@ import pathlib
 from typing import List, Dict, Tuple, Optional
 
 import torch
-from transformers import BertTokenizerFast, BertModel
+from transformers import BertConfig, BertTokenizerFast, BertModel
 
 from models.utils import load_dict, save_dict
 
@@ -34,6 +34,7 @@ class StateActionModel(torch.nn.Module):
                 dropout: float = 0,
                 bidirectional: bool = True,
                 hidden_size: int = 768,
+                download_bert:bool = True,
         ):
             """
             Initialization of a block that composes the classifier
@@ -48,7 +49,7 @@ class StateActionModel(torch.nn.Module):
             """
             super().__init__()
 
-            self.net = BertModel.from_pretrained(bert_name)
+            self.net = BertModel.from_pretrained(bert_name) if download_bert else BertModel(BertConfig.from_pretrained(bert_name))
 
             self.net.encoder = self.BertLSTM(
                 input_size=self.net.config.hidden_size,
@@ -84,7 +85,7 @@ class StateActionModel(torch.nn.Module):
         """
 
         def __init__(self, out_features: int, bert_name="bert-base-multilingual-cased",
-                     hidden_post_bert: Optional[int] = None):
+                     hidden_post_bert: Optional[int] = None, download_bert:bool = True):
             """
             Initialization of a block that composes the classifier
             :param out_features: number of output features
@@ -93,7 +94,7 @@ class StateActionModel(torch.nn.Module):
             """
             super().__init__()
 
-            self.bert = BertModel.from_pretrained(bert_name)
+            self.bert = BertModel.from_pretrained(bert_name) if download_bert else BertModel(BertConfig.from_pretrained(bert_name))
 
             # Can also use dropout
             # num_extra_layers = max(num_layers - 2, 0)
@@ -168,6 +169,7 @@ class StateActionModel(torch.nn.Module):
             lstm_model: bool = False,
             bert_name: str = "bert-base-multilingual-cased",
             max_sequence_length: Optional[int] = None,
+            download_bert:bool = True,
             # agg_method:str='sum',
             **kwargs
     ):
@@ -194,7 +196,7 @@ class StateActionModel(torch.nn.Module):
         # shared block
         self.lstm_model = lstm_model
         if not lstm_model:
-            self.shared = self.BertSharedBlock(shared_out_dim, bert_name=bert_name)
+            self.shared = self.BertSharedBlock(shared_out_dim, bert_name=bert_name, download_bert=download_bert)
         else:
             self.shared = self.LSTMSharedBlock(
                 out_features=shared_out_dim,
@@ -204,6 +206,7 @@ class StateActionModel(torch.nn.Module):
                 dropout=0.1,
                 bidirectional=False,
                 hidden_size=512,
+                download_bert=download_bert,
             )
         # block for state
         self.state = self.IndividualBlock(shared_out_dim, state_layers)
@@ -291,7 +294,7 @@ def load_model(folder_path: pathlib.Path) -> Tuple[StateActionModel, Dict]:
     """
     path = f"{folder_path.absolute()}/{folder_path.name}"
     dict_model = load_dict(f"{path}.dict")
-    return load_model_data(StateActionModel(**dict_model), f"{path}.th"), dict_model
+    return load_model_data(StateActionModel(download_bert=False, **dict_model), f"{path}.th"), dict_model
 
 
 def load_model_data(model: torch.nn.Module, model_path: str) -> torch.nn.Module:

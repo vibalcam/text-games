@@ -1,7 +1,7 @@
 import random
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Sequence, TypeVar
+from typing import Sequence, TypeVar, List
 
 import torch
 
@@ -20,7 +20,7 @@ class RandomAgent(Agent):
     def __init__(self, seed: int = 123):
         random.seed(seed)
 
-    def act(self, state, actions: Sequence[T]) -> T:
+    def act(self, state:str, actions: Sequence[T]) -> T:
         return random.choice(actions)
 
 
@@ -31,7 +31,7 @@ class TorchModelAgent(Agent):
     It chooses the action that provides a higher percentage of certainty of being a good decision.
     It tries to maximize: 
     
-    certainty = rand * random(0,1) + (1-rand) * predicted
+    `certainty = rand * random(0,1) + (1-rand) * predicted`
     """
 
     def __init__(self, model_path: Path, rand: float = 0, use_cpu: bool = False, seed: int = 123) -> None:
@@ -50,12 +50,13 @@ class TorchModelAgent(Agent):
         self.rand = rand
         self.generator = torch.random.manual_seed(seed)
 
-    def act(self, state, actions: Sequence[T]) -> T:
+    def act(self, state:str, actions: List[str]) -> int:
         # get percentages of certainty of action with good result
-        pred = self.model.run([state] * len(actions), [actions], device=self.device,
-                              return_percentages=True).cpu().detach()
+        # model run outputs B,1 -> pred B
+        pred = self.model.run([state] * len(actions), actions, device=self.device,
+                              return_percentages=True).cpu().detach()[:,0]
         # add randomness to prediction
         pred = (self.rand) * torch.rand(pred.shape, generator=self.generator, dtype=torch.float) + (
                     1 - self.rand) * pred
         # choose option with highest certainty of good result
-        return pred.argmax()
+        return pred.argmax(0)
