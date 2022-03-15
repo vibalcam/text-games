@@ -1,0 +1,218 @@
+title: BuenoPadres
+tags: 
+colorID: 0
+position: 0,0
+---
+
+Estaba pensando en qué podría hacer esta tarde para entretenerme cuando de repente recordé que mi madre había dicho que papá llegaba pronto.
+User: ¿Cuándo llegaba papá?
+Mamá: Me dijo ayer que llegaría mañana por la mañana.
+Mamá: ¿Te sigue apeteciendo ir al cine?
+User: Claro.
+Mamá: He escogido la sesión de la tarde para que tu padre pueda descansar un poco.
+Mamá: Pero antes de nada, [name], ¿has terminado tus deberes?
+User: ...
+Ayer con todo el asunto de Hally, se me olvidaron complementante los deberes. Además, dentro de poco íbamos a tener un examen bastante importante. 
+User: No...
+Mamá: [name]...
+Mamá: No iremos mañana hasta que no termines.
+Mamá: No tendrás por casualidad algún examen ¿verdad?
+A veces me daba miedo la intuición que tenía mi madre.
+User: Lo tengo dentro de dos semanas....
+Mamá: Pues deberías estar estudiando.
+Mamá: Yo también tengo que hacer unas cosas del trabajo, si quieres nos ponemos junt@s y si tienes alguna duda te puedo ayudar.
+User: ¡Vale!
+Fui corriendo a por mis cosas para traerlas al salón.
+No me apetecía mucho ponerme a estudiar un sábado por la mañana, pero mi madre se había ofrecido a ayudarme, y podría pasar más tiempo con ella. 
+
+<<SceneChange @ salon>>
+Después de comer, mi madre me dejó descansar un rato y antes de ponernos de nuevo a trabajar. 
+Estaba en el sofá, navegando tranquilamente por Chipper, viendo qué se contaba la gente de clase y buscando un juego nuevo que me pudiera interesar.
+Mi madre estaba a mi lado y seguía trabajando en su ordenador. 
+Por puro aburrimiento, me asomé a la pantalla para ver qué estaba haciendo. 
+No entendía nada de lo que estaba viendo, sólo podía ver un montón de gráficas y números aleatorios. 
+Mamá: ¿Te entretienes?
+Usr: La verdad es que no entiendo nada. 
+Mamá: Jajaja
+Después de un rato, mi madre me dijo que volviera a retomar la lección. Me gustaba mucho ponerme a estudiar con mi madre. 
+Había veces que tenía dudas pero no tenía el valor suficiente como para levantar la mano y preguntarle al profesor, por lo que siempre tenía que intentar resolverla yo sol@.
+Pero con la ayuda de mi madre, ahorraba mucho tiempo. 
+Ella me lo explicaba todo de manera muy sencilla y podía entenderlo casi siempre  a la primera. 
+No fue hasta más tarde, cuando estaba intentando resolver uno de los últimos ejercicios del tema, que escuché el ruido de la llave entrando en la cerradura de la puerta principal.. 
+<<Act @ Mamá, mama-normal, right>>
+<<Act @ Papá, papa-normal, left,center, blue>>
+Mamá: ?
+Papá: ¡Sorpresa!
+User: !!
+Sin poder creerlo, mi padre había entrado por la puerta de casa. 
+Mamá: Pero ¿no llegabas mañana?
+Papá: Hemos terminado antes, así que pedí permiso para volver ahora. 
+Papá: ¿Pero que son esas reacciones?
+Papá: ¿No estáis content@s de verme?
+Mi madre y yo nos acercamos sonrientes a darle la bienvenida. 
+Queriendo celebrar la vuelta de mi padre, nos pusimos manos a la obra para preparar la cena. 
+Mi madre y yo no éramos muy buen@s cocinando. 
+Mi padre insistió en ayudarnos, pero no queríamos darle más trabajo después de estar todo el día viajando.
+Desgraciadamente, cuando abrimos el horno,  la cocina comenzó a inundarse de un humo negro y olor a quemado.. 
+Mamá: ...
+Papá: ...
+User: ...
+Mamá: ¿Y si pedimos algo?
+Papá: Será mejor...
+User: Deberíamos haber hecho eso desde el principio...
+<<SceneChange @ salon>>
+Después de que llegase la comida, nos sentamos juntos en el sofá.
+Papá: Bueno, contadme, ¿qué me he perdido?
+Mis padres en ese momento empezaron a hablar sobre cosas del trabajo, contándose  mutuamente lo que habían hecho esa semana. 
+Intentaba seguir la conversación que estaban teniendo, pero no entendía ni la mitad de lo que decían así que deje de prestar atención durante un rato. 
+Papá: Bueno [name], ¿Tú qué tal?
+User: Muy bien, como siempre.
+Papá: ¿Nada novedoso que contar? ¿Qué tal está Amanda?
+User: Muy bien...
+Papá: Tienes que invitarle alguna vez a casa, es muy buena chica.
+User: Le preguntaré... 
+En ese momento me pregunté qué estaría haciendo Amanda. Ayer parecía que me quería decir algo, pero se rindió en el último momento. Esta semana nos hemos alejado un poco. 
+A pesar de que me dolía, no podía evitar pensar que era lo mejor. 
+No sabía cuándo nos íbamos a mudar otra vez y no quería perder más amigos. 
+A pesar de que me sentía sol@ en el colegio, al menos tenía a mis padres que me hacían compañía cuando podían. 
+Papá: ¿Has probado ya tu ordenador nuevo?
+Mamá: ¿Probarlo? Ahora no hace otra cosa que estar con él.
+Mamá: Se pasa el día entero jugando a algo.
+User: No es verdad...
+Papá: [name] me alegra mucho que te haya gustado tu regalo, pero no queremos que estés todo el rato con él.
+Papá: ¿Por qué no quedas con Amanda alguna vez?
+Papá: No queremos verte encerrad@ en tu cuarto sol@.
+En ese momento sentí una oleada de indignación. 
+Es verdad que esta semana estaba mucho con mi ordenador jugando con Hally, pero no era para tanto. 
+Con miedo de que me quitasen el ordenador, intenté defenderme.
+User: ¡No estoy todo el día!
+User: Siempre hago los deberes antes de ponerme a jugar.
+User: Y además, no juego sol@.
+User: Mi amigo Hally juega conmigo online.
+Mamá: ¿Hally?
+En ese momento, me dí cuenta de mi desliz. No les había contado a mis padres nada sobre Hally. 
+Papá: ¿Quién es Hally?
+User:  Un amigo del colegio...
+Papá: ¿Cómo es que nunca te hemos escuchado hablar de él?
+Mamá: [name] no nos mientas. 
+Mamá: ¿Quién es?
+User: ...
+User: Hally es un amigo que he hecho online.
+User: Juego siempre con él cuando me conecto.
+Mamá: ¿Nos estas diciendo que durante todo este tiempo, has estado jugando con un desconocido online?
+User: ...sí.
+User: Pero no pasa nada, solo hablo con él cuando me conecto.
+User: Sé que no hay que decir nada privado online y no lo he hecho.
+User: He tenido cuidado, de verdad.
+Papá: [name] nos alegra escuchar eso, pero no se trata solo de eso.
+Mamá: ¿Qué pasa si en verdad ese tal "Hally" no es quien dice ser y te empieza a pedir cosas raras?
+Mamá: ¡O a mandártelas!
+User: ...
+Mamá: ¿Por qué no contestas?
+Mamá: No me digas que ya lo ha hecho...
+Papá: [name]...
+User: Es verdad el otro día me mandó un video, como dice mamá, para adultos...
+Papá: ¿Qué?
+User: Y luego también me mando unas fotos suyas... 
+Mamá: ¿Que te mandó el qué?
+User: Y luego me pidió que le mandase una de vuelta...
+Mamá: ...
+Papá: ...
+User: Pero no pasa nada, en serio.
+User: Me negué rotundamente y le dije que dejase de mandar esas cosas.
+User: Me estaba sintiendo muy incómod@ con lo que mandaba.
+User: Si queréis le bloqueo ahora mismo para que no os tengáis que preocupar.
+Papá: [name] esto es muy serio...
+Mamá: Enséñanos ahora mismo los mensajes que te ha mandado.
+User: ...
+<<SceneChange @ habitacion>>
+Sin poderme negar, les llevé a mi habitación y les enseñé el historial de mensajes que había tenido con Hally. 
+Estaban los dos muy callados leyéndolo todo desde el primer día que nos hablamos. 
+Cuando terminaron de leerlo, simplemente se miraron y no dijeron nada. 
+Mamá: ...
+Papá: ...
+Fue en ese momento cuando escuchamos una notificación de Dungeons. 
+Hally me había escrito. 
+<<Act @ HallyHealer07, hally-normal,center,center,#6BDEDB>>
+HallyHealer07: Hola [name] ^.^
+HallyHealer07: Quería disculparme de cómo me había comportado anoche.
+HallyHealer07: Estaba bastante dolido porque no confiaste en mí.
+HallyHealer07: No sabía que unas simples fotos fueran suficientes cómo romper nuestra amistad...
+HallyHealer07: Pero no pasa nada.
+HallyHealer07: Yo también te perdono.
+HallyHealer07: Te prometo que no hablaré más sobre el tema hasta que te sientas más cómod@.
+HallyHealer07: Sabes que me puedes pedir lo que sea.
+HallyHealer07: <3 
+<<Hide @ HallyHealer07>> 
+Sin decir ninguna palabra, mi padre cogió el ratón del ordenador y bloqueó la cuenta de Hally. 
+Mi madre se giró y me miró muy seriamente. 
+Mamá: [name], tenemos que hablar.
+Mamá: Esta persona de aquí no es tu amigo.
+Mamá: Siento mucho decirte esto, pero te estaba manipulando. 
+Mamá: Durante todo este tiempo quería conseguir unas fotos tuyas.
+Mamá: Esa foto que te mandó...
+Mamá: No creo que sea él.
+User: ...
+Papá: Hay mucha gente online así, [name].
+Papá: Se hacen pasar por alguien joven para poder relacionarse con adolescentes.
+Papá: [name] son pervertidos que sólo buscan una cosa.
+Papá: Acabo de bloquearle ahora mismo y no queremos que vuelvas a hablar con él.
+User: Yo...
+Al escuchar las palabras de mis padres, me sentí muy estúpid@ y avergonzad@ de lo que había hecho. 
+Es cierto que las conversaciones con Hally estaban siendo últimamente muy extrañas, pero no quería pensar que fuese algo así. 
+User: Papá... mamá... 
+User: De verdad que no lo sabía.
+User: Lo siento mucho de verdad.
+Mamá: No pasa nada [name].
+Mamá: Afortunadamente no ha pasado nada, pero queremos que tengas esto siempre en mente.
+Mamá: No todos los usuarios online son así, pero tienes que tener en cuenta que hay gente mala que se oculta y utiliza Internet a su favor.
+Mamá: Por eso te dijimos que tenías que tener cuidado.
+User: Lo entiendo mamá, no volverá a pasar.
+Papá: Pero sigo sin estar tranquilo con todo este tema.
+Papá: Este tal "Hally" no me gusta ni un pelo.
+Papá: Creo que deberíamos contactar con la policía y denunciarle.
+Papá: Afortunadamente no ha pasado nada a [name] pero no quiero que quien está detrás de “Hally” siga suelto y se aproveche así de otros chicos.
+Mamá: Estoy totalmente de acuerdo. 
+User: ...
+Papá: [name]...
+Papá: ¿Podrías por favor colaborar con la policía y contarles todo lo que sabes de él?
+Papá: Tendrías que enseñarles tu historial de mensajes también.
+User: ...
+Papá: Sé que muy probablemente no quieras pensar más sobre el asunto y olvidarlo completamente, pero esta persona puede hacer daño a muchos niños en un futuro.
+Papá: Gente como tú, pero que deciden confiar de todo en él, y les mandaría esas fotos.
+Papá: O incluso harían algo peor... 
+Papá: ¿Lo entiendes [name]?
+User: ...
+User: Sí...
+User: Tenéis razón.
+User: No quiero que le pase nada a nadie...
+Mamá: Estoy muy orgullosa de ti [name], espero que sepas que estamos haciendo lo correcto.
+User: Sí, lo sé.
+<<Hide @ Papá>>
+<<Hide @ Mamá>>
+<<SceneChange @ black>>
+
+Al día siguiente, la policía llegó a nuestra casa y se puso las manos a la obra. 
+Estuve toda la mañana hablando con los agentes y contándoles todo lo que sabía sobre Hally.  
+Al terminar de contarles todo, les enseñe el historial de mensajes que había tenido. 
+A lo largo de la semana nos visitaron varias veces, intentando recabar el máximo número de pruebas posible. 
+Durante todo el proceso, mis padres estaban siempre a mi lado, dándome todo el apoyo que necesitaba. 
+Aparentemente, ya existía una investigación abierta sobre Hally, ya que otras familias habían denunciado situaciones similares con sus hijos. 
+Durante todo el proceso, no me volví a conectar a Dungeons. Después de lo que había pasado con Hally, no me sentía cómod@ jugando a ese juego. 
+Siempre tenía la sensación de que alguien me estuviera vigilando, como si Hally estuviera en algún lado del servidor, sabiendo que le había delatado. 
+Con miedo de toparme con él, no quise volver a tocar el juego. 
+En el colegio nadie sabía lo que había pasado. 
+Amanda y yo de vez en cuando nos saludábamos e intercambiábamos un par de palabras, pero ya nunca me ofrecía quedar con ella y sus amigos. 
+Con todo lo que estaba pasado, me sentía más sol@ que nunca en el colegio, donde nadie apenas me hablaba y no tenía ningún amigo con quien poder hablar de lo sucedido.
+Finalmente, unos meses más tarde, tuvimos que mudarnos de nuevo. Una vez más, empezaría de cero en otro colegio sin saber cuánto tiempo duraría en él. 
+Sin embargo, tenía a mis padres para lo que necesitase. Ahora, me controlaban un poco más cada vez que usaba el ordenador, pero era comprensible después de lo que había pasado. 
+Necesitarían un poco de tiempo para volver a confiar en mí como lo hacían antes. 
+Había vivido una experiencia extraña y desagradable la primera vez que tu utilice Internet. 
+Afortunadamente no ocurrió nada grave, pero al menos pude observar de antemano los peligros que podría encontrar. 
+Desde entonces, tenía mucho cuidado con qué decía y mostraba en internet. 
+Nunca sabemos con seguridad quién se oculta al otro lado de la pantalla. 
+
+<<set $silencio to false>>
+<<SetEnding @ Normal_2>>
+[[Final]]
+===

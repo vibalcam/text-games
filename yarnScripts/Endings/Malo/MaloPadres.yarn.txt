@@ -1,0 +1,86 @@
+title: MaloPadres
+tags: 
+colorID: 0
+position: 0,0 
+---
+User: ...
+Tenía mucho miedo de contárselo. 
+Pero sabía perfectamente que no podía afrontar esta situación yo sola.
+Antes de que pudiera acobardarme y cambiar de opinión, salí del cuarto y fui al salón. 
+<<SceneChange @ salon>>
+
+<<Act @ Mamá, mama-normal, right, center,green>>
+<<Act @ Papá, papa-normal,left,center,blue>>
+
+Papá: ¡Mira quién ha vuelto!
+Papá: ¿Me has echado de menos?
+
+Mamá: Bueno tampoco te pases, tan sólo han sido 5 días, tampoco te has ido a dar la vuelta al mundo y has vuelto. 
+
+Papá: [name] tu madre es muy cruel...
+
+Al ver a mis padres hablando de esa manera y tan felizmente, no pude evitar pensar en mi situación actual y lo que había hecho. 
+Sin darme cuenta, me empezaron a caer lágrimas y no podía dejar de parar. 
+
+Papá: Eh eh eh, ¿qué pasa? ¿Tanto me has echado de menos?
+
+Mamá: [name] ¿qué ha pasado?
+
+<<Hide @ Papá>>
+<<Hide @ Mamá>>
+
+<<SceneChange @ black>>
+Así, entre sollozos, les conté a mis padres por lo que había pasado.
+Cómo empecé a jugar con el ordenador nuevo. 
+Cómo conocí a Hally. 
+Como al final...
+Para cuando terminé mi historia, mi madre me tenía en sus brazos mientras seguía llorando y mi padre estaba sentado muy serio en el sofá. 
+Cuando pudieron asumir más o menos la noticia, lo primero que hicieron fue contactar con Chipper para eliminar mi foto de Internet.
+Chipper se disculpó por lo que había ocurrido ya que aparentemente Hally había conseguido mi información debido un fallo en el diseño de Chipper con los juegos que tiene asociados. 
+Aparentemente, en el momento en que te hacías amigo de alguien en un juego, automáticamente también eras su amigo en la cuenta de Chipper. 
+Por lo que Hally pudo ver desde el momento que acepté su amistad toda la información que tenía guardada en mi cuenta. 
+Tras zanjar el asunto con la página web, mis padres se pusieron en contacto con las autoridades. 
+Éstos nos informaron de que ya existía una investigación contra Hally, y estuvieron durante varios días haciéndome preguntas mientras me miraban el chat que había tenido con él.
+En otras palabras, rastreaban la información de Hally gracias al error en el sistema de Chipper.
+Sin embargo, los días que tenía que ir al colegio se me hicieron muy duros. 
+Cada vez que entraba en clase, podía escuchar los murmullos de la gente al mi alrededor. 
+
+<<Act @ Compañero, user, center,center,blue>>
+Compañero1: Mira, mira allí está.
+Compañero2: Ostras es verdad. 
+Compañero1: No me creo que pueda venir a clase... 
+Compañero1: Me moriría de vergüenza... 
+Compañero2: Ya, y yo... 
+
+
+Cada día era una tortura ir a clase y escuchar comentarios de mis compañeros. 
+Lo peor, sin embargo, era cruzarme con Amanda. 
+<<Act @ Amanda, amanda-normal, center,center,brown>>
+Cada vez que nos veíamos, me miraba con una mezcla de pena y frustración. 
+Había ocasiones en las que parecía caminar decidida en mi dirección, pero siempre cambiaba de opinión en el último momento.
+
+<<if $contar is true>>
+	Compañero: Anda mira Amanda, allí está [name].
+	Amanda: ...
+	Compañero: Venga vámonos, no puedes perdonarle por lo que dijo en ese post. 
+	Compañero: ¿Cómo se atreve a decir algo así de ti cuando sólo querías ser su amiga?
+	Amanda: ...
+	Amanda: Anda déjalo, vámonos a dar una vuelta.
+<<endif>>
+
+<<Hide @ Amanda>>
+A pesar de todo, yo tampoco tuve nunca el valor de acercarme a ella para aclarar las cosas. A saber la imagen que tenía de mí ahora. 
+
+Unas semanas después al incidente, mis padres me dijeron que nos teníamos que mudar otra vez. 
+Mi madre me contó que mi padre había solicitado un traslado. 
+Los dos se imaginaron que lo estaba pasando mal en el colegio y cuando me preguntaron si prefería hacer borrón y cuenta nueva no lo dudé ni un instante.
+Quería alejarme del colegio y de las mirabas de mis compañeros de clase. 
+Hay ciertas noches que pienso en Hally y en mis fotos rondando por Internet. Cuando ese pensamiento me desvela, siempre acudo a mis padres para que me ayuden a conciliar el sueño. 
+A veces me gustaría tener un amigo con quien poder desahogarme, pero al menos tengo a mis padres, que me ayudan poco a poco a recuperar mi vida normal.
+Espero que en un futuro, este recuerdo se vuelva menos doloroso. 
+Al menos, ahora soy consciente de que nunca sabemos con seguridad quién se oculta al otro lado de la pantalla.
+<<set $silencio to false>>
+<<SetEnding @ Malo_2>>
+[[Final]]
+
+===

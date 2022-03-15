@@ -1,0 +1,351 @@
+title: Day5
+tags: 
+colorID: 0
+position: 0,0
+---
+
+// ETAPA FINAL
+
+<<Scene @ habitacion>>
+
+Me desperté a día siguiente con la alarma del despertador. 
+Habían pasado unos cuantos días desde que descansé bien. 
+Esta mañana me desperté sin ningún dolor de cabeza y estaba de mejor humor que otros días. 
+Me levanté de la cama y empecé a preparme para ir al colegio. 
+Justo cuando estaba saliendo por la puerta del cuarto, me dí cuenta de que era viernes. 
+Pensnado en que esta noche podía jugar todo lo que quisiese con el ordenador sin preocuparme de levantarme temprano al día siguiente, salí content@ del cuarto. 
+
+<<SceneChange @ salon>>
+<<Act @ User,user, center,center,grey>>
+<<Act @ Mamá, mama-normal, center, center, green>>
+User: Buenos días mamá. 
+Mamá: Buenos días. 
+
+<<if $mamaTrust is true>>
+	User: ...
+	User: Oye mamá, me lo pasé muy bien contigo anoche. 
+	User: ¿Podemos repetir cuando papá vuelva?
+	Mamá: ¡Claro!
+	Mamá: Podemos ir al cine y todo si quieres
+	Mamá: Esta noche miraré a ver que encuentro en cartelera y le escribo a tu padre para saber cuándo vuelve. 
+	Mamá: ¿Qué te parece?
+	User: ¡Genial!
+<<else>>
+	Mamá: ¿Te encuentras hoy mejor?
+	Mamá: Te veo de buen humor.
+	User: Sí, hoy he dormido muy bien
+	Mamá: ¿Ves?
+	Mamá: Cuando dejas el ordenador y te vas a dormir a la cama, sorprendentemente descansas y te encuentras mejor. 
+	Mamá: Me pregunto por qué será. 
+	User: Ja ja. 
+<<endif>>
+
+Mamá: Uy mira la hora que es.
+Mamá: Desayuna algo rápido que llegamos tarde. 
+
+Me acerqué a la cocina y me preparé lo más rápido que pude unas tostadas. 
+<<Hide @ Mamá>>
+<<if $amandaTrust is true>>
+	Cuando estaba terminando mi segunda tostada, escuche como alguien tocaba el timbre. 
+	<<Act @ Mamá, mama-normal,right,center,green>>
+	Mamá: ¿Me pregunto quién será?
+	Mi madre se acercó extrañada a la entrada y abrió la puerta. 
+	<<Act @ Amanda, amanda-normal, left, center, brown>>
+	Amanda: ¡Buenos días!
+	Mamá: Hombre, qué sorpresa. 
+	Mamá: Buenos días Amanda
+	Mamá: ¿Qué tal estas?
+	Amanda: Yo de maravilla, ¿qué tal se encuentra usted?
+	Mamá: Muy bien muy bien. 
+	Mamá: Por cierto, muchísimas gracias por acompañar a [name] al colegio.
+	User: Mamá...
+	Amanda: No se preocupe, lo hice encantada. 
+	Amanda: Además, luego [name] me lo recompensó con un helado, así que no me puedo quejar jaja.
+	Mamá: Ah es verdad, ayer estuvistéis juntas después del colegio.
+	User: Mamá la hora...
+	Mamá: OH ES VERDAD
+	Mamá: ¿Amanda vienes con nosotr@s en el coche?
+	Amanda: Pue-
+	Mamá: Hombre, por supuseto que vienes. 
+	Mamá: ¿Cómo te voy a hacer ir andando cuando has venido hasta aquí?
+	Mamá: Dadme un segundo que cojo mi bolso. 
+	//<<Move @ Mamá, 1.25, center, 0.5>>
+	User: Hola Amanda. 
+	Amanda: Buenos días [name]
+	Amanda: ¿La partida de anoche estuvo bien?
+	<<if $mamaTrust is true>>
+		User: Sólo jugue un ratito, mi madre y yo estuvimos viendo una peli. 
+	<<else>>
+		User: La verdad es que sí, estoy a muy pocos niveles para conseguir una clase nueva.
+	<<endif>>
+	Amanda: Uh nice. 
+	//<<Move @ Mamá, right, center, 0.5>>
+	Mamá: ¡Lista!
+	Mamá: Vamos chic@s
+	<<Hide @ Mamá>>
+	<<SceneChange @ clase>>
+	Amanda y yo entramos junt@s en clase. 
+	Antes de que pudiera ir a mi asiento, Amanda se giró a preguntarme algo. 
+	Amanda: ¿Mañana te apetece quedar?
+	Amanda: Tenemos una cita pendiente con Dungeons
+	Amanda: ¿Me paso por tu casa y echamos una partida junt@s?
+	Al escuchar la invitación de Amanda, no pude evitar alegrarme. 
+	Hacia mucho tiempo que no quedaba con alguien en un fin de semana y tenía muchas ganas de salir a dar una vuelta. 
+	User: ¡Claro!
+	Amanda: Hehe, perfecto. 
+	Amanda: ¿Me paso por tu casa después de comer? 
+	User: ¡Vale!
+	En ese  momento, sonó el timbre. 
+	<<Hide @ Amanda>>
+	Al escucharlo, Amanda y yo nos sentamos en nuestros respectivos sitios. 
+	<<SceneChange @ clase>>
+	Al terminar las clases, recogí mis cosas y me preparé para volver a casa. 
+	Yendo hacia la puerta, me fijé que Amanda estaba con sus amigos. 
+	User: ¡Nos vemos mañana Amanda!
+	<<Act @ Amanda, amanda-normal, center,center,brown>>
+	Amanda: ¡Hasta mañana!
+	<<Hide @ Amanda>>
+<<else>>
+	Al terminar, puse los platos en el lavaplatos y cogí mi mochila. 
+	<<Act @ Mamá, mama-normal,center,center,green>>
+	Mamá: ¿Lista?
+	User: Sí
+	Mamá: Vamos pues.
+	<<Hide @ Mamá>>
+	<<SceneChange @ clase>>
+	Llegué a clase justo unos minutos antes de que sonara el timbre. 
+	Al entrar por la puerta, me cruce con Amanda en la entrada. 
+	<<Act @ Amanda, amanda-normal, center,center,brown>>
+	User: Buenos días, Amanda
+	Amanda: Buenos días, [name]
+	Amanda: ...
+	Amanda: [name] una cosa
+	User: Dime. 
+	Amanda: ...
+	Amanda: No, no importa. 
+	Amanda: Déjalo.
+	Amanda: Total si te ofrezco probablemente me digas que no...
+	User: ¿Qué?
+	Amanda: No, nada nada. 
+	Amanda: Luego nos vemos.
+	User: Hasta luego...
+	<<Hide @ Amanda>>
+	Extrañad@ por el comportamiento de Amanda, me sente en mi sitio y esperé a que comenzasen las clases. 
+	<<SceneChange @ clase>>
+	Al sonar el timbre, recogí mis cosas y me dirigí hacia la salida. 
+	<<Act @ Amanda, amanda-normal, right,center,green>>
+	Junto cuando iba a pasar por la puerta, me fijé que Amanda estaba con sus amigos.
+	Amanda: ...
+	Amanda me miró un momento y luego desvió la vista para continuar hablando con uno de sus amigos. 
+	<<Hide @ Amanda>>
+	Sintiendome rechazad@ por la actitud de Amanda, salí por la puerta y me dirigí a casa.
+<<endif>>
+
+<<SceneChange @ salon>>
+Cuando llegué a casa me fije que mi madre estaba todavía fuera. 
+
+<<if $mamaTrust is true>>
+	Al pasar por la cocina, me fije que mi madre me había dejado una nota 
+	<<Act @ Mamá, user, center, center, green>>
+	Mamá: He hablado con tu padre, su avión llega mañana a la tarde. He visto una peli muy buena que podemos ver todos juntos el domingo. 
+	Mamá: Tu padre se ha alegrado mucho cuando le he dicho que esto ha sido idea tuya. 
+	Estaba muy contenta caudno leí que no sólo mi padre iba a volver mañana, sino que además ibámos a quedar todos juntos una vez más. 
+	Me fui a mi cuarto content@
+<<else>>
+	Me acerqué un momento a la cocina para ver si mi madre me había dejado algún mensaje. 
+	Al no ver ninguno, me dirigí a mi cuarto. 
+<<endif>>
+
+<<SceneChange @ habitacion>>
+Lo primero que hice nada más entrar a mi cuarto, fue dejar la mochcila encima de la cama y encender el ordenador. 
+Al conectarme a Dungeons, pude ver que Hally estaba ya conectado.
+
+<<Act @ HallyHealer07, hally-normal, center,center,#6BDEDB>>
+HallyHealer07: ¡Hola [name]!
+
+Cuando vi la ventana de chat, pude observar una vez más el archivo de video que me mandó Hally anoche. 
+Tal vez era yo el que no estaba acostumbrado a ese tipo de cosas y era normal para el resto del mundo, pero seguía sin tener el valor como para abrir ese archivo.
+Ignorándolo lo máximo que pude, contesté a Hally. 
+
+User: Hola Hally
+
+HallyHealer07: ¿Qué tal estás?
+
+User: Muy bien, ¿y tú?
+
+HallyHealer07: ¡Ahora que estás tú genial! ^.^
+HallyHealer07: ¿Echamos una partida?
+
+User: ¡Claro!
+
+Hally y yo estuvimos jugando a una de las misiones más largas del juego. 
+No fueron hasta horas después cuando conseguimos terminarla y tener un pequeño descanso. 
+
+HallyHealer07: ¡Buff!
+HallyHealer07: ¡Eso ha sido duro!
+
+User: Sí...
+
+HallyHealer07: ...
+HallyHealer07: Por cierto [name]
+
+User: Dime
+
+HallyHealer07: ...
+HallyHealer07: ¿Viste al final el video que te mande ayer?
+
+Tenía la esperanza de que Hally no mencionase el tema, pero desgraciadamente no tuve esa suerte. 
+
+User: No...
+
+HallyHealer07: ¿Por qué no?
+HallyHealer07: ¿Te sigue incomodando?
+
+User: La verdad es que sí...
+
+HallyHealer07: ...
+HallyHealer07: Si quieres te puedo mandar una mía para que te sientas menos incómodo. 
+
+User: ¿Qué?
+
+HallyHealer07: Tal vez te sientes incómodo porque la gente que hay en ese video no la conoces. 
+HallyHealer07: En cambio, ¡yo soy amigo tuyo!
+HallyHealer07: Como nos conocemos, ¿Es mucho menos incómdo verdad?
+
+User: Hally espera
+
+HallyHealer07: ¡Te la mando ahora!
+
+User: No, Hally no espe-
+
+Antes de que pudiese terminar el mensaje, Hally ya me había manda una foto suya.
+La ventana de chat del juego muestran todas las imágenes que se envían por los mensajes, por lo que no pude hacer nada para impedir la foto que me había enviado Hally.
+
+Era él, mirando a la cámara sonrojado. 
+Tenia el pecho descubierto y estaba en ropa interior. 
+En la imagen se le veía como si no quisiera hacerse la foto y se viera forzarlo a hacerlo, lo cual me sorprendía dado que era él el que había propuesto mandarse fotos de ese estilo.
+Evitando la mirada de la foto, miré lo que me había escrito Hally. 
+
+HallyHealer07: ¿Ves?
+HallyHealer07: ¿A que no se te hace tan raro?
+
+User: Hally...
+
+HallyHealer07: ¿Qué?
+HallyHealer07: ¿Te ha molestado?
+HallyHealer07: Jo, lo siento mucho [name]
+HallyHealer07: Sólo quería hacerte sentir menos incómodo.
+
+Francamente, no sabía como responder a eso. 
+Apreciaba a Hally como amigo, pero no me gustaba que me mandase ese tipo de mensajes. 
+Iba a pedirle que dejase de nombrar el tema cuando de repente me envió otro mensaje. 
+
+HallyHealer07: Pero no me parece justo...
+HallyHealer07: Yo te he enviado una imagen
+HallyHealer07: Me ha dado mucha verguenza ;.;
+HallyHealer07: ¡Exijo que me mandes una de vuelta! >:(
+
+User: ¿Qué?
+
+HallyHealer07: Es lo justo ¿no?
+HallyHealer07: Yo lo he pasado muy mal enviandote esa imagen. 
+
+Nadie te pidió que la mandases. 
+
+HallyHealer07: Sólo quería hacerte sentir menos incómod@... 
+
+Has hecho justo lo contrario
+
+HallyHealer07: ¡Lo justo es que me mandes una de vuelta!
+
+No quiero hacerlo. 
+
+User: No...
+HallyHealer07: ¿No? ¿Por qué no?
+<<if $foto is true>>
+	HallyHealer07: Ya nos hemos mandado fotos antes. 
+	HallyHealer07: Salías muy bien en la foto. 
+	HallyHealer07: ¡Esto es lo mismo!
+	HallyHealer07: A mi también me ha dado mucha verguenza, [name]
+	HallyHealer07: Como la primera foto que nos mandamos. 
+	HallyHealer07: Pero ahora me siento mucho más cómodo hablando contigo. 
+	HallyHealer07: Siento que conoces una parte de mí que nadie más conocía. 
+	HallyHealer07: Te prometí con la otra foto que no la iba a subir a ningún sitio
+	HallyHealer07: ¡¿Y no lo hice verdad?!
+	HallyHealer07: Es más, la borré nada más verla. 
+	HallyHealer07: Te lo prometo
+<<endif>>
+<<if $contar is true>>
+	HallyHealer07: Pensaba que nos contábamos todos nos secretos. 
+	HallyHealer07: Como cuando te peleaste con tu amiga Amanda y estabas triste porque tus padres están siempre fuera dejándote sol@...
+	HallyHealer07: ¿Te acuerdas como te apoye? ¿Como te anime?
+<<endif>>
+HallyHealer07: Hemos estado todos estos días jugando juntos. 
+HallyHealer07: Nos lo hemos pasado genial y te considero una de las personas a las que más confio. 
+HallyHealer07: Por eso te he enviado esa imagen.
+HallyHealer07: Para demostrarte que confio y en ti. 
+HallyHealer07: ¿Acaso tú no confias en mí?
+
+-> Mandar foto__0
+	<<set $finalFoto to true>>
+	No pude contestar a Hally, porque todo lo que había dicho era cierto. 
+	Mientras abría la cámara del ordenador y me ponía en ropa interior, intentaba autoconvencerme de que estaba haciendo lo correcto. 
+	No te preocupes, es Hally. 
+	No tiene malas intenciones. 
+	Es Hally, confías en él.
+	Encendí la cámara del ordenador y me saqué una foto. 
+	<<SceneChange @ black>>
+	HallyHealer07: ¡Muchas gracias [name]!
+	HallyHealer07: ¡¡Estás super guapo@!!
+	HallyHealer07: Sabía que confiabas en mí. 
+	HallyHealer07: ¿Te apetece seguir jugando?
+	HallyHealer07: Podemos estar todo lo que quieras. 
+	HallyHealer07: ^.^
+	<<Go @ Malo>>
+-> No mandar foto__1 <<if $foto is false and $contar is false>>
+	<<set $finalFoto to false>>
+	User: Hally no te voy a mandar una foto mía así. 
+	User: Quiero que dejes además de mandarme ese tipo de cosas, me incomodan mucho y no me gustan ese tema de conversación. 
+	User: Así que para por favor. 
+	HallyHealer07: ...
+	HallyHealer07: ¿De verdad no me vas a mandar?
+	User: No. 
+	HallyHealer07: Me parece fatal que me hagas esto. 
+	HallyHealer07: No sabía que eras esa clase de persona. 
+	HallyHealer07: Todo este tiempo desperdiciado. 
+	HallyHealer07: Casi te tenía además... 
+	HallyHealer07: Tal vez... 
+	User: ?
+	User: ¿De qué estas hablando?
+	HallyHealer07: No, nada. 
+	User: ¿Te has enfadado?
+	HallyHealer07: Sí, me has hecho mucho daño. 
+	Por un momento sentí una punzada de pánico cuando Hally me dijo eso. 
+	Pero da igual lo mucho que le doliese, no iba a mandar esas fotos. 
+	User: Lo siento mucho Hally, pero no voy a hacerlo. 
+	HallyHealer07: Está bien. 
+	HallyHealer07: Me tengo que ir. 
+	<<Hide @ HallyHealer07>>
+	De repente, Hally se desconectó de la conversación.
+	Me enfadé bastante con Hally en ese momento. 
+	¿Se ha enfadado porque no le he mandado unas fotos?
+	¿Acaso no se da cuenta de lo que me está pidiendo?
+	Es verdad que en estos días me había hecho su amigo, pero no eso no significaba que podía pedirme ese tipo de cosas. 
+	No importa lo mucho que confíe en alguien, nunca mandaría fotos de ese estilo. 
+	Sobre todo a alguien que sólo conozco de un par de días. 
+	Pensé que Hally se estaba comportando de manera muy infantil. 
+	A pesar de que estaba verdaderamente enfadad@ con Hally, no pude evitar el mideo que me entró cuando dijo que le había hecho daño.
+	No quería perderle como amigo, tenía miedo de quedarme otra vez sólo sin nadie con quien poder jugar. 
+	<<if $amandaTrust is true>>
+		Afortunadamente, ahora Amanda y yo nos habíamos vuelto más cercan@s. 
+		A pesar de que no pudiese estar con Hally, me alegraba saber que todavía tenía a Amanda a mi lado. 
+		Tenía ganas de que llegase mañana y pasarnos toda la tarde jugando. 
+		No podía esperar a enseñarle lo que había avanzado en el juego. 
+		Podía incluso presentarle a Hally. 
+		Pero viendo cómo se estaba comportando últimamente y los temas de conversación que escogía, descarté la idea. 
+		No quería que Amanda se sintiera cómoda, sobre todo al ser la primera vez que quedábamos en mi casa. 
+	<<endif>>
+	Intenando dejar de pensar sobre el asuntó, me metí en la cama y me fui a dormir. 
+	<<Go @ Bueno>>
+// DON'T DELETE THE "==="
+===

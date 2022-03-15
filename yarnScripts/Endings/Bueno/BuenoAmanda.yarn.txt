@@ -1,0 +1,67 @@
+title:  BuenoAmanda
+tags:
+colorID: 0
+position: 0,0
+---
+
+<<SceneChange @ habitacion>>
+Después de que Amanda me ayudase a colocar el colchón en mi cuarto, le presté uno de mis pijamas y nos metimos en la cama. 
+<<Act @ Amanda, amanda-normal, center>>
+Estuvimos durante un rato hablando sobre los cotilleos de clase y de las cosas que nos gustaban.
+No fue hasta mucho más tarde cuando Amanda se quedó durante un tiempo completamente callada.
+Amanda: ...
+Amanda: [name]
+User: Dime
+Amanda: ¿Cómo crees que será Hally en la vida real?
+Me sorprendió no sólo que Amanda sacase el tema de Hally, sino también la pregunta en sí.
+User: Pues no sé... 
+User: Sólo me lo imagino con las fotos que me ha mandado.
+Amanda: ¿De verdad crees que es él quien sale en esas fotos?
+...
+Sinceramente, nunca me había planteado la posibilidad de que Hally estuviese utilizando fotos de otras personas. 
+Más bien, no quería pensar que existía esa posibilidad. 
+User: No lo sé...
+User: Si de verdad no fuera él, entonces esa última foto que me mandó... 
+Amanda: ...
+Amanda: De verdad pienso que tendríamos que habérselo dicho a tu madre.
+Amanda: Pero no te preocupes, no lo haré.
+User: ...
+User: Muchas gracias Amanda.
+User: Me alegro mucho tenerte como amiga.
+Amanda: ¡Lo mismo digo!
+User: ...
+User: Oye una pregunta.
+User: Si tuviéramos que mudarnos otra vez... 
+Amanda: ...
+User: ¿Seguiríamos siendo amig@s?
+Amanda: ¿Qué clase de pregunta es esa?
+Amanda: ¡Pues claro que sí!
+Amanda: Si te acabas mundando, seguiríamos en contacto.
+Amanda: Tienes ordenador y podemos hablar todos los días por Chipper.
+Amanda: También podemos organizarnos para que pudieras venir a mi casa...
+Amanda: ¡O puedo ir yo a visitarte!
+Amanda: De verdad, [name], no te preocupes. 
+Amanda: Puedes contar conmigo para lo que sea.
+
+Antes pensaba que sólo Hally me diría unas palabras así. No sabía que podía tener un amigo tan cerca.
+Me alegré muchísimo de haber conocido a Amanda y sinceramente deseaba que, pasase lo que pasase, pudiéramos seguir siendo amig@s.
+<<Hide @ Amanda>>
+<<SceneChange @ black>>
+Desde entonces, Amanda y yo seguíamos quedando muy a menudo. 
+En muchas ocasiones, quédabamos y jugábamos una partida a Dungeons, ya fuese de manera virtual o incluso en mi casa. 
+Cada vez que jugábamos, siempre me preguntaba por Hally. 
+Le seguía teniendo bloqueado, por lo que no volví a tener ninguna conversación con él. Había veces que me parecía ver su avatar por los servidores, pero nunca me acercaba a comprobarlo. 
+Tenía curiosidad de saber si me había escrito en todo este tiempo, pero nunca me atreví a cambiar el estado de bloqueado. 
+Algunas noches, me preguntaba si lo que había hecho era lo correcto. Me sentía culpable por no haberle contado nada a mis padres, pero de verdad no quería dar más importancia a este asunto. 
+Las veces que me sentía agobiad@, Amanda siempre estaba allí para animarme. Ella no sólo me hacía compañía y me animaba en los momentos más duros, sino que además me ayudaba a integrarme más en clase. 
+No recordaba la última vez que me había sentido tan cómod@ con los compañeros de aula.
+Desgraciadamente, aunque era predecible, unos meses más tarde mis padres me dijeron que nos teníamos que volver a mudar. 
+Estaban muy tristes cuando me dieron la noticia, porque sabían que por fin había hecho muchos amigos en el colegio. 
+Fue muy duro distanciarme de Amanda pero mantuvo su promesa y mantuvimos el contacto a pesar de las distancias.
+Incluso vino a visitarme un mes después de la mudanza. 
+Puede ser que mi primera experiencia en internet no fuera de la mejor, pero ahora podía utilizar el portátil para hablar con una de mis mejores amigas. 
+Al menos, había aprendido una valiosa lección; nunca sabemos con seguridad quién se oculta al otro lado de la pantalla.
+
+
+<<SetEnding @ Normal_1>>
+[[Final]]

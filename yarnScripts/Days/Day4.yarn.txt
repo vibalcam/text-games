@@ -1,0 +1,475 @@
+title: Day4
+tags: 
+colorID: 0
+position: 0,0
+---
+
+// RIESGO  + EXCLUSIVIDAD
+<<Scene @ habitacion>>
+<<Act @ User,user,center,center,grey>>
+
+Al día siguiente, me desperté por el dolor de cabeza. Girando en la cama, me planteé no ir a clase. 
+Solo había dormido unas cuantas horas y no sentía que tuviera la energía suficiente para ir caminando al colegio tan temprano. 
+Como nunca había faltado, siempre podía decir que estaba enferm@.
+
+<<SceneChange @ habitacion>>
+Sin embargo, unos minutos después, alguien tocó el timbre de casa. 
+Intenté ignorarlo, pero a medida que iba pasando el tiempo, más insistente era la persona que estaba timbrando. 
+Finalmente, me di por vencid@ y me levanté para abrir la puerta. 
+<<SceneChange @ salon>>
+
+Abrí la puerta, preguntándome quién sería a estas horas. 
+<<Act @ Amanda,amanda-normal,center,center,brown>>
+
+Amanda: ¡He acertado! ¡Qué bien! pensaba que despertaría algún abuelito ¿Qué haces en pijama? ¡Vamos!
+
+User: ¿Amanda?
+
+Amanda: En persona
+
+User: ¿Qué haces aquí?
+
+Amanda: Contemplar las vistas ¿Tú qué crees?
+Amanda: Pues acompañarte al colegio.
+Amanda: Tu madre le dijo a la mía que hoy no iba a poder llevarte, así que he sido buena persona y he decidido venir a acompañarte.
+Amanda: ¿Te habías quedado dormid@? 
+Amanda: Menos mal que he venido, entonces. 
+Amanda: Venga rápido, vístete. Tengo unas galletas en la mochila que puedes desayunar en el camino. 
+Amdan: Vamos. 
+
+Me sentía verdaderamente agradecid@ de que Amanda viniese hasta mi casa para que no fuese sol@ al colegio. 
+A pesar de que seguía algo molest@, no podía negar de que había sido un detalle por su parte venir hasta mi casa para acompañarme. 
+Incluso si había sido obligada por su madre.
+Dejando un lado el dolor de cabeza y el cansancio, decidí ir al colegio con ella. 
+User: Muchas gracias, Amanda. Dame 10 minutos, siéntate donde quieras.
+
+Amanda: ¡Sin problema! Así te puedo robar el wifi y me entretengo en Chipper. 
+
+User: Claro, ahora bajo. 
+Me vestí a la velocidad de la luz y bajé corriendo las escaleras
+
+<<SceneChange @ salon>>
+User: Ya estoy, ¿vamos?
+Amanda: ¡Vamos!
+
+<<SceneChange @ clase>>
+Cuando llegamos a clase, Amanda se paró durante un momento delante de la puerta del aula. 
+User: ...
+Amanda: Oye [name]
+Justo cuando me iba a decir algo, alguien le llamó a Amanda a lo lejos. 
+Me giré para ver quien era y era uno de los mejores amigos de Amanda, que le estaba junto con otros compañeros de clase. 
+Me imaginé que le tendrían que decir algo importante así que me despedí de ella. 
+User: Luego nos vemos. 
+Amanda: Vale...
+
+<<Hide @ Amanda>>
+
+Me senté en mi pupitre y apoyé la cabeza sobre la mesa. El dolor incrementaba por momento y el ruido que me rodeaba solo hacía que empeorase. 
+Debería haberme quedado en casa. 
+Sólo quería volver e irme a dormir. Y una vez hubiera descansado,  jugaría con Hally. 
+<<if $contar is true>>
+	Hally fue muy comprensivo cuando le conté mi situación actual. 
+	Por una vez no me sentí completamente sol@ en casa. 
+<<else>>
+	A pesar de que no pudiese contarle nada, Hally me siguió apoyando e insistiendo que podía confiar en él para cualquier cosa. 
+<<endif>>
+Agradezco enormemente el apoyo que Hally me da y se está convirtiendo en uno de mis amigos más cercanos. 
+Muy probablemente porque mi relación con él no cambiará si me vuelvo a mudar de ciudad. 
+No tengo el miedo de que tengamos que dejar de ser amigos porque mientras tenga wifi, podremos seguir quedando por las tardes.
+Creo que ese es uno de los motivo por el que sigo algo enfadad@ con Amanda. En realidad prefiero alejarme de ella antes de tener que separarme de nuevo de una amiga.  
+
+
+<<SceneChange @ clase>>
+
+Al sonar el timbre marcando el final del día, recogí mis cosas y me dispuse a volver a casa. 
+Estaba a punto de salir por la puerta cuando alguien me llamó. 
+
+<<Act @ Amanda, amanda-normal, center,center, brown>>
+Amanda: [name]
+
+Extrañad@ por que Amanda me llamase de repente, me acerqué a ella. 
+Mientras tanto, miraba el reloj de la clase para calcular lo que tardaría en echarme una pequeña siesta antes de jugar con Hally. 
+
+Amanda: ¿Pero te apetece ir a tomar algo? Tu y yo sol@s
+Amanda: Han abierto una heladería nueva enfrente del parque y quiero probarla. 
+Amanda: Sé que te encantan los helados...
+
+Era bastante tentadora la oferta de Amanda, pero estaba agotada y la cabeza me estaba matando. 
+-> Dar una vuelta con Amanda__1
+	<<set $amandaTrust to true>>
+	Pero hacía mucho que no estaba sol@ con Amanda y…
+	Además, si de verdad quería tener amigos, debo dar primero el paso para conseguirlo. 
+	Ahora que tengo ordenador, y a lo mejor dentro de poco un móvil, puedo tener una relación a distancia con los amigos que haga. 
+	Además...Era helado, no podía resistirme 
+	User: ¡Claro! ¡Vamos!
+	Amanda: Yes
+	<<Hide @ Amanda>>
+	<<SceneChange @ salon>>
+	Amanda y yo no sólo habíamos ido a la heladería, sino que además dimos una vuelta por el parque. 
+	Los helados de ese sitio estaban verdaderamente buenos y nos estuvimos riendo un buen rato cuando a Amanda se le cayó el helado encima de la chaqueta. 
+	Después del paseo por el parque, Amanda me acompañó hasta mi casa. 
+	<<Act @ Amanda, amanda-normal, center,center,brown>>
+	Amanda: Me lo he pasado genial 
+	User: Yo también
+	Amanda: ¿Vas a echar una partida ahora al "Dungeon"?
+	User: A lo mejor jaja
+	User: ¿Te unes?
+	Amanda: Que va, mi madre no me deja jugar por la noche
+	Amanda: Otro día tal vez.
+	Amanda: ...
+	Amanda: Por cierto, siento otra vez lo del mensaje al otro día. 
+	Amanda: Sé que te molestó bastante, no trates de ocultarlo. 
+	Amanda: De verdad que fue un accidente, pero la próxima vez tendré más cuidado. 
+	User: Siento también no responderte anoche. 
+	User: Pero de verdad que no hace falta que te disculpes así. 
+	User: Tu misma lo has dicho, fue un accidente.
+	User: No tendría que haber reaccionado de esa manera. 
+	User: Perdona. 
+	Amanda: No hay nada que perdonar
+	Amanda: ¡Nos vemos mañana!
+	User: ¡Hasta mañana!
+	<<Hide @ Amanda>>
+	Me despedí de Amanda y me dirigí al salón. 
+	<<Act @ Mamá, mama-normal, center,center, green>>
+	Mamá: ¿Has salido con Amanda?
+	User: Ah hola mamá. 
+	User: Sí hemos ido a tomar un helado. 
+	User: Qué pronto has llegado ¿no?
+-> Irse a casa__0
+	<<set $amandaTrust to false>>
+	User: Lo siento Amanda, no me encuentro muy bien. 
+	User: Quizás otro día. 
+	Amanda: Oh...
+	<<if $preguntarAmanda is true>>
+		Amanda: ¿Sigues molesta por lo del otro día?
+		Amanda: De verdad que lo siento...
+		User: No, no te preocupes, fue un accidente. 
+		User: De verdad que no me encuentro bien. 
+		User: Otro día ¿vale?
+	<<endif>>
+	Amanda: Descansa entonces y recupérate. 
+	Amanda: ¿Nos vemos mañana?
+	User: Claro. 
+	Amanda: Hasta luego
+	Sabía perfectamente que Amanda era buena persona, pero no podía superar el miedo de establecer una amistad para luego tener que romperla. 
+	Preferiría cortar de raíz.
+	Después de despedirme de Amanda, salí del aula y me dirigí a casa. 
+	<<Hide @ Amanda>>
+	<<SceneChange @ salon>>
+	Cuando entré por la puerta de casa, sorprendentemente me encontré con mi madre en la cocina. 
+	<<Act @ Mamá, mama-normal, center,center, green>>
+	User: Hola mamá
+	Mamá: Ah hola, ¿qué pronto has llegado no?
+	Mamá: ¿No has salido con Amanda?
+	User: No,
+	User: Tu también has llegado muy temprano ¿no?
+Mamá: La reunión ha ido muy bien y hemos cerrado un acuerdo bastante importante
+Mamá: ¿Te apetece celebrarlo?
+Mamá: ¿Qué te parece si vemos una peli y hacemos palomitas?
+Mamá: Pasar algo de tiempo madre e hija. 
+
+-> Quedarse__1
+	<<set $mamaTrust to true>>
+	User: ¡Sí!
+	Me alegré muchísimo cuando vi que mi madre quería pasar tiempo conmigo.
+	Le dije a Hally que hoy me conectaría, pero podría jugar un rato con él después de cenar. 
+	Mamá: Pues iré preparando las palomitas, elige la peli que te apetezca. 
+	User: ¡Vale!
+	<<SceneChange @ salon>>
+	La película acababa de terminar y estábamos viendo los créditos. 
+	Siempre nos gusta comentar la película después de verla, por lo que mi madre y yo estuvimos un buen tiempo hablando en el sofá. 
+	Mamá: Uff se está haciendo tarde. 
+	Mamá: Estoy muy contenta de que hayamos podido pasar tiempo junt@s 
+	Mamá: Ojalá estuviese tu padre aquí también. 
+	Mamá: ...
+	Mamá: Siento mucho que estemos siempre trabajando, [name]
+	Mamá: Nos encantaría pasar más tiempo juntos pero...
+	User: ...
+	Siempre se me olvida de que no soy la única que quiere pasar tiempo con la familia. 
+	Ellos también quieren pasar tiempo conmigo, simplemente no pueden. 
+	Y siempre, en los escasos ratos libres que tienen, siempre intentan pasar el máximo tiempo conmigo. 
+	User: A mi también me gustaría mamá. 
+	User: Pero lo entiendo. 
+	Mamá: Eso espero. 
+	Mamá: Bueno.
+	Mamá: Tengo que terminar un par de cosas para mañana.
+	Mamá: ¿Hoy no tenías deberes? 
+	Mamá: Te puedo ayudar un poco si quieres. 
+	User: No, hoy no han mandado nada, no te preocupes. 
+	User: ...
+	User: ¿Puedo jugar un rato con el ordenador antes de irme a dormir?
+	<<if $jugarTarde is true>>
+		Mamá: [name]...
+		User: Sólo un ratito, te prometo que me meteré pronto a la cama. 
+		Mamá: Está bien. 
+		Mamá: Pero sólo media hora. 
+		Mamá: Voy a comprobarlo, espero verte en la cama para entonces. 
+		User: ¡Sí!
+	<<else>>
+		Mamá: No me gusta que juegues tan tarde...
+		Mamá: Pero sólo un rato. 
+		Mamá: Mañana tienes colegio y vas a estar agotad@. 
+		Mamá: Métete pronto en la cama ¿entendido?
+		User: ¡Sí mamá!
+	<<endif>>
+	<<Hide @ Mamá>>
+	<<SceneChange @ habitacion>>
+	Cuando entré a la habitación, me puse rápidamente el pijama y me conecté a Dungeons. 
+	Al entrar, pude ver que Hally ya estaba conectado. 
+-> Ir al cuarto__0
+	<<set $mamaTrust to false>>
+	User: Hoy estoy un poco cansada mamá, ¿vemos la peli otro día?
+	Mamá: Oh...
+	Mamá: Claro no te preocupes. 
+	Mamá: Súbete la cena del frigorífico y ve a descansar. 
+	User: Gracias mamá
+	<<Hide @ Mamá>>
+	<<SceneChange @ habitacion>>
+	Entré a mi cuarto y rápidamente encendí el ordenador. 
+	Cuando me conecté a Dungeons, pude ver que Hally ya estaba conectado
+
+<<Act @ HallyHealer07, hally-normal, center,center,#6BDEDB>>
+HallyHealer07: ¡[name]!
+
+<<if $mamaTrust is true>>
+	HallyHealer07: Que tarde te has conectado... ;.;
+	User: Perdona estaba viendo una peli con mi madre. 
+	<<if $contar is true>>
+		HallyHealer07: ¿Tu madre?
+		HallyHealer07: ¿Has podido estar hoy con ella?
+		User: Sí, hoy ha llegado antes a trabajar y hemos visto una peli juntas
+		HallyHealer07: qué bien
+		HallyHealer07: Cómo me alegro.
+		HallyHealer07: Espero que puedas pasar más tiempo con tus padres
+		User: Sí, yo también. 
+	<<else>>
+		HallyHealer07: Uhhh... ¡qué bien!
+		HallyHealer07: ¿Era buena la peli?
+		User: Bueno, no ha estado mal. 
+		User: He pasado un rato con mi madre al menos. 
+		HallyHealer07: me alegro mucho
+	<<endif>>
+	<<if $amandaTrust is true>>
+		User: Hoy ha sido un buen día. 
+		User: Además, he dado una vuelta con una amiga también hehe
+		HallyHealer07: ¿Una amiga?
+		<<if $contar is true>>
+			HallyHealer07: ¿Con Amanda? 
+			User: Sí. 
+			User: ¿Cómo lo sabes?
+			HallyHealer07: Haha, me contaste que habías tenido una pelea con ella porque había ignorado tus mensajes...
+		<<else>>
+			HallyHealer07: ¿Con la que tuviste una pelea?
+			User: Bueno, más o menos. 
+			User: Pero sí, con esa
+		<<endif>>
+		HallyHealer07: ¿Habéis hecho las paces entonces?
+		User: Sí, nos hemos disculpado l@s dos.
+		HallyHealer07: Jo cuántas buenas noticias. 
+		HallyHealer07: Hoy es un buen día sí, sí
+	<<else>>
+		HallyHealer07: ¿Y qué tal con tu amiga?
+		<<if $contar is true>>
+			HallyHealer07: Con... ¿Amanda?
+		<<endif>>
+		HallyHealer07: ¿Habéis conseguido hacer las paces?
+		User: Hoy me ha invitado a dar una vuelta. 
+		User: Pero la verdad es que no me apetecía... 
+		User: He vuelto a casa y he visto la peli con mi madre. 
+		HallyHealer07: Bueno haces bien 
+		HallyHealer07: Te hizo algo muy feo y no estuvo nada bien.
+	<<endif>>
+<<else>>
+	HallyHealer07: Te estaba esperando hehe. 
+	<<if $amandaTrust is true>>
+		User: Perdona acabo de llegar a casa, he tardado un poco. 
+		HallyHealer07: ¿Y eso?
+		User: He dado una vuelta con una amiga
+		HallyHealer07: ¿Una amiga?
+		<<if $contar is true>>
+			HallyHealer07: ¿Con Amanda? 
+			User: Sí. 
+			User: ¿Cómo lo sabes?
+			HallyHealer07: Haha, me contaste que habías tenido una pelea con ella porque había ignorado tus mensajes...
+		<<else>>
+			HallyHealer07: ¿Con la que tuviste una pelea?
+			User: Bueno, más o menos. 
+			User: Pero sí, con esa
+		<<endif>>
+		HallyHealer07: ¿Habéis hecho las paces entonces?
+		User: Sí, nos hemos disculpado l@s dos.
+		HallyHealer07: Jo cómo me alegro
+	<<else>>
+		User: Acabo de llegar a casa del colegio hehe. 
+		HallyHealer07: Sí, yo también he llegado hace poco. 
+		HallyHealer07: Por cierto, ¿qué tal con tu amiga?
+		<<if $contar is true>>
+			HallyHealer07: Con...¿Amanda? 
+			User: ¿Amanda? 
+	HallyHealer07: Sí, me contaste que tuviste una pelea con ella porque te ignoró tus mensajes...
+		<<else>>
+			HallyHealer07: ¿Con la que tuviste una pelea?
+			HallyHealer07: La que te ingnoró tus mensajes
+		<<endif>>
+		HallyHealer07: ¿Habéis conseguido hacer las paces?
+		User: No, no hemos hablado.
+		User: Hoy me ha invitado a dar una vuelta. 
+		User: Pero la verdad es que no me apetecía... 
+		User: He vuelto a casa y he visto la peli con mi madre. 
+		HallyHealer07: Bueno haces bien 
+		HallyHealer07: Te hizo algo muy feo y no estuvo nada bien.
+	<<endif>>
+<<endif>>
+
+Hally y yo estuvimos un rato jugando. 
+Se estaba haciendo tarde, por lo que quedamos en jugar una misión corta entre los dos para pasar el rato. 
+Mientras jugábamos, hablábamos tranquilamente. 
+
+HallyHealer07: ¿De verdad que hoy no te puedes quedar más?
+User: No, mi madre probablemente entre en mi cuarto para ver si me he metido en la cama. 
+<<if $jugarTarde is true>>
+	User: Sobre todo porque la última tarde me quedé hasta tarde y se enfadó jaja
+<<endif>>
+HallyHealer07: Jo que pena... 
+HallyHealer07: ¿Usas el ordenador de tu madre para jugar?
+
+User: Que va, uso el mío. 
+User: Me lo acaban de regalar por mi cumpleaños. 
+
+HallyHealer07: ¿Ha sido tu cumpleaños?
+HallyHealer07: ¡FELICIDADES!
+
+User: Jaja gracias
+
+HallyHealer07: Jo, ya me gustaría usar mi propio ordenador...
+HallyHealer07: Yo estoy en el despacho de mi padre usando el suyo para jugar ;.;
+
+Me extrañó que dijese eso. 
+Estos últimos días hemos estado jugando hasta la madrugada. 
+Me pregunté qué padres tan liberales tenía que dejaban a su hijo usar su ordenador tan tarde, encima en su despacho.
+
+-> Preguntar__1
+	User: ¿Tus padres te dejan jugar tan tarde?
+	HallyHealer07: ¿Eh?
+	User: Has dicho que usas el despacho de tu padre...
+	User: Me extraña que no te quite el ordenador para irte a dormir. 
+	HallyHealer07: ¡Ah!
+	HallyHealer07: Hago que me voy a dormir y luego me conecto a escondidas
+	HallyHealer07: Jajaja
+	HallyHealer07: No se lo digas o cambiará su contraseña
+-> No preguntar__0
+	Me pareció algo curioso, pero a lo mejor sus padres son como los míos y no están tanto tiempo en casa. 
+	A lo mejor ni se dan cuenta de que lo está usando.
+
+HallyHealer07: ¿Tú juegas en tu cuarto?
+User: Sí. 
+HallyHealer07: Jo entonces tú alli sol@ podrás jugar cuánto quieras...
+User: Un poco sí. 
+User: Como siempre estoy encerrad@ en mi cuarto, pues al final estoy todo el día con él y nadie se da cuenta jaja
+HallyHealer07: ¿Ah sí?
+HallyHealer07: Qué envidia...
+HallyHealer07: Entonces, ¿nadie sabe que hablas conmigo verdad?
+
+User: ???
+User: ¿No? ¿Por qué lo dices?
+
+HallyHealer07: En mi casa tampoco sabe nadie que hablo contigo. 
+HallyHealer07: Hey, tengo una idea. 
+HallyHealer07: ¿Por qué no seguimos sin contárselo a nadie?
+HallyHealer07: Así tenemos un gran secreto entre los dos.
+HallyHealer07: ¡Podemos ser como agentes secretos!
+HallyHealer07: Nadie conoce nuestra identidad, pero lo sabemos todo.
+HallyHealer07: Es divertido, ¿no crees?
+
+User: Si tu lo dices...
+
+HallyHealer07: ¡A partir de ahora somos agentes secretos!
+HallyHealer07: Y nuestra información es altamente confidencial. 
+HallyHealer07: Mmmm.... ¿de qué podemos hablar que no hablemos con nadie?
+
+User: No sé...
+
+HallyHealer07: ¡Ah! ¡Ya sé!
+HallyHealer07: La última vez hablamos si habíamos besado a alguien alguna vez... 
+
+User: Sí...
+User: Y ninguno de los dos lo habíamos hecho
+
+HallyHealer07: ;.;
+HallyHealer07: No me lo recuerdes. 
+HallyHealer07: Bueno, como estuvimos hablando sobre la idea de besar...
+HallyHealer07: ¿Qué piensas sobre el sexo?
+HallyHealer07: ¿Has pensado sobre eso alguna vez?
+
+Me quedé un buen rato leyendo lo que me había escrito Hally.
+Sinceramente no sabía qué contestarle y no me estaba sintiendo nada cómod@ con sus preguntas. 
+Pero antes que pudiera decirle nada, Hally siguió escribiendo. 
+
+HallyHealer07: El otro día encontré unos videos que tenía mi padre en su ordenador. 
+HallyHealer07: Era la primera vez que había visto un video así.
+HallyHealer07: Nos habían enseñado en clase la teoría, pero me pareció super extraño verlo. 
+HallyHealer07: Mira, te lo paso.
+
+Al leer que Hally quería mandarme un video para adultos, mi nivel de incomodidad subió estrepitosamente.
+Es cierto que sentía curiosidad al igual que él sobre esas cosas, pero no sentía que verlo fuera lo más correcto. 
+En todos los colegios que había estado nos habían dado charlas sobre este tipo de contenido, y nos habían repetido hasta la saciedad que lo que aparece no se acerca a la realidad. 
+Una vez más, sin esperar a que le respondiera, Hally ya me había mandado el video. 
+En el chat se podía ver una imagen descriptiva del video, en éste se veían a un hombre y a una mujer desnudos. 
+No quería seguir viendo esa imagen pero no sabía cómo eliminar archivos desde el chat del juego. 
+
+HallyHealer07: ¿Qué te parece? ¿Quieres verlo juntos?
+
+Estaba a punto de contestarle, cuando de repente alguien tocó la puerta de mi cuarto. 
+Rápidamente, cerré el chat de juego y pretendí que estaba jugando.
+
+<<Act @ Mamá, user, right,center, green>>
+Mamá: Venga [name], es hora de dormir. 
+
+User: Vale mamá, ahora lo apago. 
+
+<<Hide @ Mamá>>
+
+Abrí una vez más el chat del juego y le contesté a Hally. 
+
+User: Hally me tengo que ir 
+
+HallyHealer07: ¿Eh? ¿En serio?
+HallyHealer07: ¿Te ha molestado lo del video?
+
+User: Me ha puesto bastante incómod@...
+User: No quería verlo la verdad.
+
+HallyHealer07: ¿En serio?
+HallyHealer07: Bueno es normal que al principio estés así. 
+HallyHealer07: Pero si luego te interesa me comentas y lo vemos juntos hehe. 
+
+User: Claro...
+User: Me tengo que ir Hally 
+
+User: Buenas noches. 
+
+HallyHealer07: ¡Buenas noches [name]! uwu
+
+<<Hide @ HallyHealer07>>
+
+Me despedí de Hally y apagué el ordenador. 
+Me seguía sintiendo incómod@. Él había dicho que era normal sentirse así, pero que luego me interesaría. 
+Me pregunté si estaba siendo rar@ sobre el asunto. 
+No sabía si el resto de chicos de mi edad veían esta clase de vídeos. Me imaginé que si Hally los estaba viendo, que sería normal hacerlo. 
+
+<<if $mamaTrust is true>>
+	Podría preguntarle a mamá sobre el tema, pero eso probablemente sería una conversación muy incómoda. 
+	De todas formas, papá y ella siempre han estado allí para explicarme cualquier cosa, por lo que si de verdad tengo curiosidad, no sería mala idea hacerlo.
+<<endif>>	
+<<if $amandaTrust is true>>
+	Amanda también tiene nuestra edad, y además es amiga de casi todos los de clase, así que a lo mejor ella sabe sobre estos temas. 
+	Hoy por fin he decidido acercarme más a ella, por lo que le podría preguntar para quedarme tranquil@ sobre el tema. 
+<<endif>>
+
+Me quedé bastante tiempo pensando sobre el asunto hasta que finalmente me fui a dormir de agotamiento. 
+
+<<Go @ Day5>>
+
+// DON'T DELETE THE "==="
+
+===

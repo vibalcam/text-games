@@ -1,0 +1,41 @@
+title: MaloFinal
+tags: 
+colorID: 0
+position: 0,0 
+---
+Al ver su mensaje, apagué el ordenador y me escondí entre las sábanas de mi cama. 
+Lo había visto, Amanda había visto el post. 
+<<if $contar is true>>
+	Entonces seguro que también había visto la descripción que había dejado Hally junto con las fotos.
+	¿Pensará que es cierto?
+<<endif>>
+
+Muriendo de la vergüenza al pensar que Amanda había visto esas fotos, continué llorando en la cama hasta que me quedé profundamente dormida. 
+<<SceneChange @ habitacion>>
+No sé cuánto tiempo había pasado, pero cuando me desperté, sólo podía sentir un gran vacío dentro de mi cuerpo. 
+No quería conectarme al ordenador. 
+No quería ver esas fotos. 
+No quería pensar en Hally. 
+No quería volver al colegio. 
+Simplemente quería quedarme para siempre en la cama donde nadie me tuviese que ver. 
+
+<<Act @ Mamá, user, right,center,green>>
+El sonido de alguien tocando la puerta de mi cuarto me sacó de mis pensamientos.
+Mamá: [name], tengo una sorpresa.
+Mamá: ¡Tu padre acaba de llegar a casa!
+Mamá: Rápido baja a saludarle.
+<<Hide @ Mamá>>
+
+<<if $mamaTrust is false>>
+	[[MaloSilencio]]
+<<endif>>
+
+
+-> Contarles lo que ha pasado__1 <<if $mamaTrust is true>>
+	[[MaloPadres]]
+
+-> No decir nada__0 <<if $mamaTrust is true>>
+	[[MaloSilencio]]
+
+
+===
