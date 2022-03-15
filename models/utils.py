@@ -1,6 +1,7 @@
 from typing import List, Dict, Tuple
 
 import numpy as np
+import pandas as pd
 import torch
 from torch.utils.data import Dataset, DataLoader
 
@@ -24,6 +25,7 @@ class StateActionDataset(Dataset):
             tokenizer=None,
             max_length: int = None,
             device=None,
+            balanced_actions:bool = False,
     ):
         """
         Initializer for the dataset
@@ -34,6 +36,7 @@ class StateActionDataset(Dataset):
         :param tokenizer: tokenizer. Only used if tokenize is true.
         :param max_length: max length for tokenization. Only used if tokenize is true
         :param device: the desired device of returned data. Only used if tokenize is true
+        :param balanced_actions: if true, it will ensure that the actions returned are balanced
         """
         # Check correct parameters
         if tokenize and tokenizer is None:
@@ -43,13 +46,20 @@ class StateActionDataset(Dataset):
         self.tokenize = tokenize
         self.rewards = torch.as_tensor(rewards, dtype=torch.float)
 
+        self.balanced_actions = balanced_actions
+        if balanced_actions:
+            s_actions = pd.Series(actions)
+            self.act_idx = [np.nonzero((s_actions == k).to_numpy())[0] for k in s_actions.unique()]
+            # mask has all actions by index of a certain type
+            # where returns indices where it is true
+            # choose randomly one of those indices
+            self.act_perm = [np.random.permutation(m).tolist() for m in self.act_idx]
+
         # if no tokenize, save lists
         if not tokenize:
             self.states = states
             self.actions = actions
             return
-
-        # todo do not cut, let tokenizer do the cutting
 
         # If none is given for max_length or it exceeds maximum, use max length from tokenizer
         if max_length is None or max_length > tokenizer.model_max_length:
@@ -69,7 +79,15 @@ class StateActionDataset(Dataset):
         """
         :return: the length of the dataset
         """
-        return self.rewards.shape[0]
+        return self.rewards.shape[0] if not self.balanced_actions else len(self.act_idx)
+
+    def _get_item_balanced(self, idx):
+        act_type = self.act_perm[idx]
+        if not act_type:
+            act_type = np.random.permutation(self.act_idx[idx]).tolist()
+            self.act_perm[idx] = act_type
+
+        return act_type.pop()
 
     def __getitem__(self, idx):
         """
@@ -77,6 +95,9 @@ class StateActionDataset(Dataset):
         :param idx: index to retrieve
         :return: item retrieved (state: str, action:str, reward: float)
         """
+        if self.balanced_actions:
+            idx = self._get_item_balanced(idx)
+
         if not self.tokenize:
             return self.states[idx], self.actions[idx], self.rewards[idx]
 
@@ -90,10 +111,20 @@ class StateActionDataset(Dataset):
                    self.rewards[idx].to(self.device)
 
 
-def load_data(dataset_path: str = '../yarnScripts', num_workers=0, batch_size=4, drop_last=False,
-              lengths=(0.8, 0.1, 0.1), random_seed: int = 123, reward_key:str='r', **kwargs) -> Tuple[DataLoader, ...]:
+def load_data(
+    dataset_path: str = '../yarnScripts',
+    num_workers=0,
+    batch_size=4,
+    drop_last=False,
+    lengths=(0.8, 0.1, 0.1),
+    random_seed: int = 123,
+    reward_key:str='r',
+    balanced_actions:bool = False,
+    **kwargs
+) -> Tuple[DataLoader, ...]:
     """
     Method used to load the dataset. It retrives the data with random shuffle
+
     :param dataset_path: path to the dataset
     :param random_seed: seed to randomly shuffle data
     :param num_workers: how many subprocesses to use for data loading.
@@ -102,6 +133,7 @@ def load_data(dataset_path: str = '../yarnScripts', num_workers=0, batch_size=4,
     :param drop_last: whether to drop the last batch if it is smaller than batch_size
     :param lengths: tuple with percentage of train, validation and test samples
     :param reward_key: attribute key for the reward
+    :param balanced_actions: if true, it will ensure that the actions returned are balanced
 
     :return: tuple of dataloader (same length as parameter lengths)
     """
@@ -129,10 +161,19 @@ def load_data(dataset_path: str = '../yarnScripts', num_workers=0, batch_size=4,
     lengths = [int(k * len(states)) for k in lengths[:-1]]
     lengths = np.cumsum(lengths)
 
-    datasets = [StateActionDataset(states[:lengths[0]], actions[:lengths[0]], rewards[:lengths[0]], **kwargs)]
-    datasets.extend([StateActionDataset(states[lengths[k]:lengths[k + 1]], actions[lengths[k]:lengths[k + 1]],
-                                        rewards[lengths[k]:lengths[k + 1]], **kwargs) for k in range(len(lengths) - 1)])
-    datasets.append(StateActionDataset(states[lengths[-1]:], actions[lengths[-1]:], rewards[lengths[-1]:], **kwargs))
+    datasets = [StateActionDataset(states[:lengths[0]],
+                                    actions[:lengths[0]],
+                                    rewards[:lengths[0]],
+                                    balanced_actions=balanced_actions,
+                                    **kwargs)]
+    datasets.extend([StateActionDataset(states[lengths[k]:lengths[k + 1]],
+                                        actions[lengths[k]:lengths[k + 1]],
+                                        rewards[lengths[k]:lengths[k + 1]],
+                                        **kwargs) for k in range(len(lengths) - 1)])
+    datasets.append(StateActionDataset(states[lengths[-1]:],
+                                        actions[lengths[-1]:],
+                                        rewards[lengths[-1]:],
+                                        **kwargs))
 
     # Return DataLoaders for the datasets
     return tuple(DataLoader(
@@ -166,7 +207,7 @@ class Accuracy:
 
     @property
     def accuracy(self):
-        return self.correct / self.samples
+        return (self.correct / self.samples).item()
 
 
 def save_dict(d: Dict, path: str) -> None:

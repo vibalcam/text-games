@@ -5,6 +5,6 @@
 
 # Temp
 .idea/
-**/logs
-**/saved
+**/logs*/
+**/saved*/
 /yarnScripts/

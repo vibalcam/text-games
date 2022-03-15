@@ -4,6 +4,7 @@ from typing import Dict
 import numpy as np
 import torch
 import torch.utils.tensorboard as tb
+from tqdm.auto import trange
 
 from .models import StateActionModel, save_model, load_model
 from .utils import Accuracy, load_data, save_dict
@@ -25,6 +26,7 @@ def train(
         steps_validate: int = 1,
         use_cpu: bool = False,
         freeze_bert: bool = True,
+        balanced_actions: bool = False,
 ):
     """
     Method that trains a given model
@@ -44,6 +46,7 @@ def train(
     :param debug_mode: whether to use debug mode (cpu and 0 workers)
     :param steps_validate: number of epoch after which to validate and save model (if conditions met)
     :param freeze_bert: whether to freeze BERT during training
+    :param balanced_actions: parameter for `utils.StateActionDataset`
     """
 
     # cpu or gpu used for training if available (gpu much faster)
@@ -62,6 +65,7 @@ def train(
         'optimizer_name',
         'batch_size',
         'scheduler_mode',
+        'balanced_actions',
     ]}
     # dict_param.update(dict(
     #     train_self_loop=dataset.add_self_loop,
@@ -100,6 +104,7 @@ def train(
         random_seed=123,
         tokenizer=model.tokenizer,
         device=device,
+        balanced_actions=balanced_actions,
     )
 
     if optimizer_name == "sgd":
@@ -112,16 +117,16 @@ def train(
         raise Exception("Optimizer not configured")
 
     if scheduler_mode == "min_loss":
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=10)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=10 if not balanced_actions else 480)
     elif scheduler_mode in ["max_acc", "max_val_acc"]:
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'max', patience=10)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'max', patience=10 if not balanced_actions else 480)
     else:
         raise Exception("Optimizer not configured")
 
-    print(f"{log_dir}/{name_model}")
-
-    for epoch in range(n_epochs):
-        print(epoch)
+    # print(f"{log_dir}/{name_model}")
+    for epoch in (p_bar := trange(n_epochs)):
+        p_bar.set_description(f"{name_model} -> {dict_model['val_acc']}")
+        # print(epoch)
         train_loss = []
         train_acc = Accuracy()
 
@@ -171,8 +176,8 @@ def train(
             train_logger.add_scalar('lr', optimizer.param_groups[0]['lr'], global_step=global_step)
 
         # Save the model
-        if (epoch % steps_validate == steps_validate - 1) and (val_acc >= dict_model["val_acc"]):
-            print(f"Best val acc {epoch}: {val_acc}")
+        if (epoch % steps_validate == steps_validate - 1) and (True or (val_acc >= dict_model["val_acc"])):
+            # print(f"Best val acc {epoch}: {val_acc}")
             dict_model["train_loss"] = train_loss
             dict_model["train_acc"] = train_acc
             dict_model["val_acc"] = val_acc
@@ -332,7 +337,10 @@ if __name__ == '__main__':
     args = args_parser.parse_args()
 
     if args.test is not None:
-        test(n_runs=args.test)
+        test(
+            n_runs=args.test,
+            save_path="./models/saved_good"
+        )
     elif args.show_examples is not None:
         show_examples(num_examples=args.show_examples)
     else:
@@ -365,7 +373,7 @@ if __name__ == '__main__':
             save_path='./models/saved',
             lr=1e-3,
             optimizer_name="adamw",
-            n_epochs=70,
+            n_epochs=30,
             batch_size=8,
             num_workers=0,
             scheduler_mode='max_val_acc',
@@ -373,4 +381,91 @@ if __name__ == '__main__':
             steps_validate=1,
             use_cpu=False,
             freeze_bert=True,
+            balanced_actions=True,
         )
+
+
+
+
+
+        # # Model
+        # bert_dict_model = dict(
+        #     shared_out_dim=125,
+        #     state_layers=[30],
+        #     action_layers=[30],
+        #     out_features=1,
+        #     lstm_model=False,
+        #     bert_name="bert-base-multilingual-cased",
+        # )
+        # # lstm_dict_model = dict(
+        # #     shared_out_dim=50,
+        # #     state_layers=[30],
+        # #     action_layers=[30],
+        # #     out_features=1,
+        # #     lstm_model=True,
+        # #     bert_name="bert-base-multilingual-cased",
+        # # )
+        # dict_model = bert_dict_model
+        # model = StateActionModel(**dict_model)
+
+        # # Training hyperparameters
+        # train(
+        #     model=model,
+        #     dict_model=dict_model,
+        #     log_dir='./models/logs',
+        #     data_path='./yarnScripts',
+        #     save_path='./models/saved',
+        #     lr=1e-3,
+        #     optimizer_name="adamw",
+        #     n_epochs=30,
+        #     batch_size=8,
+        #     num_workers=0,
+        #     scheduler_mode='max_val_acc',
+        #     debug_mode=False,
+        #     steps_validate=1,
+        #     use_cpu=False,
+        #     freeze_bert=True,
+        #     balanced_actions=True,
+        # )
+
+
+        # # other
+        # # Model
+        # bert_dict_model = dict(
+        #     shared_out_dim=125,
+        #     state_layers=[20],
+        #     action_layers=[20],
+        #     out_features=1,
+        #     lstm_model=False,
+        #     bert_name="bert-base-multilingual-cased",
+        # )
+        # # lstm_dict_model = dict(
+        # #     shared_out_dim=50,
+        # #     state_layers=[30],
+        # #     action_layers=[30],
+        # #     out_features=1,
+        # #     lstm_model=True,
+        # #     bert_name="bert-base-multilingual-cased",
+        # # )
+        # dict_model = bert_dict_model
+        # model = StateActionModel(**dict_model)
+
+        # # Training hyperparameters
+        # train(
+        #     model=model,
+        #     dict_model=dict_model,
+        #     log_dir='./models/logs2',
+        #     data_path='./yarnScripts',
+        #     save_path='./models/saved2',
+        #     lr=1e-3,
+        #     optimizer_name="adamw",
+        #     n_epochs=30,
+        #     batch_size=8,
+        #     num_workers=0,
+        #     scheduler_mode='max_val_acc',
+        #     debug_mode=False,
+        #     steps_validate=1,
+        #     use_cpu=False,
+        #     freeze_bert=True,
+        #     balanced_actions=True,
+        # )

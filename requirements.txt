@@ -8,6 +8,8 @@ torch>=1.10.1
 Pillow
 transformers
 tensorboard
+tqdm
+win10toast
 pandas
 tqdm
 mpire
