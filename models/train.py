@@ -7,7 +7,7 @@ import torch.utils.tensorboard as tb
 from tqdm.auto import trange
 
 from .models import StateActionModel, save_model, load_model
-from .utils import Accuracy, load_data, save_dict
+from .utils import ConfusionMatrix, load_data, save_dict
 
 
 def train(
@@ -128,7 +128,7 @@ def train(
         p_bar.set_description(f"{name_model} -> {dict_model['val_acc']}")
         # print(epoch)
         train_loss = []
-        train_acc = Accuracy()
+        train_acc = ConfusionMatrix(size=2, name='train')
 
         # Start training: train mode and freeze bert
         model.train()
@@ -145,10 +145,10 @@ def train(
 
             # Add train loss and accuracy
             train_loss.append(loss_val.cpu().detach().numpy())
-            train_acc.add(pred, reward)
+            train_acc.add(preds=pred, labels=reward)
 
         # Evaluate the model
-        val_acc = Accuracy()
+        val_acc = ConfusionMatrix(size=2, name='val')
         model.eval()
         with torch.no_grad():
             for state, action, reward in loader_valid:
@@ -156,8 +156,8 @@ def train(
                 val_acc.add(pred, reward)
 
         train_loss = np.mean(train_loss)
-        train_acc = train_acc.accuracy
-        val_acc = val_acc.accuracy
+        train_acc = train_acc.global_accuracy
+        val_acc = val_acc.global_accuracy
 
         # Step the scheduler to change the learning rate
         if scheduler_mode == "min_loss":
@@ -239,15 +239,15 @@ def test(
         # start testing
         test_acc = []
         for k in range(n_runs):
-            run_acc = Accuracy()
+            run_acc = ConfusionMatrix(size=2, name='test')
 
             with torch.no_grad():
                 for state, action, reward in loader_test:
                     pred = model(state, action)[:, 0]
-                    run_acc.add(pred, reward)
+                    run_acc.add(preds=pred, labels=reward)
 
-            print(f"Run {k}: {run_acc.accuracy}")
-            test_acc.append(run_acc.accuracy)
+            print(f"Run {k}: {run_acc.global_accuracy}")
+            test_acc.append(run_acc.global_accuracy)
 
         test_acc = np.mean(test_acc)
         dict_result = {"test_acc": test_acc}

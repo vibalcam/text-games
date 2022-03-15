@@ -4,8 +4,13 @@ import numpy as np
 import pandas as pd
 import torch
 from torch.utils.data import Dataset, DataLoader
+import random
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import matthews_corrcoef, mean_squared_error
 
 from simulator import YarnSimulator
+
 
 # Labels for the actions
 LABELS = ['bad', 'good']
@@ -185,6 +190,110 @@ def load_data(
     ) for idx, k in enumerate(datasets))
 
 
+class ConfusionMatrix:
+    """
+    Class that represents a confusion matrix. 
+    
+    Cij is equal to the number of observations known to be in class i and predicted in class j
+    """
+
+    def _make(self, preds: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        """
+        Returns the confusion matrix of the given predicted and labels values
+        :param preds: predicted values (B)
+        :param labels: true values (B)
+        :return: (size,size) confusion matrix of `size` classes
+        """
+        matrix = torch.zeros(self.size, self.size, dtype=torch.float)
+        for t, p in zip(labels.reshape(-1).long(), preds.reshape(-1).long()):
+            matrix[t, p] += 1
+        return matrix
+
+    def __init__(self, size, name:str=''):
+        """
+        This class builds and updates a confusion matrix.
+        :param size: the number of classes to consider
+        :param name: name of the confusion matrix
+        """
+        self.matrix = torch.zeros(size, size, dtype=torch.float)
+        self.preds = None
+        self.labels = None
+        self.name = name
+
+    def __repr__(self) -> str:
+        return self.matrix.numpy().__repr__
+
+    def add(self, preds: torch.Tensor, labels: torch.Tensor) -> None:
+        """
+        Updates the confusion matrix using predictions `preds` (e.g. logit.argmax(1)) and ground truth `labels`
+        :param preds: predicted values (B)
+        :param labels: true values (B)
+        """
+        preds = preds.reshape(-1).cpu().detach().clone()
+        labels = labels.reshape(-1).cpu().detach().clone()
+        
+        self.matrix += self._make(preds, labels)
+        self.preds = torch.cat((self.preds, preds), dim=0) if self.preds is not None else preds
+        self.labels = torch.cat((self.labels, labels), dim=0) if self.labels is not None else labels
+
+    @property
+    def size(self):
+        return self.matrix.shape[0]
+
+    @property
+    def matthews_corrcoef(self):
+        """
+        Matthews correlation coefficient (MCC) 
+        https://scikit-learn.org/stable/modules/model_evaluation.html#matthews-corrcoef
+        """
+        return matthews_corrcoef(y_true=self.labels.numpy(),y_pred=self.preds.numpy())
+
+    @property
+    def rmse(self):
+        return mean_squared_error(y_true=self.labels.numpy(),y_pred=self.preds.numpy(), squared=False)
+
+    @property
+    def global_accuracy(self):
+        true_pos = self.matrix.diagonal()
+        return (true_pos.sum() / (self.matrix.sum() + 1e-5)).item()
+
+    @property
+    def class_accuracy(self):
+        true_pos = self.matrix.diagonal()
+        return true_pos / (self.matrix.sum(1) + 1e-5)
+
+    @property
+    def average_accuracy(self):
+        return self.class_accuracy.mean().item()
+
+    @property
+    def per_class(self):
+        return self.matrix / (self.matrix.sum(1, keepdims=True) + 1e-5)
+
+    @property
+    def normalize(self):
+        return self.matrix / (self.matrix.sum() + 1e-5)
+
+    def visualize(self, normalize: bool = False):
+        """
+        Visualize confusion matrix
+        :param normalize: whether to normalize the matrix by the total amount of samples
+        """
+        plt.figure(figsize=(15, 10))
+
+        matrix = self.normalize.numpy() if normalize else self.matrix.numpy()
+
+        df_cm = pd.DataFrame(matrix).astype(int)
+        heatmap = sns.heatmap(df_cm, annot=True, fmt="d")
+
+        heatmap.yaxis.set_ticklabels(heatmap.yaxis.get_ticklabels(), rotation=0, ha='right', fontsize=15)
+        heatmap.xaxis.set_ticklabels(heatmap.xaxis.get_ticklabels(), rotation=45, ha='right', fontsize=15)
+        plt.ylabel('True label')
+        plt.xlabel('Predicted label')
+
+        return plt
+
+
 class Accuracy:
     """
     Calculates the accuracy of the predictions
@@ -233,11 +342,29 @@ def load_dict(path: str) -> Dict:
 
 
 def set_seed(seed: int) -> None:
+    """
+    This function sets a seed and ensure a deterministic behavior
+
+    :param seed: seed for the random generators
+    """
+    # todo delete all calls to set seed except this one
+    # set seed in numpy and random
     np.random.seed(seed)
+    random.seed(seed)
+
+    # set seed and deterministic algorithms for torch
     torch.manual_seed(seed)
+    # torch.use_deterministic_algorithms(True)
+
+    # Ensure all operations are deterministic on GPU
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
+        # torch.backends.cudnn.determinstic = True
+        # torch.backends.cudnn.benchmark = False
+
+        # for deterministic behavior on cuda >= 10.2
+        # os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
 
 
 def load_list(path: str) -> List:
