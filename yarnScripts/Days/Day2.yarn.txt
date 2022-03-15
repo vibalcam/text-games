@@ -1,0 +1,371 @@
+title: Day2
+tags: 
+colorID: 0
+position: 0,0
+---
+
+<<Scene @ habitacion>>
+
+<<Act @ User, user,left,center,grey>>
+
+// AUDIO DESPERTADOR
+
+El sonido del despertador irrumpió en mi sueño
+<<if $jugarTarde is true>>
+	Después de estar jugando hasta la madrugada, no tenía suficiente energía para levantarme de la cama. 
+	Estiré el brazo, apagué el despertador y seguí durmiendo. 
+	Minutos más tarde, alguien tocó la puerta. 
+
+	<<Act @ Mamá, mama-normal, 1.25, center, green>>
+	Mamá: Venga a despertar, tienes que ir al colegio. 
+
+	Sin hacer amago de levantarme, seguí durmiendo. 
+	Una vez más, tocaron la puerta, esta vez con más ímpetu
+
+	Mamá: [name] venga, levántate que vas a llegar tarde. 
+
+	Seguí durmiendo en la cama ignorando a mi madre. 
+	
+	Me planteé incluso hacerme la enferma para poder dormir durante todo el día. 
+
+	<<Hide @ Mamá>>
+
+	Pero no me dio tiempo a pensar en una buena excusa, porque mi madre ya estaba dentro de la habitación 
+
+	//<<Move @ Mamá, right, center, 2>>
+	<<Act @ Mamá, mama-normal, right, center, green>>
+
+	Mamá: [name], levántate ahora mismo de la cama. 
+
+	User: Cinco minutitos más...
+
+	Mamá: Ni lo pienses. Vas a llegar tarde y como no te levantes vas a ir andando hasta el colegio. 
+	Mamá: ¿Estuviste con el ordenador toda la noche?
+
+	User: No mamá....
+
+	Mamá: No me mientas. 
+	Mamá: [name] no hagas que me arrepienta haberte hecho ese regalo. 
+	Mamá: Ni siquiera te has despedido de tu padre que acaba de salir otra vez de viaje de trabajo. 
+
+	User: ¿Papá se ha ido a otra vez? ¿Pero no acababa de volver de viaje?
+
+	Mamá: Tu padre no terminó su viaje anterior, pidió permiso para pasar el fin de semana contigo durante tu cumpleaños y ha tenido que volver.
+	Mamá: Ni siquiera te has despedido de él porque te has pasado la noche con el ordenador 
+	Mamá: Que sea la última vez que ocurre
+	Mamá: A partir de ahora sólo podrás estar con el ordenador hasta las 21.30. 
+
+	User: Sí mamá...
+
+	Mamá: Vamos, vístete que es tardísimo. 
+	Mamá: Te he preparado unas tostadas para que las comas en el coche. 
+	Mamá: Te quiero abajo en 5 minutos. 
+
+	User: Vale... 
+
+	// <<Move @ Mamá, 1.25, center, 2>>
+	<<Hide @ Mamá>>
+
+	Después de que mi madre saliera de la habitación, me puse el uniforme del colegio y metí rápidamente los libros que necesitaba para las clases de hoy. 
+
+
+<<else>>
+
+	Me levanté de la cama. 
+	<<SceneChange @ salon>>
+
+	Después de vestirme y preparar los libros que necesitaba para las clases de hoy, bajé a la cocina y me encontré a mi padre desayunando. 
+	Mi madre estaba en la cocina limpiando su plato. 
+	
+	<<Act @ Mamá, mama-normal, right, center, green>>
+	User: Buenos días. 
+	
+	Mamá: Buenos días, [name]. 
+
+	<<Hide @ Mamá>>
+
+	Al entrar en la cocina, me preparé unas tostadas y un vaso de leche caliente para desayunar. 
+	Cogí mi desayuno y me senté con mi padre para desayunar. 
+
+	<<Act @ Papá, papa-normal, left, center, blue>>
+	Papá: ¡Buenos días!
+
+	User: Buenos días, papá. 
+
+	Papá: ¿Qué tal has dormido?
+
+	User: Muy bien.
+
+	Al sentarme en la mesa vi que había una maleta de viaje pequeña al lado del asiento de mi padre. 
+
+	User: ¿Te vas otra vez? ¿No volvistes hace tan sólo unos días?
+
+	// <<Act @ Papá, papa-normal>>
+
+	Papá: Sí, debería haber vuelto para finales de mes. 
+	Papá: Tuve que pedir un permiso para volver a casa el fin de semana.
+	Papá: Pero ahora, tengo que regresar
+	Papá: Volveré cuando termine todo el trabajo pendiente. 
+
+	<<Act @ Mamá, mama-normal, right, center, green>>
+	Mamá: Lo importante es que vuelvas sano y salvo, ten cuidado en la carretera
+
+	// <<Act @ Papá, papa-smile>>
+	Papá: Lo sé cariño. 
+	Papá: Con este trabajo es bastante difícil disfrutar de tiempo de calidad con mi familia
+	Papá: Pero no me hubiera perdido tu cumpleaños por nada del mundo. 
+
+	User: Gracias papá. 
+
+	// <<Act @ Mamá, mama-sad>>
+	Mamá: Venga rápido, terminad vuestro desayuno que vais a llegar los dos tarde. 
+
+	Papá: ¡Sí señora!
+
+	<<Hide @ Papá>>
+	<<Hide @ Mamá>>
+
+<<endif>>
+
+<<SceneChange @ clase>>
+
+// <<Act @ Amanda, amanda-normal, 1.25, center, brown>>
+
+Ya había sonado la campana, pero el profesor no había llegado todavía a clase. 
+Viendo como mis compañeros hablaban entre ellos, abrí uno de mis cuadernos y empecé a garabatear. 
+Pensando en el juego que probé anoche, empecé un boceto del logo del juego. 
+
+// <<Move @ Amanda, center, center, 2>>
+<<Act @ Amanda, amanda-normal, center, center, brown>>
+
+Amanda: Hola
+
+User: ?
+
+User: Ah, hola Amanda. 
+
+Amanda: Cómo que "Hola Amanda". ¿!Ayer me añadiste a Chipper!? ¿Te compraron un movil  por tu cumple?
+
+User: Jaja, casi. Me regalaron un ordenador. 
+
+Amanda: ¡Genial!
+Amanda: ¿Y qué te ha parecido Chipper? ¿Estuviste probando la página?
+
+User: Sí, más o menos ya se como funciona. La verdad es que dudo que vaya a subir ningún post. 
+User: Pero ya he jugado a uno de los juegos y mola bastante, la verdad. 
+
+Amanda: ¿Ah sí? ¿A cuál?
+
+User: A uno que se llama "Dungeons"
+
+<<if $jugarTarde is true>>
+	User: Es más, me pasé toda la noche jugando. Esta mañana mi madre me ha echado una buena bronca.
+
+	Amanda: Jaja, ya decía yo que tenías más ojeras de lo normal
+
+	User: ¡Oye!
+
+<<else>>
+
+	User: Estuve jugando un ratito, es bastante adictivo.
+	User: Porque mi madre me dijo que parase, sino me habría pasado toda la noche jugando.
+
+	Amanda: Uy no, si ya tienes ojeras de normal, no me quiero ni imaginar la cara de koala que se te quedaría. 
+
+	User: ¡Oye!
+
+<<endif>>
+
+Amanda: Pero ya sé cual dices. Yo también tengo una cuenta, aunque hace mucho que no juego. 
+Amanda: Si quieres puedo conectarme esta tarde y echamos una partida junt@s. 
+
+User: ¿En serio? Eso sería genial
+
+Amanda: Pero primero he quedado con unos amigos de clase a dar una vuelta. 
+Amanda: ¿Te quieres unir? Luego nos podemos conectar y te enseño un par de trucos. 
+
+User: Yo...
+
+Miré a la gente de clase y pude observar cómo algunos miraban cómo hablábamos, esperando que Amanda terminase para poder hablar con ella. 
+Amanda es amiga de mucha gente de clase y agradezco mucho que me invitase para dar una vuelta con sus amigos. 
+
+Pero...
+
+User: Muchas gracias, pero no puedo. 
+
+Amanda: ¿Y eso?
+
+User: Mi padre se ha ido hoy de viaje y mi madre me ha pedido que le ayude con un par de cosas cuando llegue a casa. 
+
+Amanda: Vaya, qué pena...
+Amanda: Bueno, si al final puedes, estaremos por la plaza tomando algo. Puedes venir cuando quieras. 
+
+User: Muchas gracias Amanda. 
+
+<<Hide @ Amanda>>
+
+No me gustaba tener que mentirle, pero me costaba desenvolverme bien en reuniones grandes.
+No me importaría quedar sólo con Amanda y un par de personas, pero por lo que había observado en las últimas semanas, seguro que había invitado a la mitad de la clase. 
+De todas formas, tenía ganas de quedar con ella online.
+
+<<SceneChange @ clase>>
+
+Al finalizar las clases, recogí todo y pasé por el pupitre de Amanda de camino a la puerta. 
+
+<<Act @ Amanda, amanda-normal, center, center, brown>>
+
+User: Hasta luego Amanda. 
+
+Amanda: Hasta luego [name], luego nos vemos en la partida. 
+
+User: ¡Sí!
+
+<<Hide @ Amanda>>
+
+Volví a casa deseando que pasaran las horas para poder jugar con mi nueva amiga
+
+<<SceneChange @ salon>>
+
+User: Ya he llegado. 
+User: ...
+User: ¿Mamá?
+
+Eché un vistazo por la casa. 
+La puerta del despacho estaba cerrada, seguro que mi madre no sabía ni la hora que era y no había parado de trabajar. 
+No me atreví a entrar, no quería interrumpirla. 
+Con una sensación de soledad a la que ya estaba bastante habituada, tomé algo del frigo para comer y subí a mi cuarto. 
+
+<<SceneChange @ habitacion>>
+
+En mi habitación, sentad@ delante del ordenador me tomé tiempo para reflexionar. 
+Al mediodia, podría haber salido con Amanda y sus amigos y ocupar con ellos el banco donde se sientan siempre para hablar durante el recreo, pero me quedé en la clase. 
+La verdad es que me gustaría quedar con ellos, ¿por qué no tengo el suficiente valor para hacerlo? 
+Intentando evitar estos pensamientos, encendí el ordenador y entré en Chipper. 
+Amanda probablemente no se conectaría hasta mucho más tarde, sin embargo, podría echar una partida a “Dungeons” antes y coger un poco más de experiencia. 
+
+<<SceneChange @ habitacion>>
+
+Tras un par de horas, conseguí subir bastantes niveles y poco a poco mi personaje, que por su puesto, se trataba de un dragón, mejoró considerablemente sus habilidades. 
+El tiempo pasó en un abrir y cerrar de ojos, y cuando quise darme cuenta, la hora a la que había quedado con Amanda había llegado.
+Vi en el chat de Chipper que en esos momentos estaba online y decidí avisarla.
+
+User: [Hey Amanda, estoy conectada. ¿Al final echamos esa partida?]
+...
+Esperé un par de minutos sin recibir respuesta y volví a la pantalla del juego, sin cerrar el chat de Chipper. 
+El tiempo pasó, y no recibí respuesta. Revisé de nuevo el chat, Amanda estaba desconectada, y mi mensaje en visto. 
+Sentí una gran decepción.
+¿Me había ignorado? ¿Le había molestado? ¿Seguía con sus amigos? ¿Acaso no quería jugar conmigo y sólo estaba siendo amable?
+Volví a centrarme en "Dungeons" para distraerme de mis pensamientos. 
+Justo cuando estaba a punto de terminar una de las misiones, vi a otro jugador acercándose. 
+
+<<Act @ HallyHealer07, hally-normal, center,center,#6BDEDB>>
+
+Pasando por mi lado, el jugador se lanzó sobre el enemigo que tenía yo en frente  sin pensarlo. 
+Al ver al otro jugador enzarzado en la lucha, me alejé un poco.
+Sin embargo, me di cuenta de que le quedaba poca vida y el enemigo estaba a punto de matarle. 
+
+-> Ayudarle
+	<<set $ayudaHally to true>>
+	Decidí intervenir en la batalla y ayudarle. Podría perder todo el progreso que había conseguido hasta ahora. 
+	Gracias a mis intervención, pudimos derrotarlo entre los dos y recogimos las recompensas de la misión.
+	HallyHealer07: ¡¡¡Muchas gracias!!! ^.^
+
+-> No ayudarle
+	<<set $ayudaHally to false>>
+	Por mucho que quisiese ayudarle, no quería entrometerme en su batalla. 
+	Me dediqué a atacar a otros enemigos que se acercaban al lugar de batalla. 
+	Finalmente, el otro jugador a pesar de que estaba a punto de morir, consiguió derrotar al jefe final con dificultad. 
+	Yo, por mi parte, completé la misión y recibí las recompensas sin saber muy bien si podía recogerlas sólo por participar un momento en la batalla. 
+	Me sentí un poco culpable por no haber ayudado a este jugador. 
+	HallyHealer07: Uff eso ha sido difícil >.<
+
+Un pequeño mensaje apareció en la ventana del chat del juego; el jugador me había enviado un mensaje. 
+No sabía qué hacer en esa situación, nunca había mantenido una conversación con alguien online. 
+Estaba a punto de continuar con mi camino, pero algo me hizo cambiar de opinión. 
+Tal vez fuese por la soledad y la decepción que sentía por la situación con Amanda, o porque mi madre aún no había dado señales de vida desde que llegué a casa, que sentí la necesidad de hablar con alguien.
+
+<<if $ayudaHally is true>>
+	User: No hay de qué. Tenía que matarle de todas formas
+	HallyHealer07: ¿Estás haciendo la misión de los huérfanos?
+	User: Sí
+	HallyHealer07: o.O ¡¡Yo también!!
+<<else>>
+	User: Hola. Siento no haberte ayudado, no quería estorbarte. Pensaba que tenías todo bajo control, ¿necesitas pociones?
+	HallyHealer07: La verdad es que no me vendrían mal unas pociones~ uwu
+	HallyHealer07: Yo también pensaba que lo tenía controlado T-T
+	User: Toma
+	Sintiéndome culpable por no haberle ayudado, le pasé unas pociones para regenerar vida en el juego 
+	HallyHealer07: !!!
+	HallyHealer07: ¡¡Muchas gracias!! uwu
+<<endif>>
+
+De repente, una notificación apareción en la ventana del juego. 
+El jugador HallyHealer07 me había enviado una solicitud de amistad. Sin saber qué hacer, continué escribiéndole. 
+
+User: ???
+
+HallyHealer07: ¿Te gustaría jugar conmigo?
+HallyHealer07: La verdad es que acabo de empezar a jugar y me está costando mucho...
+HallyHealer07: Es la tercera vez que intento hacer esta misión >.<
+HallyHealer07: No conozco a nadie que juegue a este juego ;.; 
+HallyHealer07: No me importaría algo de compañía... uwu
+
+No me esperaba que alguien me enviase una solicitud de amistad después de jugar por sólo un par de minutos. 
+Esta situación me parecía algo extraña, pero me sentía un poco identificad@ con esta persona.  
+Yo tampoco conocía a nadie en este juego, exceptuando a Amanda, por lo que no pude rechazarle. 
+
+User: ¡Claro!
+User: Yo tampoco conozco a nadie.
+User: Si nos unimos, podemos hacer las misiones de grupo juntos
+User: :) 
+
+HallyHealer07: !!!
+HallyHealer07: GENIAL, MUCHÍSIMAS GRACIAS
+HallyHealer07: Me puedes llamar Hally uwu
+HallyHealer07: ¿Cómo te llamas?
+
+User: Me llamo [name]
+
+HallyHealer07: ¡Un placer [name]!
+
+HallyHealer07: Voy a continuar con la misión.
+HallyHealer07: ¿Te apetece jugar un rato más?
+User: ¡Claro!
+
+<<SceneChange @ habitacion>>
+Pasé toda la tarde jugando y conversando con Hally. Sabía hacerme reir y aunque no éramos muy buenos, dábamos lo mejor de nosotros.
+HallyHealer07: Me lo he pasado genial [name]
+HallyHealer07: Me encantaría seguir jugando pero mi madre me está llamando para irme a la cama ;.;
+
+Fue entonces cuando me dí cuenta de que era casi medianoche y ni siquiera había cenado. 
+No sabía si mi madre habría cenado ya, o si había salido siquiera del despacho. El juego me había absorbido completamente. 
+User: Ostras es verdad, no me había dado cuenta
+HallyHealer07: xD
+HallyHealer07: ¿Mañana estas libre? Podríamos jugar más... 
+
+Cuando me preguntó eso, no pude contener mi felicidad. Ya no me aburriría por las tardes, me gustaba mucho pasar tiempo con Hally. 
+Sin dudarlo siquiera le respondí al segundo. 
+
+User: ¡Claro!
+
+HallyHealer07: Nos vemos mañana entonces uwu
+
+<<Hide @ HallyHealer07>>
+User: ¡Hasta mañana!
+
+Cuando Hally se desconectó, yo también lo hice. 
+En ese instante fui consciente del hambre que tenía.
+
+<<SceneChange @ salon>>
+Bajé al salón, vi la luz del cuarto de mi madre encendida. 
+Me imaginé que seguiría con su trabajo, simplemente había cambiado de estancia, pero me dolía un poco que no se hubiera pasado por mi habitación para saludarme en ningún momento de la tarde.
+Pasé a la cocina, me hice un sandwich rápido y volví a mi cuarto. 
+
+<<SceneChange @ habitacion>>
+Después de una ducha rápida me metí en la cama. 
+Mientras conciliaba el sueño, pensé en Hally. 
+Me imaginé que tendría que tener mi edad o incluso menos, viendo la forma que tenía de escribir en el chat y cómo actuaba mientras jugábamos. 
+Me dormí con muchas ganas de que llegase la tarde siguiente.
+
+<<Go @ Day3>>
+===

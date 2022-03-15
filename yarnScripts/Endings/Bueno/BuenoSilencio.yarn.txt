@@ -1,0 +1,175 @@
+title: BuenoSilencio
+tags:
+colorID: 0
+position: 0,0
+---
+
+Mamá: ¿Tienes algún plan hoy?
+User: No, la verdad es que no. Tenía pensado quedarme esta tarde haciendo deberes y estudiando.
+User: Dentro de poco tengo un examen y hoy además han mandado muchos trabajos .
+Mamá: Entiendo...
+Mamá: Me alegra que esté estudiando y que te tomes en serio con tus estudios.
+Mamá: Pero no viene mal de vez en cuando quedar con tus amigos y salir un rato. 
+Mamá: ¿Qué tal está Amanda?
+Mamá: Hace mucho que no la veo.
+Mamá: ¿Por qué no quedas con ella algún día?
+User: Sí, lo haré mamá.
+
+En ese momento no pude evitar pensar en Amanda. 
+Ayer parecía que me quería decir algo, pero se rindió en el último momento. Esta semana nos hemos alejado un poco. 
+A pesar de que me doliese, no podía evitar pensar que era lo mejor. No sabía cuándo nos íbamos a mudar otra vez y no quería perder más amigos. 
+A pesar de que me sentía sol@ en el colegio, era algo a lo que estaba acostumbrado. 
+Conociendo a mis padres, no estaríamos mucho tiempo viviendo aquí. 
+Sólo tenía que tener intentar no agobiar a mis padres con la situación e intentar llevar al día mis estudios. 
+Al terminar de desayunar, recogí mis platos. 
+
+User: Me voy a estudiar a mi cuarto mamá. 
+Mamá: ¿Estás segur@?
+Mamá: Puedes estudiar aquí conmigo si quieres. 
+Mamá: Me puedes preguntar cualquier cosa si te surge alguna duda. 
+Es cierto que en el colegio me daba vergüenza levantar la mano y preguntar en mitad de la clase cada vez que tenía una duda.  
+Por eso, cada vez que tenía una pregunta, la resolvía yo sol@ en casa. 
+Eso hacía que perdiese un montón de tiempo intentando resolver esa duda. Había veces que cuando no podía resolverlo, acudía a mi madre a pedirle ayuda. 
+Era perfectamente consciente de que interrumpía su trabajo cada vez que lo hacía y por eso solo iba cuando era estrictamente necesario. 
+Sabía que era un foco de preocupación para mis padres, ya que siempre se sentían culpables por las constantes mudanzas. 
+No quería darles darles más problemas, y por eso nunca les contaba cómo me sentía, ni solía acudir a ellos para pedirles ayuda. 
+User: No, no te preocupes mamá.
+User: Mejor me quedo en mi cuarto y así me concentro mejor.
+Mamá: Está bien.
+Mamá: Si necesitas cualquier cosa, ya sabes dónde estoy.
+User: Gracias mamá.
+<<Hide @ Mamá>>
+<<SceneChange @ habitacion>>
+Durante el resto de la mañana estuve estudiando en mi cuarto como le dije a mi madre. 
+A la hora de comer, preparamos juntas algo sencillo y nos fuimos cada un@ de nuevo a trabajar. 
+En uno de mis descansos vi que tenía un mensaje en la pantalla del ordenador.  
+Después de pensarlo un poco, decidí abrirlo y conectarme a Dungeons. 
+Era Hally.
+<<Act @ HallyHealer07, hally-normal,center,center,#6BDEDB>>
+HallyHealer07: Hola [name] ^.^
+HallyHealer07: Quería disculparme de cómo me había comportado anoche.
+HallyHealer07: Estaba bastante dolido porque no confiaste en mí.
+HallyHealer07: No sabía que unas simples fotos fueran suficientes cómo romper nuestra amistad...
+HallyHealer07: Pero no pasa nada.
+HallyHealer07: Yo también te perdono.
+HallyHealer07: Te prometo que no hablaré más sobre el tema hasta que te sientas más cómodo.
+HallyHealer07: Sabes que me puedes pedir lo que sea si lo necesitas.
+HallyHealer07: <3 
+Me alegré de que Hally se hubiese disculpado, pero desde entonces ya había dejado de tener la confianza que tenía antes con él. 
+User: Gracias por disculparte Hally. 
+User: Pero no quiero que vuelvas a sacar este temas de conversación.
+User: Podemos seguir jugando de vez en cuando si quieres.
+User: Pero no quiero que me pidas ese tipo de cosas nunca más.
+User: Si lo haces, se lo contaré a mis padres.
+HallyHealer07: ...
+HallyHealer07: Está bien, está bien, no volveré a pedírtelo [name].
+HallyHealer07: Pero no hace falta meter a nuestros padres en esto.
+HallyHealer07: Sólo es una conversación entre adolescentes jaja.
+HallyHealer07: Pero te prometo que no lo volveré a hacer.
+User: Bien. 
+User: ¿Te apetece echar una partida?
+HallyHealer07: Sí claro... 
+<<SceneChange @ habitacion>>
+Durante un rato, estuve jugando con Hally. 
+Noté perfectamente como su actitud había cambiado completamente después de esta conversación. 
+Hally ya no estaba igual de alegre que otras veces ni me animaba como solía hacerlo antes. 
+También noté como su estilo de juego había cambiado completamente. 
+Antes Hally iba siempre detrás, diciendo que no era muy bueno y me pedía siempre ayuda en las luchas. 
+Yo le animaba a que fuese delante a veces para que mejorara jugando, pero al final siempre dependía de mí para terminar la batalla. 
+Ahora, sin embargo, Hally estaba luchando de manera muy agresiva. Estaba utilizando poderes y movimientos que nunca antes le había visto usar ni sabía que existían. 
+En la mayoría de las batallas, Hally conseguía matar a todos los monstruos de un solo ataque. 
+No sabía por qué había surgido semejante cambio, pero no me atrevía a preguntarle. 
+Cuando terminamos un par de misiones, Hally se paró de repente en mitad del juego. 
+HallyHealer07: [name] me tengo que ir. 
+User: ¿Te llaman tus padres?
+HallyHealer07: Sí,sí, dicen que tengo que ir. 
+User: ¿Te apetece quedar mañana a otra partida?
+HallyHealer07: Mañana no puedo, dentro de poco empiezo exámenes y tengo que estudiar.
+HallyHealer07: Ya te escribiré cuando esté libre y así quedamos.
+User: Oh...
+User: Está bien.
+User: Nos vemos. 
+HallyHealer07: Adiós. 
+<<Hide @ HallyHealer07>>
+En ese momento, Hally se desconectó. 
+Estaba bastante desconcertad@ de lo cambiado que estaban en ese momento. 
+Tenía miedo de que de verdad hubiese ofendido a Hally por no enviarle la foto y no quisiera ser mi amigo. 
+Pero no pensé que hubiera hecho nada malo. Por mucho que se enfadase y se hubiera ofendido, no estaba dispuest@ a enviarle ninguna foto. 
+Tenía un poco de miedo de no volver a hablar con Hally, pero no me arrepentía de lo que había hecho. 
+Tal vez, la próxima vez que hablase con él, me disculparía y le explicaría por qué no quería hacerlo. 
+De esa manera, podría comprenderme y a lo mejor así dejaba de estar enfadado. Apagué el ordenador y seguí estudiando durante el resto de la tarde. 
+
+<<SceneChange @ salon>>
+Cuando fui al salón a cenar, me encontré una pequeña sorpresa.
+<<Act @ Papá, papa-normal, left,center,blue>>
+<<Act @ Mamá, mama-normal, right,center,green>>
+User: ¡Papá!
+Papá: Pero mira quien nos honra con su presencia.
+Mamá: No seas así, ha estado estudiando.
+User: ¿Cómo has vuelto tan temprano?
+Papá: Hemos terminado la reunión de hoy antes de tiempo y he pedido permiso para volver a casa.
+Papá: ¿Qué pasa?
+Papá: ¿No me queréis aquí?
+Mamá: Tengo que decir que la casa está más tranquila cuando no estás...
+Papá: ¡Traicionado por mi propia mujer!
+User: No seas así mamá, no es culpa de papá que le guste gritar tanto.
+Papá: ¡Ahora mi popi@ hij@!
+Nos estuvimos riendo durante un tiempo. 
+Mis padres se pusieron al día con las cosas que hicieron a lo largo de la semana. 
+Como la gran mayoría trataban sobre sus trabajos, no podía entender la mitad de lo que decían, por lo que dejé de prestar atención por un momento. 
+Papá: ¿Y tú qué tal [name]?
+Papá: ¿Algo nuevo que contar?
+User: No la verdad es que no.
+User: Dentro de poco empiezo exámenes así que he estado estudiando.
+Mamá: Por eso estás siempre encerrad@ en tu cuarto.
+Mamá: Pensaba que estabas siempre con el ordenador. 
+No sabía que mi madre se había fijado en que pasaba casi todas las tardes en mi habitación. 
+No queriendo confesar que en verdad tenía razón, les hice creer a mis padres que durante todo este tiempo estaba estudiando, y no jugando con Hally. 
+No quería que me echaran la bronca por pasar tanto tiempo con el ordenador. 
+Papá: ¿No estás usando el ordenador entonces?
+Papá: Y yo que pensé que te había gustado...
+User: No, no, si me encanta.
+User: Me entretengo un rato en los descansos y también lo uso para resolver algunas dudas de clase.
+Papá: ¿Ah sí?
+Papá: Me alegro entonces.
+Mamá: Bueno, ¿qué os apetece cenar?
+Mamá: Podemos preparar algo para celebrar que tu padre ha vuelto.
+User: ¡Sí!
+Papá: ¿Qué tal si mejor pedimos algo?
+Papá: Conociendo vuestro historial de cocina, dudo mucho que termine saliendo el plato como queréis.
+Mamá: ...
+User: ...
+Mamá: Es verdad que la casa está mucho mejor sin él.
+User: Sip. 
+Papá: ¡Era una broma!
+
+<<Hide @ Mamá>>
+<<Hide @ Papá>>
+
+<<SceneChange @ black>>
+Semanas después, llegaron mis exámenes. 
+Durante todo ese tiempo, no había vuelto a hablar con Hally. 
+Le había escrito un mensaje a ver si le apetecía jugar, pero no me contestó. Había veces que le veía jugando por el servidor, pero nunca me volvió a hablar. 
+Ni siquiera se acercaba a saludarme. 
+Esas semanas fueron muy solitarias para mí. 
+Mis padres seguían trabajando casi todas las tardes y sin tener a Hally para jugar, me pasaba la mayoría del tiempo sola en mi cuarto jugando por mi cuenta. 
+En el colegio, me solía topar con Amanda. Nos saludábamos e intercambiábamos un par de palabras, pero ella nunca me volvió a ofrecer quedar. 
+Por muy sol@ y dolid@ que me sintiese, en verdad pensé que era lo mejor. No quería volver a perder amigos cuando tuviera que cambiar de ciudad.
+Unos meses más tarde, mis padres me dieron la noticia de que nos tendríamos que mudar. 
+Se sentían muy culpables por tener que pasar de nuevo por esta situación, pero les aseguré que no había ningún problema y que no me importaba. 
+Y esta vez era cierto. 
+A pesar de la extraña experiencia que tuve con Hally, mi vida continuaría con normalidad. 
+Mis padres siempre trabajando. 
+Yo cambiándome de colegio. 
+La soledad de no hacer amigos pero la necesidad de evitarlos. 
+Anhelando compartir más momentos con mis padres, pero no queriendo interrumpir sus trabajos. 
+Mi vida se había convertido es una paradoja constante.
+Algunas tardes, algún jugador de Dugeons me contactaba, pero recordaba la experiencia de Hally, y acababa ignorandolos. 
+No quería que me volvieran a ignorar de nuevo.
+
+<<set $silencio to true>>
+<<SetEnding @ Normal_3>>
+
+[[Final]]
+
+===

@@ -1,0 +1,179 @@
+title: Start
+tags: 
+colorID: 0
+position: 0,0
+---
+
+<<Scene @ black>>
+ 
+<<Act @ User, user,left,center,grey>>
+  
+User:...
+ 
+???: ...cumpleaños feliz...
+???: ...cumpleaños feliz...
+???: ...te deseamos todos...
+???: ...¡Cumpleaños feliz!
+ 
+???: ¡Rápido, sopla las velas!
+ 
+???: No te olvides de pedir un deseo
+ 
+// DIBUJO VELAS APAGADAS
+ 
+<<SceneChange @ salon>>
+ 
+<<Act @ Papá,papa-normal,left,center,blue>>
+ 
+<<Act @ Mamá,mama-normal,right,center,green>>
+ 
+Mamá: Rápido, rápido, abre tu regalo.
+ 
+Papá: Tu madre y yo hemos preparado algo muy especial.
+ 
+// <<Act @ Papá, papa-sad>>
+Papá: Sabemos que el cambio de ciudad ha sido muy duro para ti.
+Papá: Sobre todo en el colegio y teniendo que hacer nuevos amigos...
+ 
+//<<Act @ Mamá, mama-sad>>
+Mamá: Ya sabes [name] que tu padre y yo sentimos lo de la mudanza
+Mamá: Pero no teníamos otra opción.
+ 
+User: Lo entiendo perfectamente.
+User: Mamá tu nuevo trabajo es muchísimo mejor que el anterior.
+User: Además, ¡¿habéis visto esta casa?!
+User: ¡Mi nuevo cuarto es enorme!
+ 
+// <<Act @ Papá, papa-smile>>
+Papá: Cómo no, sólo piensas en el cuarto...
+
+User: Y mi nuevo colegio está bastante bien.
+User: La gente es muy maja y los profesores me están ayudando mucho.
+User: Estoy bien, de verdad.
+ 
+// <<Act @ Mamá, mama-smile>>
+Mamá: Me alegro mucho, [name].
+ 
+// <<Act @ Mamá, mama-laugh>>
+Mamá: Aun así, queremos recompensarte por tu duro trabajo.
+ 
+Papá: Vamos, ¡Ábrelo, ábrelo!
+ 
+// REGALO EN LA MESA
+// ORDENADOR EN LA MESA
+ 
+User: ¡¿UN PORTÁTIL?!
+ 
+Mamá: ¡Sorpresa!
+ 
+User: Pero, pero...
+ 
+Papá: Es el último modelo. Ya eres lo suficiente mayor como para que tengas el tuyo propio
+Papá: Ahora podrás hacer todos tus deberes sin tener que usar el nuestro.
+ 
+// <<Act @ Papá, papa-normal>>
+Papá: Pero no es un juguete.
+Papá: Quiero que sepas que confiamos plenamente en ti y sabemos que lo usarás de manera responsable
+Papá: En el colegio ya te habrán enseñado cómo usarlo pero, aun así...
+ 
+// <<Act @ Mamá, mama-normal>>
+Mamá: Lo que tu padre te quiere decir es que no vamos a estar vigilándote.
+Mamá: Estos últimos meses nos has demostrado lo responsable que eres y sabemos que no vas a tener ningún problema
+Mamá: De todas formas, ten mucho cuidado
+ 
+-> No te preocupes mamá, seré responsable
+   	Mamá: Lo sé, [name].
+ 
+-> ¿Eso significa que dentro de poco tendré un móvil?
+   	Papá: Bueno, tampoco te pases. Ya veremos. 
+ 
+// <<Act @ Mamá, mama-smile>>
+Mamá: Venga, vamos a comer la tarta
+Mamá: Si luego limpias todo, puedes subir a tu cuarto y probar tu nuevo ordenador.
+ 
+User: ¡Vale!
+ 
+Mamá: ¿Quién quiere tarta?
+ 
+<<Hide @ Mamá>>
+<<Hide @ Papá>>
+ 
+<<SceneChange @ habitacion>>
+User: Ahhh....
+ 
+La tarta estaba deliciosa.
+Tras ayudar a mis padres a recoger los platos, subí a mi cuarto agotad@.
+Me tumbé en la cama mirando al techo y recordé nuestra conversación durante la cena.
+Es verdad que el nuevo colegio no está nada mal y la gente es bastante maja, pero no había dicho toda la verdad. 
+Cambiar de colegio a mitad de curso no era la mejor situación para hacer amigos. 
+La mayoría de mis compañeros se conocían desde pequeños, por lo que era muy complicado integrarse. 
+Durante los intercambios de clase, prefería quedarme en mi mesa adelantando los deberes o haciendo garabatos en las esquinas de algún libro. 
+Quizás estoy demasiado acostumbrad@ a estar sol@. 
+El trabajo itinerante de mi padre nos había obligado desde pequeñ@ a mudarnos constantemente, y cada vez que parecía que conseguía un nuevo amigo, nos teníamos que marchar. 
+Finalmente me resigné y dejé de intentarlo. 
+Prefería pasar el tiempo en casa que perder amigos de nuevo. 
+Aquí, mi madre se encierra en su oficina, trabajando desde el ordenador, mientras que mi padre se pasa el día fuera de casa; con suerte, llega para la hora de la cena. 
+Es por eso que siempre he pasado mucho tiempo a solas. 
+Quizás por eso mis padres me habían regalado un portátil, una ventana al mundo desde el refugio de mi habitación.
+Con ese pensamiento en mente, me acerqué al escritorio y saqué el ordenador de caja. 
+
+User: Vamos a ver
+ 
+Se trataba del último modelo de mi marca favorita. 
+Disfruté mucho mientras lo configuraba y navegaba por su interfaz. 
+Estaba instalando algunos programas que necesitaba para los trabajos del colegio cuando el buscador me recomendó “Chipper”. 
+"Chipper" era una red social de la que mis compañeros no dejaban de hablar durante los intercambios de clase. 
+A través de esta aplicación comparten fotos y chatean todos los días. 
+Se podía decir que todos los cotilleos del instituto se encontraban allí. 
+Decidí darle una oportunidad, al menos, intentaría socializar desde mi habitación. 
+Creé una cuenta y mientras editaba mi información observé que la aplicación me sugería diferentes perfiles para añadir a mi lista de amigos. 
+Entre ellos, se encontraba una de las pocas personas que se había acercado a mí durante los días que llevaba en este colegio; Amanda. 
+En varias ocasiones se ofreció a ayudarme con los deberes e incluso me hizo una visita por las instalaciones del colegio. 
+Sin pensármelo dos veces, envié la solicitud de amistad. 
+En ese momento, la aplicación desplegó una lista de juegos vinculados al perfil de Amanda. 
+Los videojuegos no eran lo mío, aunque solía entretenerme con algunas aplicaciones de la tablet de mi madre. 
+Sin embargo, uno de ellos me llamó la atención, su diseño era muy original, se trataba de un dragón apoyado majestuosamente sobre la torre de un castillo. 
+Como amante de los seres mitológicos, no pude evitar descargarlo.
+
+ 
+// PANTALLA JUEGO
+ 
+Se trataba de un juego multijugador llamado "Dungeons". 
+El objetivo consistía en cazar animales y seres mitológicos para convertirlos en tus compañeros, poder entrenarlos y combatir con otros jugadores.
+Algunas misiones requerían varios jugadores, por lo que el juego incluía un chat online donde podías hablar con el resto de usuarios. 
+Además, se podían desplegar chats privados con aquellos que tuvieras agregados como “amigos”.
+
+Escogí el avatar que más me gustaba y empecé a jugar.
+
+ 
+No llevaba mucho tiempo, cuando tocaron en la puerta.
+// <<Move @ Mamá, right, center, 1>>
+<<Act @ Mamá,mama-normal, right,center,green>>
+
+
+User: ¿Sí?
+ 
+Mamá: ¿Estás jugando a estas horas?
+Mamá: [name], me alegro de que te guste el regalo, pero ya es tarde y mañana tienes colegio.
+Mamá: Anda, apágalo y vete a dormir.
+ 
+User: Sí, mamá.
+ 
+// <<Move @ Mamá, right, center, 0.25>>
+<<Hide @ Mamá>> 
+
+-> Seguir jugando__0
+   	<<set $jugarTarde to true>>
+   	Cuando mi madre cerró la puerta, me puse el pijama y me tumbé en la cama con el portátil
+   	Para simular que estaba durmiendo, apagué las luces y seguí jugando a oscuras con los auriculares
+   	No fue hasta la madrugada cuando me empezaron a doler los ojos y me fui a dormir.
+-> Ir a dormir__1
+   	<<set $jugarTarde to false>>
+   	Mi madre tenía razón, mañana iba a estar muy cansada
+	Guardé la partida y cerré el ordenador.
+   	Afortunadamente, terminé mis deberes a lo largo del fin de semana, por lo que no me tenía que preocupar por las entregas del día siguiente.
+   	Me puse el pijama y me fui a dormir
+
+<<Go @ Day2>>
+// DON'T DELETE THE "==="
+===

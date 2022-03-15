@@ -1,0 +1,57 @@
+title: Final
+tags: 
+colorID: 0
+position: 0,0 
+---
+
+<<SceneChange @ tv>>
+
+<<Act @ Televisión, user, center,center, grey>>
+
+Televisión: ...
+Televisión: En el informativo de hoy hablaremos sobre una de las prácticas más peligrosas encontrada en Internet.
+Televisión: La práctica de online grooming es una de las que más afecta a los jóvenes hoy en día. 
+Televisión: Online Grooming es una forma de acoso y abuso sexual en contra de niños y jóvenes. 
+Televisión: Los acosadores utilizan el anonimato de diversas plataformas de internet, para hacerse pasar por menores. 
+Televisión: Utilizando perfiles públicos, escogen una víctima y comienzan un proceso manipulación hacía el joven. 
+Televisión: Durante un periodo de tiempo se ganan su confianza y poco a poco intentan convencer a los jóvenes de participar en actividades sexuales. 
+Televisión: Para prevenir este tipo de casos, se recomiendan a los padres que utilicen ciertas medidas de prevención y protección cuando sus hijos utilizan Internet. 
+Televisión: Para aquellos jóvenes que utilizan Internet a menudo, se les recuerda que no divulguen información privada online ni intercambien imágenes con desconocidos.
+Televisión: En caso de que algún "amigo" online comience a hacer insinuaciones sexuales, por favor, avisad a un adulto responsable. 
+Televisión: Se aconseja precaución a todos los usuarios de Internet.
+Televisión: La detección de estos acosadores de Internet es altamente difícil, dado que utilizan el anonimato para esconderse.
+Televisión: Además, aquellos jóvenes que han sufrido este tipo de acosos, no lo notifican ni a las autoridades ni a los adultos responsables.
+Televisión: Por ese motivo, a pesar de que sepamos de la existencia de este acoso sexual, sin la aportación de las víctimas, la única forma de poder pararlo es educando a los jóvenes de los peligros que corren en Internet.
+<<if $silencio is true>>
+	Televisión: Para aquellos jóvenes que hayan sufrido estas experiencia, se aconseja alertar a los adultos responsables.
+	Televisión: A pesar de que con el tiempo el asunto quede en el olvido, los acosadores sexuales siguen sueltos y pueden afectar a muchas otras víctimas en un futuro.
+	Televisión: Y recuerden, nunca sabemos con seguridad quién se oculta al otro lado de la pantalla.
+	Televisión: La siguiente noticia...
+	<<SceneChange @ black>>
+
+	...
+	...
+	<<Act @ HallyHealer07, hally-normal, center,center, #6BDEDB>>
+	...
+
+	HallyHealer07: ¡Hola! uwu
+	HallyHealer07: Me llamo Hally.
+	HallyHealer07: ¿Te apetece jugar conmigo?
+	<<Hide @ HallyHealer07>>
+
+<<else>>
+	Televisión: Sin embargo, gracias  a la colaboración de una de las víctimas más recientes, recientemente se ha podido arrestar un agresor de online gooming.
+	Televisión: El agresor, un hombre de 40 años en paro, utilizaba una cuenta de usuario llamada "HallyHealer07".
+	Televisión: Durante la investigación del agresor, se pudo descubrir su paradero y la policía obtuvo una orden de arresto.
+	Televisión: Al investigar su casa, se pudieron encontrar una carpeta llena de archivos donde hallaron una gran cantidad de videos y fotos de las distintas víctimas que el agresor estuvo acosando hasta la fecha.
+	Televisión: La policía se puso en contacto con todas y cada una de las víctimas.
+	Televisión: Aún está por determinar la fecha en la que se celebrará el juicio contra el agresor, donde las víctimas y familias que se han visto afectadas podrán prestar declaración contra el acosador. 
+	Televisión: Este es, sin embargo, uno de los muchos acosadores que se pueden encontrar hoy en día en Internet.
+	Televisión: Afortunadamente, gracias a la colaboración de las víctimas y el trabajo de la policía, podemos encontrar un acosador menos en la gran red de Internet.
+	Televisión: Recordamos siempre ser precavidos y no bajar la guardia en Internet.
+	Televisión: Nunca sabemos quién se oculta al otro lado de la pantalla.
+	
+<<endif>>
+
+
+===

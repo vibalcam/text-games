@@ -1,0 +1,88 @@
+title: MaloAmigos
+tags: 
+colorID: 0
+position: 0,0 
+---
+
+User: No...
+User: No puedo Amanda. 
+
+Amanda: [name] tienes que hacerlo. 
+Amanda: ¿No ves que si no hacemos nada, este tal "Hally seguirá suelto"?
+
+User: ¡Lo sé!
+User: Pero simplemente no puedo.
+User: No puedo afrontar a mis padres si se lo cuento.
+User: Simplemente no puedo Amanda.
+
+Amanda: ...
+
+User: Por favor te lo pido, no se lo cuentes.
+
+Amanda: ...
+
+User: Por favor, Amanda.
+
+Amanda: ...está bien.
+Amanda: Lo hago porque me lo estás pidiendo.
+Amanda: Pero quiero que sepas que no estoy de acuerdo.
+
+User: Muchas gracias.
+
+Amanda: Si alguna vez quieres contárselo y necesitas apoyo, ya sabe dónde encontrarme.
+
+User: ... lo sé.
+
+Amanda: Bueno...
+Amanda: ¿Qué hacemos ahora?
+
+User: No lo sé...
+User: Me gustaría que esa foto dejase de estar en Internet al menos...
+
+Amanda: Déjamelo a mí. 
+Amanda: En nada, esa foto dejará de estar en Chipper. 
+
+User: Pero seguirá estando en el recuerdo de todos...
+
+Amanda: ...
+Amanda: Por algo se empieza al menos.
+<<Hide @ Amanda>>
+<<SceneChange @ black>>
+Amanda y yo escribimos a la página de Chipper para reportar el asunto sobre mi foto de Internet. 
+A las pocas horas, nos escribieron de vuelta informándonos de que la foto había sido eliminada. 
+Pidieron un montón de disculpas, dado que aparentemente el usuario "Hally" había conseguido acceder a la información de mi cuenta de Chipper mediante el juego de Dungeons. 
+Debido a un error de la página los usuarios añadidos como amigos en los juegos, se añadían automáticamente a la cuenta de Chipper. 
+Después de eliminar la foto de Internet, Amanda y yo estuvimos cenando con mis padres. 
+
+
+<<Act @ Mamá, mama-normal, right,center,green>>
+<<Act @ Papá, papa-normal, left,center,blue>>
+Durante toda la cena, Amanda intentaba disimular, fingiendo que no pasaba nada. 
+Yo también hice lo mismo. 
+Creo que mis padres se tuvieron que dar cuenta, pero no nos quisieron presionar. 
+<<Hide @ Mamá>>
+<<Hide @ Papá>>
+Las siguientes semanas en clase fueron muy duras para mí. 
+Escuchaba constantemente el murmullo de mis compañeros, hablando sobre la foto que habían visto y soltando rumores.
+<<Act @ Compañero, user, center,center,blue>>
+Compañero1: Mira, mira allí está.
+Compañero2: Ostras es verdad. 
+Compañero1: No me creo que pueda venir a clase... 
+Compañero1: Me moriría de vergüenza... 
+Compañero2: Ya, y yo... 
+
+<<Act @ Amanda, amanda-normal, right,center,brown>>
+Amanda: Eh eh, a callar.
+Amanda: Si no tenéis ni idea de lo que estáis hablando, ¿por qué no cerráis mejor el pico?
+Sin embargo, Amanda siempre estaba a mi lado para defenderme. 
+<<Hide @ Amanda>>
+Un par de meses después al incidente, mis padres me dijeron que nos teníamos que mudar otra vez. 
+Me dio pena no poder más a Amanda, pero la ciudad a la que íbamos estaba relativamente cerca de su casa y siempre podríamos hablar online juntas y quedar de vez en cuando.
+Hay ciertas noches donde pienso en Hally y en mis fotos rondando por Internet. Cuando este pensamiento me desvela, siempre escribo a Amanda para desahogarme, y ella nunca tarda en responder. 
+Me alegro de habérselo contado, por lo menos no estoy sol@ en estos momentos tan duros. 
+Espero que en un futuro, este recuerdo se me haga menos doloroso. Al menos ahora soy consciente de que nunca sabemos con seguridad quién se oculta al otro lado de la pantalla.
+
+<<set $silencio to true>>
+<<SetEnding @ Malo_3>>
+[[Final]]
+===

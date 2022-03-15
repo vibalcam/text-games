@@ -1,0 +1,82 @@
+title: MaloSilencio
+tags: 
+colorID: 0
+position: 0,0
+---
+
+User: No me encuentro muy bien mamá, creo que he pillado un virus.
+Mamá: ¿Qué?
+
+Al escuchar eso mi madre entró en mi habitación.
+
+<<Act @ Mamá, mama-normal>>
+Mamá: ¿[name] qué te pasa?
+
+Al ver la cara de preocupación de mi madre, me sentí todavía más culpable en ese momento. 
+Me gustaría poder responderle, decirle lo que ha ocurrido y poder llorar en sus brazos. 
+Pero no tenía el valor suficiente para hacerlo. 
+No podía imaginarme la cara que pondría mi madre si le dijese que había una foto mía en Internet...
+No podía contárselo. 
+
+User: No sé...
+User: Me duele mucho la tripa.
+
+Mamá: Tienes una cara terrible. 
+Mamá: Quédate en la cama, ahora mismo te subo una manzanilla ¿vale?
+
+User: Gracias mamá. 
+
+<<Hide @ Mamá>>
+
+Al ver salir a mi madre del cuarto, las lágrimas que estaba intentando aguantar empezaron a desbordarse.
+Sin querer volver a salir de mi casa en la vida, me arropé en la cama y me volví a dormir. 
+
+<<SceneChange @ black>>
+
+Desde aquel día, sólo salía de casa para ir al colegio. 
+Cada vez que entraba en clase, podía escuchar los murmullos de la gente al mi alrededor. 
+
+<<Act @ Compañero, user, center,center,blue>>
+Compañero1: Mira, mira allí está.
+Compañero2: Ostras es verdad. 
+Compañero1: No me creo que pueda venir a clase... 
+Compañero1: Me moriría de vergüenza... 
+Compañero2: Ya, y yo... 
+
+Cada día era una tortura ir a clase y escuchar comentarios de mis compañeros. 
+Lo peor, sin embargo, era cruzarme con Amanda. 
+<<Act @ Amanda, amanda-normal, center,center,brown>>
+Cada vez que nos veíamos, me miraba de una forma que no sabría describir. 
+Había ocasiones en las que parecía que se dirigía a mí, pero siempre cambiaba de opinión en el último momento. 
+
+<<if $contar is true>>
+	Compañero: Anda mira Amanda, allí está [name].
+	Amanda: ...
+	Compañero: Venga vámonos, no puedes perdonarle por lo que dijo en ese post. 
+	Compañero: ¿Cómo se atreve a decir algo así de ti cuando sólo querías ser su amiga?
+	Amanda: ...
+	Amanda: Anda déjalo, vámonos a dar una vuelta.
+<<endif>>
+A pesar de todo, yo tampoco me atreví a dar el primer paso y hablar con ella. A saber la imagen que tendría de mí. 
+<<Hide @ Amanda>>
+
+<<Act @ Papá, papa-normal, left, center, blue>>
+<<Act @ Mamá, mama-normal, right, center, green>>
+
+Nunca les conté a mis padres sobre este asunto. 
+Sé que eran perfectamente conscientes de que algo había ocurrido, pero nunca mencionaron nada y siempre estaban a la espera de que fuese yo quien diera el primer paso. Pero nunca lo hice. 
+<<Hide @ Mamá>>
+<<Hide @ Papá>>
+Unos meses después del incidente, mis padres me dijeron que nos teníamos que mudar una vez más. 
+Me alegré bastante al escuchar la noticia. 
+Donde quiera que fuésemos, nadie sabría lo que había ocurrido. 
+Nadie habrá visto mi imagen. 
+Podría ocultar esta experiencia por el resto de mi vida y nadie sabría sobre el asunto. 
+Eso sí, no me acercaría al ordenador por un largo tiempo.
+No quería tener nada que ver con la experiencia que viví ese día. 
+Con un poco de tiempo, esperaba que todo quedase en el olvido. 
+<<set $silencio to true>>
+<<SetEnding @ Malo_1>>
+[[Final]]
+
+===

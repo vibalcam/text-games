@@ -1,0 +1,523 @@
+title: Day3
+tags: 
+colorID: 0
+position: 0,0
+---
+
+// RELACIÓN 
+
+<<Scene @ clase>>
+
+<<Act @ User, user,left,center,grey>>
+
+Al día siguiente, cuando entré por la puerta de clase, Amanda se acercó a mí y me saludó. 
+
+<<Act @ Amanda, amanda-normal, center, center, brown>>
+
+Amanda: ¡Hola [name]!
+
+User: Hola Amanda. 
+
+A pesar de que la tarde con Hally me hizo olvidar, no pude evitar recordar lo que había ocurrido al ver a Amanda de nuevo. 
+
+-> Preguntarle__1
+	<<set $preguntarAmanda to true>>
+	Justo cuando Amanda iba a sentarse en su asiento, me armé de valor para preguntarle sobre ayer.
+	User: Oye Amanda...
+	Amanda: Dime
+	User: ¿No viste mi mensaje?
+	Amanda: ¿Mensaje?
+	User: Sí, habíamos quedado para jugar una partida. Te escribí para ver si seguía en pie...
+	Amanda: ¡OSTRAS!
+	Amanda: Es verdad, lo siento muchísimo [name]. 
+	Amanda: Estaba con los de clase cuando vi tu mensaje 
+	Amanda: Justo cuando te iba a responder se me acabó la batería y cuando llegue a casa se me olvidó por completo.
+	Amanda: Lo siento
+	User: No pasa nada... 
+	User: Sólo era por curiosidad
+	Amanda: Bueno luego hablamos 
+	User: Vale
+	Me dirigí de nuevo a mi asiento. Desde allí vi cómo Amanda se acercaba a la mesa de sus amigos mientras esperábamos a que llegara el profesor.
+-> No preguntarle__0
+	<<set $preguntarAmanda to false>>
+	Quería saber por qué me dejo en visto, pero ya me había visto en situaciones similares en otros colegios, y no iba a volver a molestarme
+	Decidí no decirle nada y me fui directamente a mi asiento.
+
+<<Hide @ Amanda>>
+
+No conseguí prestar atención durante las clases. 
+Quizás estaba siendo un poco exagerad@ y mis pensamientos negativos no me dejaban razonar con claridad. 
+Sin embargo, cuanto más lo pensaba, más segur@ estaba de que Amanda me había ignorado a propósito. Estaba cansad@ de este tipo de situaciones. 
+Para cuando las clases habían terminado, tenía un dolor de cabeza insoportable. Sólo quería teletrasportarme, si fuera posible, hasta mi cuarto.
+
+<<Act @ Amanda, amanda-normal, center, center, brown>>
+
+Amanda: ¡Hey [name]!
+
+User: ...
+
+Amanda: ¿?
+
+Ignoré a Amanda y me fui a casa. 
+
+<<Hide @ Amanda>>
+
+<<SceneChange @ salon>>
+
+User: He llegado…
+User: Otro día más, nadie contesta cuando llego a casa. 
+
+Me dirigí directamente al botiquín para coger una pastilla para el dolor de cabeza. 
+Cuando pasé por la cocina para pillar algo de comer, vi en el frigorífico una nota.
+
+<<Act @ Mamá, user, center, center, green>>
+
+Mamá: "[name], me han convocado para una reunión de empresa, no me esperes para la cena”.
+
+<<Hide @ Mamá>>
+
+Tiré la nota a la basura y me dirigí a mi cuarto.
+
+<<SceneChange @ habitacion>>
+
+Me senté frente al escritorio y dí un gran suspiro. 
+No sé cuánto tiempo estuve allí sentad@ sin hacer nada, simplemente mirando a la pantalla, pero cada vez me dolía más y más la cabeza. Se me había olvidado tomar la pastilla. 
+Estaba actuando de forma muy inmadur@ pero no podía evitarlo. 
+De repente, una notificación de Chipper apareció en la pantalla del portátil. Entré en la aplicación.
+Cuando finalmente se cargó la partida de Dugueons pude ver que se trataba de un mensaje de Hally.
+
+<<Act @ HallyHealer07, hally-normal, center,center,#6BDEDB>>
+HallyHealer07: ¡[name]! ^.^
+
+User: Holaaa
+
+HallyHealer07: Te estaba esperando para jugar. 
+
+User: ?
+User: ¿Y eso?
+
+HallyHealer07: Jeje, ¡Toma!
+
+User: !!
+
+Hally me dió una de las armas más poderosas del juego; una espada encantada.
+Había leído en uno de los manuales que sólo podías conseguir esta espada derrotando a un monstruo en específico pero era bastante raro encontrarlo. 
+Hally habría tenido que jugar muchas veces para poder conseguir este objeto. 
+
+User: ¡Hally no puedo aceptar esto! 
+HallyHealer07: ¡Claro que sí! 
+HallyHealer07: De alguna manera te tengo que agradecer por ayudarme ayer ^.^
+
+<<if $ayudaHally is true>>
+	HallyHealer07: Si no hubiese sido por ti habría perdido todo mi progreso.
+	User: ¡Pero si yo también le tenía que matar!
+<<else>>
+	HallyHealer07: Tus pociones me salvaron la vida. 
+	HallyHealer07: Y son bastante caras para comprar..o.O
+	User: ¡Pero casi mueres por mi culpa!
+	User: No te ayudé
+	User: Y esas pociones las puedo conseguir en seguida
+<<endif>>
+
+HallyHealer07: Aún así, me salvaste la vida uwu
+HallyHealer07: Hay que recopensar a las buenas personas >:(
+
+User:...¿piensas que soy buena persona?
+
+HallyHealer07: ¡Claro!
+HallyHealer07: Sólo nos concimos ayer pero me lo pasé genial contigo uwu
+HallyHealer07: Y a pesar de que eres mucho mejor que yo, estuviste todo el tiempo ayudándome
+
+User: Tampoco soy tan buena jugando...
+
+HallyHealer07: ¡¿Cómo que no?! >:(
+HallyHealer07: Todas las misiones que completamos ayer fue gracias a ti
+
+User: Pero si no hubieras intervenido justo a tiempo en las batallas
+User: Habría muerto varias veces
+
+HallyHealer07: Jeje...parece que congeniamos bien uwu
+HallyHealer07: ¡Formamos un gran equipo!
+
+Sentí una enorme felicidad, y por un momento no me importó ni Amanda, ni mis padres. Con Hally sentía que por fin alguien disfrutaba de mi compañía.
+Era bastante extraño, dado que sólo nos concíamos de un día y no sabía practicamente nada sobre él. 
+
+HallyHealer07: Wow [name], ¡gran golpe! uwu
+
+<<Act @ HallyHealer07, hally-normal, left>>
+
+HallyHealer07: ¡¿Acabas de encontrar un camino secreto?! o.O
+
+<<Act @ HallyHealer07, hally-normal, right>>
+
+HallyHealer07: JAJAJAJA para, para, no puedo parar de reirme xD
+
+<<Act @ HallyHealer07, hally-normal, center>>
+
+HallyHealer07: ¿¡ME DAS ESO!?, [name] no hacia falta...
+
+<<Hide @ HallyHealer07>>
+
+Durante toda la tarde, Hally estuvo animándome, nos regalábamos items mutuamente, y me daba constantemente las gracias. 
+
+No podía evitar pensar que actuaba de una forma muy adorable. 
+
+De nuevo, la noche cayó en un suspiro, antes de lo que me hubiera gustado.
+
+<<Act @ HallyHealer07, hally-normal, center,center,#6BDEDB>>
+
+HallyHealer07: [name] me tengo que ir ;.;
+
+User: Nooooo ¿por qué?
+
+HallyHealer07: Tengo que irme a cenar. Mi madre me llama ;.; 
+
+User: Oh...
+User: ¿Vas a conectarte después de cenar?
+
+HallyHealer07: No iba a hacerlo
+HallyHealer07: Pero si te conectas tu si lo hago ^.^ 
+
+Al leer ese mensaje, me sentí culpable al forzarle a conectarse otra vez. 
+No quería dejar de jugar, estaba retrasando la hora de dormir lo máximo posible. 
+Estaba completamente sol@ en casa. Siempre dormía mal cuando mis padres estaban fuera.
+
+User: Si no quieres no tienes por qué hacerlo... 
+
+HallyHealer07: ¡Pero quiero estar contigo!
+
+Simplemente con esa frase, todos mis miedos se esfumaron. 
+
+User: ¿De verdad?
+
+HallyHealer07: ¡Claro! ^.^
+HallyHealer07: Voy a cenar y me conecto. 
+
+User: Valeee
+User: ¡Que aproveche!
+
+HallyHealer07: Graaaciaaas~~ uwu
+HallyHealer07: ¡ESPERA!
+HallyHealer07: ¿[name] has cenado?
+
+En el momento que Hally me hizo esa preguntá, me sonaron las tripas. Se me había olvidado una vez más hacerme la cena. 
+
+User: ...no 
+
+HallyHealer07: ¡Mal!
+HallyHealer07: ¡Tienes que cenar [name]!
+HallyHealer07: Cuando terminemos de cenar los dos, seguimos jugando ¿vale?
+
+User: ¡Vale!
+
+HallyHealer07: Me tendrás que mandar una foto de tu plato terminado para que te pueda creer, sino no seguimos jugando. 
+HallyHealer07: ¿Trato hecho?
+
+User: ¡Trato hecho!
+
+<<Hide @ HallyHealer07>>
+
+Cuando vi que Hally se habia desconectado, baje corriendo a la cocina. 
+
+<<SceneChange @ salon>>
+Abrí el frigorífico y miré lo que me había dejado mi madre para cenar. 
+Sino hubiese sido por Hally, me habría pasado otra noche sin cenar. 
+Mi madre no se da ni cuenta que he cenado, mi padre ni me llama para saber cómo estoy y mi única amiga me ignora… 
+La única persona que ha mostrado algo de preocupación por mí, ha sido Hally.
+Tomé la cena, subí con ella a mi habitación.
+
+<<SceneChange @ habitacion>>
+
+Mientras esperaba a Hally, estuve viendo unos videos en Chipper.
+Fue entonces cuando me di cuenta de que Amanda me había escrito. 
+
+<<Act @ Amanda, user, 1.25, center, brown>>
+Amanda: Holaaaa [name]
+Amanda: ¿Qué tal?
+Amanda: ¿Te apetece echar esa partida?
+
+Por un momento me alegré de que Amanda me hubiese escrito, pero por otro lado no me apetecía estar con ella. Ya había quedado con Hally
+Podía decirle que se uniese a nosotros, pero una pequeña parte de mi tenía miedo de que Amanda me quitase a Hally. 
+Ella era muy extrovertida y le caía bien a todo el mundo. No quería que a Hally le cayese mejor Amanda que yo. 
+Además, ella ignoró mi mensaje ayer, así que ¿por qué tengo que contestarle yo ahora cuando ella está libre? 
+¿Acaso soy su última opción?
+Pensando eso, cerré el mensaje sin contestar y miré el chat de "Dungeons"
+
+<<Hide @ Amanda>>
+<<Act @ HallyHealer07, hally-normal, center,center,#6BDEDB>>
+
+HallyHealer07: ¡He vuelto!
+HallyHealer07: ¿Has cenado?
+
+User: ¡Sí!
+
+HallyHealer07: Mmmmmm... No se si creerte. 
+HallyHealer07: ¡Necesitaré pruebas!
+HallyHealer07: ¡Exijo ahora mismo una foto de tu cena!
+
+User: Hahahaha
+User: Vale vale, ahora te mando xD 
+
+Encendí la cámara del portátil y sujeté el plato vacío enfrente mío, tapándome la mitad superior de la cara. 
+Sólo se me veían los labios. Sujeté el plato y saqué la lengua para la foto.,
+Le envié a Hally. 
+
+HallyHealer07: !!
+HallyHealer07: Muy bien, muy bien. 
+HallyHealer07: Después de una rica cena, no hay nada mejor que una buena partida hehe ^.^
+HallyHealer07: Por cierto, eres bastante guap@, ¿lo sabías?
+
+User: ¡¿?!
+
+No pude evitar sonrojarme cuadno Hally me escribió eso. 
+Una parte de mi cerebro me avisaba de que ese era un cometario bastante extraño e inesperado, pero de todas formas no pude evitar sentirme alagad@. 
+
+User: Apenas se me ve en la foto. Me he tapado casi toda la cara.
+
+HallyHealer07: Nonono, se puede ver perfectamente. 
+HallyHealer07: Si me mandas otra foto con tu cara seguro que te lo podré confirmar. 
+
+-> Enviar la foto__0
+	<<set $foto to true>>
+	Tenía mucha curiosidad de saber cómo era Hally, así que sin dudarlo, volví a abrir la cámara del ordenador y me saqué una foto. 
+	Arrastré mi foto al chat del juego y se la envié.
+	User: Aquí está jaja
+	HallyHealer07: ¡Lo sabía! ¡Guap@!
+	User: Ahora te toca a tí 
+	HallyHealer07: Jeje, voy voy.
+	Al minuto, Hally ya me había mandado su foto. 
+	Se podía ver en la iamgen que Hally era un chico de más o menos mi edad. 
+	Aparentaba ser un chico muy sonriente y amigable. 
+	Llevaba un uniforme de colegio que no recononcía y sus cascos de color verde fosforito llamaban mucho la atención.
+	HallyHealer07: Ahora sabes cómo soy jaja
+	User: Te ves muy bien
+	HallyHealer07: ¡Gracias! 
+	HallyHealer07: Pero no tanto como tú uwu
+-> No enviar la foto__1
+	User: Me da un poco de verguenza...
+	HallyHealer07: ¡¿Por qué?!
+	HallyHealer07: Te prometo que no subiré la foto a ningún lado. 
+	HallyHealer07: Mira si quieres te mando una mía primero.
+	Antes de que pudiera contestarle que no hacía falta, vi como Hally me envió una foto por el chat. 
+	Con mucha curiosidad, abrí la imagen. 
+	Hally era un chico que más o menos aparentaba mi edad, en la foto se le veía sonriendo, con unos cascos puestos y sentado en frente del escritorio, como si se la hubiera sacado ahora mismo mientras jugaba.
+	HallyHealer07: Ahora tú uwu
+	-> Enviar la foto__0
+		<<set $foto to true>>
+		Viendo que Hally ya me había mandado la foto, me sentía un poco culpable al no hacer lo mismo. 
+		Así que volví a abrir la cámara del ordenador y me saqué una foto sonriendo. 
+		HallyHealer07: ¿Ves? ¡Súper guap@!
+	-> No enviar la foto__1
+		<<set $foto to false>>
+		User: No puedo, me da  mucha verguenza...
+		HallyHealer07: No pasa nada.
+		HallyHealer07: Algún día conseguiré esa foto jejeje >:)
+		User: Jajaja seguro
+		HallyHealer07: Pero con la anterior puedo ver que de verdad eres muy guapo@
+
+HallyHealer07: Seguro que ya tienes pareja
+
+User: ¿Pareja? Jajaja que va
+
+HallyHealer07: ¿Cómo que no? ¿Y has besado alguna vez a alguien?
+
+User: No...
+
+HallyHealer07: ¿Te gustaría probarlo alguna vez?
+
+Esta conversación me estaba incomodando un poco. 
+No sabía por qué de repente Hally empezó a hablar sobre este tema, pero las preguntas se estaban volviendo un poco personales y no estaba segur@ de si me sentía del todo cómod@...
+
+User: Tal vez...
+
+HallyHealer07: ¿Con quién?
+HallyHealer07: Yo tampoco he besado a nadie nunca, pero me gustaría probarlo con alguien...
+HallyHealer07: Aunque me da mucha verguenza >.<
+HallyHealer07: ¿Sabes con quién me gustaría probarlo?
+
+User: ...
+
+No estaba segur@ de si quería continuar con esta conversación pero tenía bastante curiosidad. 
+Mucha gente de mi edad que conozco ya han salido con otras personas, era una de l@s poc@s que todavía no lo habían hecho. 
+Me alegró saber que Hally, siendo de edad parecida, estaba en la misma situación que yo. 
+Así que al final cedí y le pregunté. 
+
+User: ¿Con quién?
+
+HallyHealer07: Con una de mis profesoras >.<
+
+User: !!
+User: ¿En serio?
+
+HallyHealer07: Sí, se porta muy bien conmigo...
+HallyHealer07: Ay me ha dado mucha verguenza decirlo >.<
+
+User: Jajaja no pasa nada. 
+User: No se lo contaré a nadie. 
+
+HallyHealer07: ¡Perfecto! 
+HallyHealer07: ¿Quieres seguir jugando?
+
+User: ¡Sí!
+
+Hally y yo estuvimos jugando durante un buen rato. 
+Después de esa conversación, me sentía más cercano a Hally. 
+Ahora no sólo le pongo rostro, sino que además me había contado uno de sus secretos más íntimos. 
+Se estaba acercando medianochoe cuando Hally y yo terminamos al fin una de las misiones. 
+
+HallyHealer07: ¡Me lo he pasado genial [name]! ^.^
+
+User: Yo también. 
+
+Durante un momento, dudé sobre lo que iba a escribir. 
+
+User: Sinceramnete, no estaba teniendo un buen día. 
+User: Pero gracias a ti estoy mucho mejor :) 
+
+HallyHealer07: ¿Y eso? ¿Que ha pasado? ¿Por qué estabas mal?
+HallyHealer07: ¿¡QUIÉN HA SIDO!? 
+HallyHealer07: Nadie hace daño a mi [name] >:(
+
+User: Jajaja no es nada.
+User: Sólo yo dándole vueltas a unas cosas. 
+
+HallyHealer07: :(
+HallyHealer07: [name] quiero que sepas que puedes contarme cualquier cosa. 
+HallyHealer07: Si quieres desahogarte estoy aqui para lo que sea. 
+
+Cuando Hally me dijo eso, tuve una sensación extraña en ese momento. 
+¿Debería contarle a un desconocido cosas de mi vida privada?
+
+-> Contarle__0
+	<<set $contar to true>>
+	Al fin y al cabo, es Hally. 
+	Durante estos días ha sido muy bueno conmigo y gracias a él, estoy de mucho mejor humor. 
+	Poco a poco empecé a contarle sobre todo lo que me preocupaba.
+	User: Pues, la verdad es que no tengo muchos amigos. 
+	User: Por no decir ninguno. 
+	User: Mis padres siempre están trabajando y casi nunca están en casa. 
+	User: Muchas veces nos hemos tenido que mudar por temas de sus trabajos. 
+	User: Es más, hace menos de un mes, me mude otra vez. 
+	User: No me importa la mudanza, lo que peor llevo es tener que empezar de cero.
+	User: Volver a tener que hacer amigos cada vez que empiezo un colegio nuevo. 
+	User: Para luego tener que despedirme de ellos al poco tiempo. 
+	User: Las últimas veces ya ni he intentado integrarme
+	User: Pero hay una chica que se llama Amanda y es muy buena conmigo. 
+	User: Es la única amiga que tengo en este instituto. 
+	User: Ayer habíamos acordado echar una partida juntas, pero me dejó en visto y me ignoró. 
+	<<if $preguntarAmanda is true>>
+		User: Esta mañana le he preguntado por qué me dejo en visto y ella misma me ha dicho que se le apagó el móvil y se le olvidó contestarme.
+		User: Lo entiendo perfectamente, pero no puedo evitar pensar que soy un estorbo para ella.
+	<<endif>>
+	User: Es verdad que es mi culpa por no intentar integrarme pero no sé...
+	User: Estos días, con mis padres además de viaje, y sin nigún amigo, pues me siento muy sol@
+	HallyHealer07: ...
+	HallyHealer07: [name], muchas gracias por contármelo. 
+	HallyHealer07: Siento mucho todo lo que te está pasando.
+	HallyHealer07: Pero no olvides que no estás sola, ahora me tienes a mí :))
+-> No contarle__1
+	A pesar de que Hally me había contado uno de sus scretos, no me veía capaz de hacer lo mismo. 
+	Es cierto que ahora le puedo poner rostro, pero eso no significa que sepa suficiente sobre él. 
+	<<if $foto is true>>
+		Una cosa era enviarle una foto mía, pero otra distinta era contarle sobre mi vida.
+	<<endif>>
+	No sentía que contar información privada a alguien desconocido fuese seguro, así que simplemente le contesté de manera un poco ambigua. 
+	User: No, nada nada no te preocupes.
+	User: Sólo he tenido una pequeña pelea con una amiga y me siento un poco mal
+	User: Peleas de adolescentes hehe. 
+	HallyHealer07: No sabes cómo te entiendo xD
+	HallyHealer07: Pero en serio, puedes contarme lo que sea. 
+	HallyHealer07: Yo soy una tumba. 
+	HallyHealer07: Y seguro que te sientes mucho mejor después de contármelo. 
+	HallyHealer07: Sólo quiero que te sientas mejor y me alegro que te haya podido ayudar a que te olvides de todo. 
+	HallyHealer07: Yo te considero uno de mis mejores amigos. 
+	HallyHealer07: Por no decir el único ;.; 
+	HallyHealer07: Así que no quiero verte pasarlo mal. 
+	HallyHealer07: Me gustaría ayudar si pudiera...
+	User: ...
+	-> Contarle__0
+		<<set $contar to true>>
+		User: Muchas gracias Hally. 
+		User: La verdad es que yo tampoco tengo muchos amigos...
+		User: La única amiga que tengo me ingoró el otro día. 
+		User: Habíamos quedado para echar una partida, pero no se conectaba. Le envíe un mensaje para saber si al final se unía y me ignoró. 
+		HallyHealer07: ¡No!
+		<<if $preguntarAmanda is true>>
+			User: Esta mañana le he preguntado por qué me dejo en visto y ella misma me ha dicho que se le apagó el móvil y se le olvidó contestarme.
+			User: Lo entiendo perfectamente, pero no puedo evitar pensar que soy un estorbo para ella.
+		<<endif>>
+		User: Y luego mis padres nunca están en casa y siempre nos estamos mudando. 
+		User: Así que, después de tantos colegios distintos ya ni intento integrarme entre mis compañeros. 
+		User: Y ahora la única amiga que tengo me ha ignorado. 
+		User: Sé que es sólo un mensaje y no es gran cosa pero...
+		User: No sé, muchas cosas a la vez supongo. 
+		User: Y por eso hoy no ha sido buen día. 
+		HallyHealer07: Jo...
+		HallyHealer07: Siento mucho lo que te está pasando [name].
+		HallyHealer07: Sé que no puedo hacer gran cosa y sólo ayudarte...
+	-> No contarle__1
+		<<set $contar to false>>
+		User: Hally de verdad, muchísimas gracias. 
+		User: Yo también te considero un amigo. 
+		User: Hoy simplememente ha sido un día largo para mí. 
+		User: De verdad, no hay nada más. 
+		User: De todas formas, muchas gracias. 
+		HallyHealer07: ¡De nada!
+		HallyHealer07: ¡Estoy aquí para lo que necesites!
+
+HallyHealer07: Pero quiero que sepas [name] que siempre tendrás un amigo en mí. 
+HallyHealer07: <3
+User: ...
+User: Muchas gracias Hally
+HallyHealer07: hehe
+HallyHealer07: [name] me encantaría seguir hablando, pero tengo que irme ya a la cama. 
+HallyHealer07: Es super tarde y mañana hay clase;.; 
+
+Cuando miré el reloj, me di cuenta de que eran ya pasadas las doce. 
+
+User: Ostras es verdad, es super tarde. 
+User: Mañana vamos a llegar muertos al instituto xD 
+
+HallyHealer07: Hahahaha me voy a dormir en todas las clases. 
+HallyHealer07: Bueno [name]
+
+<<if $contar is true>>
+	HallyHealer07: Muchísimas gracias por contarme lo que te esta pasando. 
+	HallyHealer07: Sinceramente me parece fatal que tu amiga te haya ignorado. 
+	HallyHealer07: No me parece nada bien. 
+	HallyHealer07: Y además, ¿en que piensan tus padres no haciendote comañia? >:(
+	HallyHealer07: Quiero que sepas que peinso que eres muy valiente por aguantar todas esas cosas. 
+	HallyHealer07: No sabría lo que haría yo si estuviera tu misma situación ;.; 
+	User: ...
+	User: Muchas gracias Hally. 
+	User: Eres una de las pocas personas en las que puedo confiar. 
+	HallyHealer07: ... 
+	HallyHealer07: De nada [name]
+	HallyHealer07: Y quiero que sepas que el sentimiento es mutuo <3
+	HallyHealer07: Espero que sepas que siempre puedes contar conmigo para lo que sea :3
+<<else>> 
+	HallyHealer07: Espero que la pelea con tu amiga se solucione ;.; 
+	HallyHealer07: No me gusta verte triste [name]
+	HallyHealer07: Te considero una gran persona y un@ de l@s pocos amig@s que tengo. 
+	HallyHealer07: Espero que sepas que siempre puedes contar conmigo para lo que sea :3
+	User: ...
+	User: Muchas gracias Hally 
+	HallyHealer07: De nadaaaa :)
+<<endif>>
+
+HallyHealer07: Buenas noches~
+HallyHealer07: ¿Nos vemos mañana?
+
+User: ¡Claro!
+User: Buenas noches
+
+<<Hide @ HallyHealer07>>
+
+Apagué el ordenador y me fui a dormir con las palabras de Hally en la cabeza.
+
+<<Act @ HallyHealer07, user, center,center, #6BDEDB>>
+"Siempre puedes contar conmigo"
+
+<<Go @ Day4>>
+// DON'T DELETE THE "==="
+===

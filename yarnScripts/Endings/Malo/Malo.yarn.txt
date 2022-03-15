@@ -1,0 +1,151 @@
+title: Malo
+tags: 
+colorID: 0
+position: 0,0
+---
+<<Scene @ habitacion>>
+<<Act @ User, user, center,center,grey>>
+Al día siguiente, me desperté con un gran dolor de cabeza y me escocían los ojos. 
+Después de mandarle la foto a Hally, éste insistió en que jugásemos un poco más. 
+No recuerdo exactamente lo que ocurrió durante ese tiempo, ya que no podía dejar de pensar en lo que había hecho. 
+Me arrepentía enormemente de haberle enviado esa foto. 
+Sin embargo, seguía confiando en Hally. Cuando me levanté de la cama me di cuenta de que me había dejado el ordenador con el juego encendido. 
+Me acerqué a apagarlo y me fije que Hally estaba ya conectado y me había escrito un mensaje. 
+¿Habría estado jugando toda la noche?
+
+<<Act @ HallyHealer07, hally-normal, center,center,#6BDEDB>>
+HallyHealer07: ¡Buenos días [name]! ^.^
+
+Estuve a punto de cerrar el ordenador y no contestarle, pero incoscientemente, nublad@ por el sueño, le respondí.
+
+User: Hola Hally
+
+HallyHealer07: ¿Qué tal has dormido?
+HallyHealer07: ¿Te apetece jugar un rato?
+
+User: Ahora no me apetece...
+
+HallyHealer07: Oh...
+HallyHealer07: ¡Podemos jugar luego si quieres!
+HallyHealer07: ¿Te ayudaron las fotos de anoche a sentirte más cómod@?
+HallyHealer07: Podemos repetir esta noche si quieres :)
+
+Un escalofrío me recorrió por todo el cuerpo cuando leí esos mensajes. 
+No quería repetir la misma experiencia de anoche y me arrepentí al segundo de hacerlo, por lo que me negué en rotundo. 
+
+User: No, Hally, no me gustan esas fotos.
+User: No quiero mandar más.
+
+HallyHealer07: ¿Qué?
+HallyHealer07: ¿Pero por qué?
+HallyHealer07: Pensaba que confiabas en mi...
+
+User: No me gusta mandar ese tipo de fotos Hally.
+User: Ni tampoco me gusta que me manden.
+User: Así que para ya por favor.
+
+HallyHealer07: ...
+HallyHealer07: ¿De verdad no vas a mandar más?
+
+User: No.
+
+HallyHealer07: ...
+HallyHealer07: ¿Incluso si subo tu foto para que todos la vean?
+
+User: ...
+User: ¿Qué...?
+
+HallyHealer07: No me parece nada justo que no me mandes más fotos [name].
+HallyHealer07: De alguna forma tendría que castigarte.
+
+User: Hally, me prometiste que no lo harías... 
+User: Me prometiste que la borrarías...
+
+HallyHealer07: Tal vez.
+HallyHealer07: Pero eso era antes de que me traicionarás así.
+HallyHealer07: Te voy a volver a preguntar [name].
+HallyHealer07: ¿Vas a mandar más fotos?
+
+User: ...
+User: Hally, no puedo hacerlo, de verdad.
+User: Por favor no lo hagas.
+
+HallyHealer07: Está bien, está bien...
+
+User: ...¿?
+
+HallyHealer07: A Chipper entonces.
+
+User: !!
+
+HallyHealer07: Es una pena que no sepas poner tu cuenta en privado [name].
+HallyHealer07: Gracias a ti, puedo etiquetarte en un segundo, y todos tus amigos y los amigos de tus amigos, podrán ver lo guap@ que sales.
+
+User: ESPERA HALLY
+<<Hide @ HallyHealer07>>
+
+Hally se desconectó del chat antes de que pudiera impedírselo.
+Intenté conectarme a la cuenta de Chipper lo más rápido posible, para poder cambiar el estado de mi cuenta a privado y evitar que alguien pudiera ver mi foto.
+
+Sin embargo, nada más ver la página principal de Chipper, sólo podía observar un único mensaje.
+
+"Te han etiquetado en una foto nueva"
+
+Con una gran sensación de pánico, hice click en el mensaje y al ver el enlace del mensaje, sentí una gran punzada de dolor en mi pecho.
+En el foro de Chipper, se podía ver mi imagen en ropa interior.
+<<if $foto is true>>
+	Junto a esa imagen, estaba a su lado la primera foto que le mandé a Hally, mi cara sonriendo en ese mismo asiento. 
+	Como la habitación y el escritorio se veían igual, además de que en la primera foto se veía mi cara perfectamente, no había manera de negar que yo misma me había sacado esa foto.
+<<endif>>
+	
+<<if $contar is true>>
+	Cuando iba a cerrar el post, me di cuenta de que había una descripción debajo de las fotos.
+	"Hola, me llamo [name]. Estoy muy sola porque mi papi ni mi mami no me hacen caso. Pienso que mi amiga Amanda es una idiota y una traidora, la odio con toda mi alma y no la soporto. 
+	Sólo estoy con ella porque no tengo amigos. Busco compañía, el que quiera que me escriba"
+<<endif>>
+
+Debajo del post, podía ver un montón de mensajes. 
+Sólo habían pasado un par de minutos, pero podía ver en los mensajes que casi todos mis compañeros ya la habían visto. 
+<<Act @ Usuario1, user, center,center,blue>>
+
+Usuario1: Ostras, ¿es [name]?
+Usuario1: ¿Le han hackeado la cuenta?
+Usuario2: No,no, otra persona lo ha subido.
+Usuario2: Le habrá mandado esa foto a alguien y le habrá dado luego una puñalada por la espalda.
+Usuario3: Pobre...¿quién sería tan rácano como para subir una foto así de alguien?
+Usuario3: Sobre todo sin su permiso.
+Usuario2: [name] es bastante rar@ la verdad.
+Usuario2: No se relaciona con nadie y nunca nos dirige la palabra.
+Usuario2: ¿Quién sabe?
+Usuario2: A lo mejor le gusta…
+Usuario4: Se lo ha buscado.
+Usuario4: ¿A quién se le ocurre enviar esas fotos por internet?
+
+Cerré rápidamente el post. 
+Poco a poco, se me iban cayendo las lágrimas mientras una mezcla de miedo, vergüenza y angustia me recorría todo el cuerpo. 
+¿Cómo puedo ir a clase el lunes?
+No me quiero ni imaginar a cuantas personas se han podido ver esa foto. 
+Cuántas de ellas se la habrán guardado...
+Apoyé la cabeza contra la mesa y continué llorando y llorando. No podía soportar la idea de que tantas personas pudieran ver esa imagen de mi. 
+¿Por qué habría hecho eso Hally?
+Pensé que podía confiar en él...Él me dijo que no haría nada con esas fotos... 
+¿Me estaba mintiendo desde un principio?
+Tal vez... ¿sólo quería fotos mías desde un principio?
+¿Acaso era la única que pensaba que éramos amigos?
+De repente pude escuchar una notificación del ordenador. Ya no tenía nada más que perder. Levanté la vista y leí el pequeño mensaje que apareció en mi pantalla.
+<<Act @ Amanda, user, center,center, brown>>
+
+Amanda: [name], ¿qué ha pasado? ¿por qué hay esa imagen tuya colgada?
+Amanda: ¿Estás bien?
+
+<<if $amandaTrust is false>>
+	[[MaloFinal]]
+<<endif>>
+
+-> Contarle a Amanda__1 <<if $amandaTrust is true>>
+	[[MaloAmanda]]
+-> No contarle a Amanda__0 <<if $amandaTrust is true>>
+	[[MaloFinal]]
+
+
+===

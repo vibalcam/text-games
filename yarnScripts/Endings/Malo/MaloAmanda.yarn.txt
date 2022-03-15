@@ -1,0 +1,113 @@
+title: MaloAmanda
+tags: 
+colorID: 0
+position: 0,0 
+---
+
+A pesar de la vergüenza que sentía por dentro se me hacía insoportable, sabía que se lo tenía que contar a alguien. 
+No podía quedarme con todo lo que estaba sintiendo dentro. 
+Me armé de valor y le contesté. 
+
+User: Amanda... ¿Podemos hablar?
+Amanda: ¿Quieres que vaya?
+User: Sí por favor...
+Amanda: En unos minutos estoy en tu casa
+
+<<SceneChange @ habitacion>>
+<<Act @ Amanda, amanda-normal, center,center,brown>>
+Cuando Amanda llegó, le conté toda mi historia con Hally. Como empezamos a escribirnos cuando me hice la cuenta del juego, como pensaba que estábamos siendo amigos..
+Y como en ciertas ocasiones sacaba temas de conversación que me incomodaban. 
+Hasta llegar al día de la foto. 
+
+Amanda: ...
+User: ... 
+User: Debes pensar que soy idiota...
+
+Amanda: ¡No!
+Amanda: [name] que te quede bien claro.
+Amanda: Esto es culpa de un idiota de Internet.
+Amanda: ¿No te das cuenta?
+Amanda: Te ha estado manipulando en todas vuestras conversaciones.
+Amanda: Utilizaba tus puntos débiles para que hicieras lo que él quería. 
+Amanda: Tal vez debería de haber tenido mucho más cuidado [name].
+Amanda: Pero no es tu culpa, es la suya.
+
+User: ...
+User: Muchas gracias Amanda, no sé qué haría sin ti.
+
+Amanda: ¿Para eso están los amigos no?
+Amanda: ...
+Amanda: AH ESTO ME ESTÁ FRUSTRANDO.
+Amanda: Tenemos que hacer algo [name].
+
+User: ¿El qué?
+User: Ya ha subido las fotos y prácticamente todo el mundo que nos tiene en Chipper las han visto..
+User: Aunque pidamos que las borren, habrá personas que se las habrá guardado.
+User: Mi foto va a seguir estando allí fuera.
+
+Amanda: Tienes razón...
+Amanda: Pero podemos impedir que esto le suceda a otra persona.
+
+User: ¿Cómo?
+
+Amanda: Contándoselo a tus padres, para que denuncien a Hally.
+
+<<if $mamaTrust is false>>
+	[[MaloAmigos]]
+<<endif>>
+
+-> Darle la razón__1 <<if $mamaTrust is true>>
+	User: ...
+	User: Tienes razón Amanda. 
+	User: Pero... me da muchísimo miedo. 
+	User: ¿Qué van a pensar de mí ahora?
+	Amanda: No te preocupes [name]
+	Amanda: ¿Quieres que esté contigo cuando se lo cuentes?
+	Amanda: Podemos bajar ahora si quieres...
+	Amanda: Pase lo que pase estoy contigo [name]
+	User: ...
+	User: Vale...
+	User: Vamos
+	<<SceneChange @ black>>
+	<<Hide @ Amanda>>
+	Después de meditarlo con Amanda, ella y yo bajamos al salón y les volví a contar la historia a mis padres
+	<<Act @ Mamá, mama-normal, right,center,green>>
+	<<Act @ Papá, papa-normal, left,center,blue>>
+	Los dos estuvieron en silencio, escuchándome atentamente durante toda la historia. 
+	Hubo momentos donde pude ver como mi padre se ponía rojo de ira y a mi madre se le ponían llorosos los rojos. 
+	<<Hide @ Mamá>>
+	<<Hide @ Papá>>
+	<<Act @ Amanda, amanda-normal,right,center,brown>>
+	En los momentos donde notaba que me trababa o me costaba hablar, Amanda me daba la mano y me daba ánimos para seguir contando. 
+	<<Hide @ Amanda>>
+	Cuando pudieron asumir más o menos la noticia, lo primero que hicieron fue contactar con Chipper para eliminar mi foto de Internet. 
+	Chipper se disculpó por lo que había ocurrido ya que aparentemente Hally había conseguido mi información debido un fallo en el diseño de Chipper con los juegos que tiene asociados. 
+	Aparentemente, en el momento que te hicieses amigo de alguien en un juego, automáticamente también eras su amigo en tu cuenta de Chipper.  
+	Sin embargo, ese error permitió que la policía pudiera rastrear a toda la información de Hally a través de mi cuenta. 
+	Las autoridades nos informaron de que ya existía una investigación contra Hally, y estuvieron durante varios días haciéndome preguntas mientras miraban nuestra conversación en el chat.
+	Durante las siguientes semanas de clase, pude escuchar cómo mis compañeros hablaban a mis espaldas. 
+	<<Act @ Compañero, user, center,center,blue>>
+	Compañero1: Mira, mira allí está
+	Compañero2: Ostras es verdad. 
+	Compañero1: No me creo que pueda venir a clase... 
+	Compañero1: Me moriría de vergüenza... 
+	Compañero2: Ya, y yo... 
+	<<Act @ Amanda, amanda-normal, right,center,brown>>
+	Amanda: Eh eh, a callar
+	Amanda: Si no tenéis ni idea de lo que estáis hablando, ¿por qué no cerráis mejor el pico?
+	Sin embargo, Amanda siempre estaba a mi lado para defenderme. 
+	<<Hide @ Amanda>>
+	Un par de semanas después del incidente, mis padres me dijeron que nos teníamos que mudar otra vez. 
+	Mi madre me contó que mi padre había solicitado un traslado. Los dos se imaginaron que lo estaría pasando mal en el colegio. 
+	Me daba pena no poder ver más a Amanda, pero la ciudad a la que nos íbamos estaba relativamente cerca y siempre podríamos hablar online y quedar de vez en cuando. 
+	Hay ciertas noches donde pienso en Hally y en mis fotos rondando por Internet. 
+	Cuando ese pensamiento me desvela, siempre acudo a mis padres o Amanda para que me ayuden. 
+	Me alegro de habérselo contado, por lo menos no estoy sol@ en estos momentos tan duros. 
+	Espero que en un futuro, este recuerdo sea menos doloroso. Al menos, ahora soy consciente de que nunca sabemos con seguridad quien se oculta al otro lado de la pantalla
+	<<set $silencio to false>>
+	<<SetEnding @ Malo_4>>
+	[[Final]]
+-> Negarse__0 <<if $mamaTrust is true>>
+	[[MaloAmigos]]
+
+===

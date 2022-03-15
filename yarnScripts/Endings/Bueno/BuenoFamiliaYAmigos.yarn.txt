@@ -1,0 +1,73 @@
+title: BuenoFamiliaYAmigos
+tags:
+colorID: 0
+position: 0,0
+---
+
+<<SceneChange @ habitacion>>
+Después de que Amanda me ayudase a colocar el colchón en mi cuarto, le presté a Amanda uno de mis pijamas y nos metimos en la cama. 
+Entonces, Amanda habló por primera vez desde que entramos en mi habitación.
+Amanda: Creo que hemos hecho lo correcto [name].
+Amanda: Tus padres se veían muy serios ahora mismo. 
+Amanda: Ellos sabrán qué hacer.
+User: Tienes razón.
+Amanda: ...
+Amanda: [name]
+User: Dime.
+Amanda: ¿Cómo crees que será Hally en la vida real?
+Me sorprendió no sólo que Amanda sacase el tema de Hally, sino también la pregunta en sí. 
+User: Pues no sé... 
+User: Sólo me lo imagino como en las fotos que me ha mandado.
+Amanda: ¿De verdad crees que es él en esas fotos?
+No quería pensar que existía esa posibilidad. 
+User: No lo sé...
+User: Si de verdad no fuera él, entonces esa última foto que me mandó... 
+Amanda: ...
+Amanda: Me alegro mucho de que se lo hayamos contado a tus padres.
+User: Yo también.
+User: ...
+User: Me alegro mucho tenerte como amiga.
+User: Si no hubiera sido por ti, no creo que hubiera tenido el valor suficiente para contárselo.
+User: Muchas gracias.
+Amanda: Para, para.
+Amanda: Sólo he hecho lo que pensaba que era lo correcto.
+Amanda: Yo también me alegro de ser tu amiga [name].
+User: ...
+User: Oye una pregunta. 
+User: Si tuviéramos que mudarnos otra vez... 
+Amanda: ...
+User: ¿Seguiríamos siendo amig@s?
+Amanda: ¿Qué clase de pregunta es esa?
+Amanda: ¡Pues claro que sí!
+Amanda: Si te acabaras mudando, no perderíamos el contacto.
+Amanda: Tienes ordenador, podemos hablar todos los días por Chipper.
+Amanda: También podemos organizarnos para que puedas venir de visita.
+Amanda: ¡O puedo ir yo a verte!
+Amanda: De verdad, [name], no te preocupes.
+Amanda: Puedes contar conmigo para lo que sea.
+
+Antes pensaba que sólo Hally me diría unas palabras así.No sabía que podía tener un amigo tan cerca. 
+Me alegré muchísimo de haber conocido a Amanda y sinceramente deseaba que, pasase lo que pasase, pudiéramos seguir siendo amig@s.
+<<Hide @ Amanda>>
+<<SceneChange @ black>>
+Al día siguiente, mis padres nos sentaron a Amanda y a mi en el salón. Nos dijeron que habían decidido denunciar lo que había sucedido a la policía. 
+Querían asegurarse de que una persona así no estuviera suelta por Internet.
+Al decirme esas palabras, me di cuenta en ese momento de la gravedad de la situación. 
+Aparentemente, ya existía una investigación abierta con un perfil similar a Hally. 
+Estuvieron a lo largo de la semana en mi casa, haciendo muchas preguntas y comprobando constantemente mis mensajes de Dungeons con Hally, intentando buscar una posible pista. 
+Desde entonces, Amanda y yo seguíamos quedando muy a menudo. 
+Muchas veces jugábamos a Dungeons, ya fuese de manera virtual o en mi casa. 
+Desde que bloqueé a Hally, no me lo volví a encontrar en los servidores, ni tampoco comprobé si me había enviado algún mensaje. No quería tener contacto nunca más a alguien así. 
+Había momentos en los que me agobiaba imaginándome qué hubiera pasado si las cosas hubieran sido de otra manera. Mis padres y Amanda me ayudaban en todo momento y nunca llegaba a sentirme sol@.
+Además,conseguí integrarme en clase con la ayuda de Amanda. No recordaba la última vez que me había sentido tan cómod@ con compañeros de aula.
+Desgraciadamente, aunque era predecible, unos meses más tarde mis padres me dijeron que nos teníamos que volver a mudar. 
+Estaban muy tristes cuando me dieron la noticia, porque sabían que por fin había hecho muchos amigos en el colegio. 
+Fue muy duro distanciarme de Amanda pero cumplió su promesa y mantuvimos el contacto a pesar de las distancias.
+Incluso vino a visitarme el mes siguiente de mudarme. 
+Puede ser que mi primera experiencia en internet no fuera de la mejor, pero ahora podía utilizar mi portátil para hablar con una de mis mejores amigas. 
+Al menos, había aprendido una valiosa lección; nunca sabemos con seguridad quién se oculta al otro lado de la pantalla.
+
+
+<<SetEnding @ Bueno>>
+[[Final]]
+===

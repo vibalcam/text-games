@@ -1,0 +1,239 @@
+title: Bueno
+tags: 
+colorID: 0
+position: 0,0
+---
+
+<<Scene @ salon>>
+<<Act @ User, user, center,center,grey >>
+<<Act @ Mamá, mama-normal, center,center,green>>
+
+Al día siguiente, mamá y yo estábamos desayunando junt@s. 
+<<if $amandaTrust is true>>
+	Fue en ese momento que me dí cuenta de que todavía no le había avisado de que había quedado con Amanda esa tarde. 
+	User: Mamá. 
+	Mamá: Dime.
+	User: He quedado con Amanda para que venga esta tarde a casa. 
+	User: Se me había olvidado decirtelo. 
+	Mamá: ¡No pasa nada!
+	Mamá: Me alegra que venga Amanda, es muy buena chica. 
+	Mamá: Puede venir todas las veces que quiera, no te preocupes. 
+	User: Me ha dicho que vendrá después de comer.
+	Mamá: Sin problema.
+	Mamá: Pero no arméis mucho alboroto.
+	Mamá: Estaré trabajando en mi cuarto y necesito concentrarme. 
+	User: Sí, mamá.
+	Mamá: Perfecto.
+	Mamá: Prepararé algo rico para que merendeis.
+	Mamá: ¿Sabes algo que le pueda gustar?
+	User: ...
+	<<Hide @ Mamá>>
+	<<SceneChange @ salon>>
+	Mi madre y yo estuvimos por la mañana preparando unas galletas para la merienda. Por la tarde estaba ojeando Chipper en el ordenador, cuando escuché que alguien llamaba al timbre.
+	<<Act @ Amanda, amanda-normal, center,center, brown>>
+	Amanda: ¡Hola!
+	User: Hola Amanda, qué pronto has llegado.
+	Amanda: Sí jeje, no tenía nada que hacer y me apetecía verte.
+	Amanda: Espero que no te importe.
+	User: ¡Claro que no!
+	Amanda: ¿Y tu madre?
+	User: Está trabajando.
+	User: Podemos jugar en mi cuarto y así no la molestamos.
+	User: ¿Has traído tu ordenador?
+	Amanda: ¡Sí!
+	User: Perfecto. 
+	User: Por cierto, mi madre y yo hemos hecho unas galletas.
+	User: Podemos comerlas mientras jugamos si quieres.
+	Amanda: ¿Cómo me voy negar a unas galletas caseras?
+	Amanda: ¡Vamos!
+
+	<<SceneChange @ habitacion>>
+	Amanda y yo estuvimos durante un buen rato jugando a Dungeons. Ella estaba tumbada en mi cama, mientras yo usaba el escritorio como siempre.
+	
+	Amanda: No me creo que hayas podido subir tantos niveles en tan solo un par de días.
+	Amanda: Alguien te ha tenido que ayudar.
+	Estuve a punto de hablarle sobre Hally, pero recordé la conversación que tuvimos la última vez. 
+	A él le gustaba que nadie supiese sobre nuestra amistad, diciendo que era nuestro secreto. 
+	Sin embargo, lo que verdaderamente me impidió nombrarle fue lo que ocurrió la noche anterior. 
+	Por algún motivo, no quería que nadie supiese que había tenido una conversación así. 
+
+	Amanda: Por cierto, ¿has conseguido llegar al último nivel de la misión de los huérfanos?
+	User: Claro, hace tiempo.
+	Amanda: ¡¿En serio?!
+	Amanda: No consigo pasar del enemigo final. 
+	Amanda: ¿Es buena la recompensa? Porque ya ni sé si me merece la pena. 
+	User: Te da una armadura bastante fuerte, es la que tengo ahora mismo.
+	Amanda: ¿En serio?
+	Amanda: Déjame ver tus stats.
+	Amanda se levantó de la cama y me cogió el portátil. 
+	Amanda: ¡No me lo puedo creer!
+	Amanda: Tiene un nivel de defensa impresionante y es bastante mona, la verdad.
+	Amanda: Uy vamos a ver qué más tienes en tu equipo...
+	Mientras Amanda ojeaba el inventario de mi personaje, cogi un par de galletas y empecé a comerlas. 
+	Se me cayeron un par de migas al suelo, así que cogí una de las servilletas que había traído y empecé a recogerlas. 
+	No quería ni imaginar la bronca que me echaría mi madre si tenía el cuarto sucio. 
+	Hasta que no terminé de recoger todo, no me di cuenta de lo callada que se había quedado Amanda. 
+	Amanda: Oye [name]...
+	User: Dime.
+	Amanda: ¿Quién es HallyHealer07 y por qué te está hablando sobre unas fotos?
+	Al escuchar lo que había dicho Amanda, me levanté rápidamente de la silla y le cogí el portátil de las manos. 
+	<<Hide @ Amanda>>
+	En la pantalla del ordenador pude ver que Hally acababa de escribir unos cuantos mensajes. 
+	<<Act @ HallyHealer07, hally-normal,center,center,#6BDEDB>>
+	HallyHealer07: Hola [name] ^.^
+	HallyHealer07: Quería disculparme por cómo me había comportado anoche.
+	HallyHealer07: Estaba bastante dolido porque no confiaste en mí.
+	HallyHealer07: No sabía que unas simples fotos fueran suficientes cómo romper nuestra amistad...
+	HallyHealer07: Pero no pasa nada,
+	HallyHealer07: Yo también te perdono.
+	HallyHealer07: Te prometo que no hablaré más sobre el tema hasta que te sientas más cómodo.
+	HallyHealer07: Sabes que me puedes pedir lo que sea si lo necesitas.
+	HallyHealer07: <3 
+	<<Hide @ HallyHealer07>> 
+	...
+	No sabía qué hacer en ese momento. 
+	<<Act @ Amanda, amanda-normal, center,center, brown>>
+	Amanda: [name] ¿quién ese ese tal Hally?
+	Amanda: He visto la foto [name]...
+	Amanda: Perdona por ver tus mensajes sin permiso.
+	Amanda: Cuando ha aparecido la notificación le he dado por instinto y he visto la imagen que te había mandado.
+	Amanda: [name] ¿quién es Hally y por qué te manda esas cosas?
+	User: ... 
+	Amanda: No será que... 
+	Amanda: Si estáis juntos o algo no me meteré pero...
+	User: No,no,no.
+	User: No es eso. 
+	User: ...
+	User: Hally es un amigo que hice hace poco jugando a Dungeons.
+	User: Empezamos a hablar hace un par de días y estábamos siendo muy amigos...
+	User: Ayer Hally me mandó esa foto.
+	User: Yo no se la pedí.
+	User: No sé por qué sacó el sexo como tema de conversación, le dije que era incómod@ para mí y me dijo que me ayudaría enviándome una foto suya desnudo. 
+	Amanda: ¿Qué?
+	User: Cuando me la mandó me pidió que le mandase una igual a cambio, que era lo justo después de que él me mandase la suya... 
+	Amanda: ¿QUÉ QUÉ?
+	User: A decir verdad, desde el día que me mandó un video adulto me estaba sintiendo muy incómod@, pero había sido muy bueno conmigo, así que no le di importancia... 
+	Amanda: ¿QUE TE MANDO QUÉ?
+	User: Pero me negué en rotundo a mandarle esa foto
+	User: No he hablado con él desde entonces....
+	Amanda: ...
+	Amanda: [name] aquí hay algo raro.
+	Amanda: Tenemos que decírselo a tu madre.
+	User: ¿Qué?
+	User: ¿Decirle el qué? ¿Por qué?
+	Amanda: [name] hay un extraño que te está sacando temas de conversaciones sexuales y te está pidiendo que le mandes fotos desnud@.
+	Amanda: No me gusta nada esto. 
+	Amanda: [name] me has dicho que esta persona te ha tratado muy bien.
+	Amanda: Pero sinceramente pienso que estaba fingiendo todo este tiempo.
+	Amanda: Entonces, ¿por qué se enfadaría al negarte a mandar unas fotos comprometedoras?
+	Amanda: ¿Qué clase de persona pide eso en un principio?
+	Amanda: ¿Y qué hubiese ocurrido si le hubieses mandado esa foto?
+	Amanda: ¿Crees que se habría quedado satisfecho con una?
+	Amanda: ¿Y si te pide más y te niegas?
+	Amanda: ¿Qué hubieras hecho si hubiese subido esa foto a Internet?
+	Amanda: De verdad [name], no me gusta nada, tendríamos que decírselo
+	User: ...
+	-> No decir nada__0
+		<<set $silencio to true>>
+		User: Amanda de verdad no hace falta.
+		User: Al final no ha pasado nada y no tengo de qué preocuparme.
+		User: Todo lo que has dicho es cierto.
+		User: No te preocupes, ahora mismo le bloqueo y no pasa nada.
+		User: Simplemente nos podemos olvidar del asunto y listo.
+		Amanda: ...
+		Amanda: ¿Segur@?
+		User: Sí Amanda, no te preocupes.
+		Amanda: ...
+		Amanda: Está bien.
+		Amanda:  Pero quiero que le bloquees ahora mismo.
+		User: Trato hecho.
+		Con Amanda al lado, me metí dentro del perfil de Hally y le dí al botón de bloquear. 
+		Había sido una experiencia muy rara y nada agradable, pero como no había ocurrido nada, simplemente me alejaría de él y me olvidaría del tema. 
+		<<SceneChange @ salon>>
+		<<Act @ Mamá, mama-normal, left,center,green>>
+		<<Act @ Papá, papa-normal, right,center, blue>>
+		Esa noche, mi padre nos sorprendió llegando temprano de su viaje de trabajo. Mis padres invitaron a Amanda a cenar, que aceptó sin apenas dudarlo. 
+		Los 4 tuvimos una cena agradable. Había ocasiones en las que notaba cómo Amanda me miraba de reojo. 
+		Probablemente estuviese pensando sobre Hally y se preguntaba si era lo correcto ocultarles lo que había sucedido.
+		Sin embargo, cumplió su palabra y no dijo nada.
+		<<SceneChange @ salon>>
+		Era bastante tarde cuando terminamos de cenar y mis padres se sentían culpables de que Amanda se tuviera que ir casi a medianoche. 
+		Mamá: Amanda, ¿por qué no te quedas a dormir?
+		Mamá: Tenemos un colchón extra, [name] puede ponerlo en su cuarto y dormir en el suelo mientras coges su cama. 
+		Amanda: No, no, por favor, no quiero ser una molestia.
+		Papá: ¡No eres ninguna molestias!
+		Amanda: Pero acaba de llegar de viaje, seguro que está agotado.
+		Amanda: Mejor os dejo tranquilos y me voy a casa.
+		Amanda: Seguro que mis padres me están esperando.
+		Papá: De verdad, no es ninguna molestia.
+		Mamá: Y no te preocupes por tus padres, ahora mismo les llamo y les aviso que te quedas a dormir.
+		Papá: No aceptamos un no como respuesta.
+		Amanda: ...
+		Amanda: ¡Está bien!
+		Amanda: Pero yo duermo en el suelo, [name].
+		User: ¡De ninguna manera!
+		<<Hide @ Mamá>>
+		<<Hide @ Papá>>
+		<<Hide @ Amanda>>
+		[[BuenoAmanda]]
+	-> Hacer caso a Amanda__1
+		<<set $silencio to false>>
+		User: Tienes razón Amanda.
+		Amanda: ¿Verdad?
+		User: No sé qué podría haber pasado si le hubiera mandado esa foto a Hally.
+		User: En todo caso, se lo tendríamos que decir para quedarnos más tranquil@s.
+		Amanda: ¿Quieres decírselo ahora a tu madre?		
+		User: ...
+		User: Creo que cuanto antes lo hagamos mejor.
+		Amanda: Tienes razón.
+		Amanda: ¿Quieres que me vaya o prefieres que me quede cuando se lo cuentes?
+		User: ...preferiría no estar sol@ al contárselo.
+		Amanda: No te preocupes, te acompaño.
+		Amanda: Vamos.
+		<<SceneChange @ salon>>
+		//<<Move @ Amanda, right,0.5>>
+		<<Act @ Amanda, amanda-normal, right>>
+		Amanda y yo fuimos al salón para hablar con mi madre.
+		Para nuestra sorpresa, no estaba sola en el salón. 
+		<<Act @ Mamá, mama-normal, center, center, green>>
+		<<Act @ Papá, papa-normal, left, center, blue>>
+		Papá: ¡Sorpresa!
+		Mamá: Adivina quién ha llegado antes del viaje.
+		Papá: No sabéis las ganas que tenía de volver.
+		Papá:  Y tú eres Amanda ¿verdad?, encantado de conocerte.
+		Amanda: Hola...
+		Papá: ¿Qué os pasa chi@s? ¿Por qué estáis tan seri@s?
+		Mamá: ¿Ha pasado algo?
+		Amanda me miró por un momento, dándome fuerzas para continuar. 
+		User: Mamá, papá, os tengo que contar una cosa. 
+		<<SceneChange @ salon>>
+		Estuvimos bastante tiempo en el salón. 
+		Les conté lo mismo que le acababa de decir a Amanda, cómo había conocido a Hally y cómo poco a poco sus conversaciones iban girando entorno a un tema específico, hasta llegar al día de la foto. 
+		Al terminar, mi madre me dió la mano y dió un gran suspiro. 
+
+		Mamá: [name] has hecho muy bien en no haber enviado esa foto.
+		Papá: ...
+		Mi padre estaba callado sin decir nada, simplemente estaba sentado, mirando fijamente el suelo. 
+		Mamá: Amanda, ¿te importaría mucho quedarte a dormir?
+		Mamá: Puedo llamar a tus padres y avisarles para que te puedas quedar.
+		Mamá: No quiero que [name] esté sol@ ahora mismo.
+		Amanda: Por supuesto, si no es ninguna molestia, me gustaría quedarme.
+		Mamá: [name] tu padre y yo tenemos que hablar, ¿por qué no subes con Amanda y preparas el colchón para que podáis dormir junt@s?
+		User: Vale.
+		User: Vamos Amanda. 
+		Amanda: Sí. 
+		<<Hide @ Papá>>
+		<<Hide @ Mamá>>
+		<<Act @ Amanda, amanda-normal, center>>
+
+		[[BuenoFamiliaYAmigos]]
+
+<<endif>>
+
+<<if $mamaTrust is true>>
+	[[BuenoPadres]]
+<<endif>>
+
+[[BuenoSilencio]]
+
+===
