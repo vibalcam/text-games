@@ -37,11 +37,11 @@ def train(
     :param data_path: directory where the data can be found
     :param save_path: directory where the model will be saved
     :param lr: learning rate for the training
-    :param optimizer_name: optimizer used for training. Can be adam, adamw, sgd
+    :param optimizer_name: optimizer used for training. Can be `adam, adamw, sgd`
     :param n_epochs: number of epochs of training
     :param batch_size: size of batches to use
     :param num_workers: number of workers (processes) to use for data loading
-    :param scheduler_mode: scheduler mode to use for the learning rate scheduler. Can be min_loss, max_acc, max_val_acc
+    :param scheduler_mode: scheduler mode to use for the learning rate scheduler. Can be `min_loss, max_acc, max_val_acc, max_val_mcc`
     :param use_cpu: whether to use the CPU for training
     :param debug_mode: whether to use debug mode (cpu and 0 workers)
     :param steps_validate: number of epoch after which to validate and save model (if conditions met)
@@ -78,8 +78,10 @@ def train(
     name_model = '/'.join([
         str(name_dict)[1:-1].replace(',', '/').replace("'", '').replace(' ', '').replace(':', '='),
     ])
-    train_logger = tb.SummaryWriter(path.join(log_dir, 'train', name_model), flush_secs=1)
-    valid_logger = tb.SummaryWriter(path.join(log_dir, 'valid', name_model), flush_secs=1)
+    # train_logger = tb.SummaryWriter(path.join(log_dir, 'train', name_model), flush_secs=1)
+    # valid_logger = tb.SummaryWriter(path.join(log_dir, 'valid', name_model), flush_secs=1)
+    train_logger = tb.SummaryWriter(path.join(log_dir, name_model), flush_secs=1)
+    valid_logger = train_logger
 
     # Model
     dict_model.update(dict_param)
@@ -118,7 +120,7 @@ def train(
 
     if scheduler_mode == "min_loss":
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=10 if not balanced_actions else 480)
-    elif scheduler_mode in ["max_acc", "max_val_acc"]:
+    elif scheduler_mode in ["max_acc", "max_val_acc", "max_val_mcc"]:
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'max', patience=10 if not balanced_actions else 480)
     else:
         raise Exception("Optimizer not configured")
@@ -128,7 +130,7 @@ def train(
         p_bar.set_description(f"{name_model} -> {dict_model['val_acc']}")
         # print(epoch)
         train_loss = []
-        train_acc = ConfusionMatrix(size=2, name='train')
+        train_cm = ConfusionMatrix(size=2, name='train')
 
         # Start training: train mode and freeze bert
         model.train()
@@ -145,19 +147,19 @@ def train(
 
             # Add train loss and accuracy
             train_loss.append(loss_val.cpu().detach().numpy())
-            train_acc.add(preds=pred, labels=reward)
+            train_cm.add(preds=pred, labels=reward)
 
         # Evaluate the model
-        val_acc = ConfusionMatrix(size=2, name='val')
+        val_cm = ConfusionMatrix(size=2, name='val')
         model.eval()
         with torch.no_grad():
             for state, action, reward in loader_valid:
                 pred = model(state, action)[:, 0]
-                val_acc.add(pred, reward)
+                val_cm.add(pred, reward)
 
         train_loss = np.mean(train_loss)
-        train_acc = train_acc.global_accuracy
-        val_acc = val_acc.global_accuracy
+        train_acc = train_cm.global_accuracy
+        val_acc = val_cm.global_accuracy
 
         # Step the scheduler to change the learning rate
         if scheduler_mode == "min_loss":
@@ -166,13 +168,17 @@ def train(
             scheduler.step(train_acc)
         elif scheduler_mode == "max_val_acc":
             scheduler.step(val_acc)
+        elif scheduler_mode == 'max_val_mcc':
+            scheduler.step(val_cm.matthews_corrcoef)
 
         global_step += 1
         if train_logger is not None:
-            # train_logger.add_text(model, img)
-            train_logger.add_scalar('loss', train_loss, global_step=global_step)
-            train_logger.add_scalar('acc', train_acc, global_step=global_step)
-            valid_logger.add_scalar('acc', val_acc, global_step=global_step)
+            suffix = 'train'
+            train_logger.add_scalar(f'loss_{suffix}', train_loss, global_step=global_step)
+            log_confussion_matrix(train_logger, train_cm, global_step, suffix=suffix)
+            # validation log
+            suffix = 'val'
+            log_confussion_matrix(valid_logger, val_cm, global_step, suffix=suffix)
             train_logger.add_scalar('lr', optimizer.param_groups[0]['lr'], global_step=global_step)
 
         # Save the model
@@ -186,6 +192,20 @@ def train(
             save_model(model, save_path, name_path, param_dicts=dict_model)
 
 
+def log_confussion_matrix(logger, confussion_matrix: ConfusionMatrix, global_step: int, suffix=''):
+    """
+    Logs the data in the confussion matrix to a logger
+    :param logger: tensorboard logger to use for logging
+    :param confussion_matrix: confussion matrix from where the metrics are obtained
+    :param global_step: global step for the logger
+    """
+    logger.add_scalar(f'acc_global_{suffix}', confussion_matrix.global_accuracy, global_step=global_step)
+    logger.add_scalar(f'acc_avg_{suffix}', confussion_matrix.average_accuracy, global_step=global_step)
+    logger.add_scalar(f'mcc_{suffix}', confussion_matrix.matthews_corrcoef, global_step=global_step)
+    for idx, k in enumerate(confussion_matrix.class_accuracy):
+        logger.add_scalar(f'acc_class_{idx}_{suffix}', k, global_step=global_step)
+
+
 def test(
         data_path: str = './yarnScripts',
         save_path: str = './models/saved',
@@ -195,6 +215,7 @@ def test(
         debug_mode: bool = False,
         use_cpu: bool = False,
         save: bool = True,
+        verbose: bool = False,
 ) -> None:
     """
     Calculates the metric on the test set of the model given in args.
@@ -208,25 +229,34 @@ def test(
     :param use_cpu: whether to use the CPU for training
     :param debug_mode: whether to use debug mode (cpu and 0 workers)
     :param save: whether to save the results in the model dict
+    :param verbose: whether to print results
     """
+    def print_v(s):
+        if verbose:
+            print(s)
+
     from pathlib import Path
     # cpu or gpu used for training if available (gpu much faster)
     device = torch.device('cuda' if torch.cuda.is_available() and not (use_cpu or debug_mode) else 'cpu')
-    print(device)
+    print_v(device)
     # num_workers 0 if debug_mode
     if debug_mode:
         num_workers = 0
 
     # get model names from folder
     model = None
-    for folder_path in Path(save_path).glob('*'):
-        print(f"Testing {folder_path.name}")
+    best_dict = None
+    best_acc = 0.0
+    list_all = []
+    paths = list(Path(save_path).glob('*'))
+    for folder_path in tqdm(paths):
+        print_v(f"Testing {folder_path.name}")
 
         # load model and data loader
         del model
         model, dict_model = load_model(folder_path)
         model = model.to(device).eval()
-        _, _, loader_test = load_data(
+        loader_train, loader_valid, loader_test = load_data(
             dataset_path=data_path,
             num_workers=num_workers,
             batch_size=batch_size,
@@ -237,25 +267,65 @@ def test(
         )
 
         # start testing
-        test_acc = []
+        train_cm = []
+        val_cm = []
+        test_cm = []
         for k in range(n_runs):
-            run_acc = ConfusionMatrix(size=2, name='test')
+            train_run_cm = ConfusionMatrix(size=2, name='train')
+            val_run_cm = ConfusionMatrix(size=2, name='val')
+            test_run_cm = ConfusionMatrix(size=2, name='test')
 
             with torch.no_grad():
+                # train
+                for state, action, reward in loader_train:
+                    pred = model(state, action)[:, 0]
+                    train_run_cm.add(preds=pred, labels=reward)
+
+                # valid
+                for state, action, reward in loader_valid:
+                    pred = model(state, action)[:, 0]
+                    val_run_cm.add(preds=pred, labels=reward)
+
+                # test
                 for state, action, reward in loader_test:
                     pred = model(state, action)[:, 0]
-                    run_acc.add(preds=pred, labels=reward)
+                    test_run_cm.add(preds=pred, labels=reward)
 
-            print(f"Run {k}: {run_acc.global_accuracy}")
-            test_acc.append(run_acc.global_accuracy)
+            print_v(f"Run {k}: {test_run_cm.global_accuracy}")
+            
+            train_cm.append(train_run_cm)
+            val_cm.append(val_run_cm)
+            test_cm.append(test_run_cm)
 
-        test_acc = np.mean(test_acc)
-        dict_result = {"test_acc": test_acc}
+        dict_result = {
+            "train_mcc": np.mean([k.matthews_corrcoef for k in train_cm]),
+            "val_mcc": np.mean([k.matthews_corrcoef for k in val_cm]),
+            "test_mcc": np.mean([k.matthews_corrcoef for k in test_cm]),
 
-        print(f"{folder_path.name}: {dict_result}")
+            "train_acc": np.mean([k.global_accuracy for k in train_cm]),
+            "val_acc": np.mean([k.global_accuracy for k in val_cm]),
+            "test_acc": np.mean([k.global_accuracy for k in test_cm]),
+        }
+
+        print_v(f"RESULT: {dict_result}")
+
         dict_model.update(dict_result)
         if save:
             save_dict(dict_model, f"{folder_path}/{folder_path.name}.dict")
+
+        list_all.append(dict(
+            dict=dict_model,
+            train_cm=train_cm,
+            val_cm=val_cm,
+            test_cm=test_cm,
+        ))
+
+        # save if best
+        if best_acc < (test_acc := dict_model['test_acc']):
+            best_acc = test_acc
+            best_dict = dict_model
+
+    return best_dict, best_acc, list_all
 
 
 def show_examples(
@@ -286,7 +356,8 @@ def show_examples(
 
     # get model names from folder
     model = None
-    for folder_path in Path(save_path).glob('*'):
+    paths = list(Path(save_path).glob('*'))
+    for folder_path in tqdm(paths):
         print(f"Show examples {folder_path.name}")
 
         # load model and data loader
