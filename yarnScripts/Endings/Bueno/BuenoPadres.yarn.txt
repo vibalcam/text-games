@@ -2,6 +2,7 @@ title: BuenoPadres
 tags: 
 colorID: 0
 position: 0,0
+final:1
 ---
 
 Estaba pensando en qué podría hacer esta tarde para entretenerme cuando de repente recordé que mi madre había dicho que papá llegaba pronto.

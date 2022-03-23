@@ -2,6 +2,7 @@ title: MaloFinal
 tags: 
 colorID: 0
 position: 0,0 
+final:0
 ---
 Al ver su mensaje, apagué el ordenador y me escondí entre las sábanas de mi cama. 
 Lo había visto, Amanda había visto el post. 
@@ -31,10 +32,10 @@ Mamá: Rápido baja a saludarle.
 <<endif>>
 
 
--> Contarles lo que ha pasado__1 <<if $mamaTrust is true>>
+-> Contarles lo que ha pasado__r:1 <<if $mamaTrust is true>>
 	[[MaloPadres]]
 
--> No decir nada__0 <<if $mamaTrust is true>>
+-> No decir nada__r:0 <<if $mamaTrust is true>>
 	[[MaloSilencio]]
 
 

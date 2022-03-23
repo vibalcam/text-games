@@ -162,12 +162,12 @@ User: Sí, mamá.
 // <<Move @ Mamá, right, center, 0.25>>
 <<Hide @ Mamá>> 
 
--> Seguir jugando__0
+-> Seguir jugando__r:0
    	<<set $jugarTarde to true>>
    	Cuando mi madre cerró la puerta, me puse el pijama y me tumbé en la cama con el portátil
    	Para simular que estaba durmiendo, apagué las luces y seguí jugando a oscuras con los auriculares
    	No fue hasta la madrugada cuando me empezaron a doler los ojos y me fui a dormir.
--> Ir a dormir__1
+-> Ir a dormir__r:1
    	<<set $jugarTarde to false>>
    	Mi madre tenía razón, mañana iba a estar muy cansada
 	Guardé la partida y cerré el ordenador.

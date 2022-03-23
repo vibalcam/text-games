@@ -147,7 +147,7 @@ def train(
 
             # Add train loss and accuracy
             train_loss.append(loss_val.cpu().detach().numpy())
-            train_cm.add(preds=pred, labels=reward)
+            train_cm.add(preds=(pred > 0).float(), labels=reward)
 
         # Evaluate the model
         val_cm = ConfusionMatrix(size=2, name='val')
@@ -155,7 +155,7 @@ def train(
         with torch.no_grad():
             for state, action, reward in loader_valid:
                 pred = model(state, action)[:, 0]
-                val_cm.add(pred, reward)
+                val_cm.add((pred > 0).float(), reward)
 
         train_loss = np.mean(train_loss)
         train_acc = train_cm.global_accuracy
@@ -182,6 +182,7 @@ def train(
             train_logger.add_scalar('lr', optimizer.param_groups[0]['lr'], global_step=global_step)
 
         # Save the model
+        # todo save every x epochs
         if (epoch % steps_validate == steps_validate - 1) and (True or (val_acc >= dict_model["val_acc"])):
             # print(f"Best val acc {epoch}: {val_acc}")
             dict_model["train_loss"] = train_loss
@@ -279,17 +280,17 @@ def test(
                 # train
                 for state, action, reward in loader_train:
                     pred = model(state, action)[:, 0]
-                    train_run_cm.add(preds=pred, labels=reward)
+                    train_run_cm.add(preds=(pred > 0).float(), labels=reward)
 
                 # valid
                 for state, action, reward in loader_valid:
                     pred = model(state, action)[:, 0]
-                    val_run_cm.add(preds=pred, labels=reward)
+                    val_run_cm.add(preds=(pred > 0).float(), labels=reward)
 
                 # test
                 for state, action, reward in loader_test:
                     pred = model(state, action)[:, 0]
-                    test_run_cm.add(preds=pred, labels=reward)
+                    test_run_cm.add(preds=(pred > 0).float(), labels=reward)
 
             print_v(f"Run {k}: {test_run_cm.global_accuracy}")
             

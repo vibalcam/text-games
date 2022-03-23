@@ -229,8 +229,8 @@ class ConfusionMatrix:
         :param preds: predicted values (B)
         :param labels: true values (B)
         """
-        preds = preds.reshape(-1).cpu().detach().clone()
-        labels = labels.reshape(-1).cpu().detach().clone()
+        preds = preds.reshape(-1).float().cpu().detach().clone()
+        labels = labels.reshape(-1).float().cpu().detach().clone()
         
         self.matrix += self._make(preds, labels)
         self.preds = torch.cat((self.preds, preds), dim=0) if self.preds is not None else preds

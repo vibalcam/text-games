@@ -20,7 +20,7 @@ User: Hola Amanda.
 
 A pesar de que la tarde con Hally me hizo olvidar, no pude evitar recordar lo que había ocurrido al ver a Amanda de nuevo. 
 
--> Preguntarle__1
+-> Preguntarle__r:1
 	<<set $preguntarAmanda to true>>
 	Justo cuando Amanda iba a sentarse en su asiento, me armé de valor para preguntarle sobre ayer.
 	User: Oye Amanda...
@@ -38,7 +38,7 @@ A pesar de que la tarde con Hally me hizo olvidar, no pude evitar recordar lo qu
 	Amanda: Bueno luego hablamos 
 	User: Vale
 	Me dirigí de nuevo a mi asiento. Desde allí vi cómo Amanda se acercaba a la mesa de sus amigos mientras esperábamos a que llegara el profesor.
--> No preguntarle__0
+-> No preguntarle__r:0
 	<<set $preguntarAmanda to false>>
 	Quería saber por qué me dejo en visto, pero ya me había visto en situaciones similares en otros colegios, y no iba a volver a molestarme
 	Decidí no decirle nada y me fui directamente a mi asiento.
@@ -277,7 +277,7 @@ User: Apenas se me ve en la foto. Me he tapado casi toda la cara.
 HallyHealer07: Nonono, se puede ver perfectamente. 
 HallyHealer07: Si me mandas otra foto con tu cara seguro que te lo podré confirmar. 
 
--> Enviar la foto__0
+-> Enviar la foto__r:0
 	<<set $foto to true>>
 	Tenía mucha curiosidad de saber cómo era Hally, así que sin dudarlo, volví a abrir la cámara del ordenador y me saqué una foto. 
 	Arrastré mi foto al chat del juego y se la envié.
@@ -293,7 +293,7 @@ HallyHealer07: Si me mandas otra foto con tu cara seguro que te lo podré confir
 	User: Te ves muy bien
 	HallyHealer07: ¡Gracias! 
 	HallyHealer07: Pero no tanto como tú uwu
--> No enviar la foto__1
+-> No enviar la foto__r:1
 	User: Me da un poco de verguenza...
 	HallyHealer07: ¡¿Por qué?!
 	HallyHealer07: Te prometo que no subiré la foto a ningún lado. 
@@ -302,12 +302,12 @@ HallyHealer07: Si me mandas otra foto con tu cara seguro que te lo podré confir
 	Con mucha curiosidad, abrí la imagen. 
 	Hally era un chico que más o menos aparentaba mi edad, en la foto se le veía sonriendo, con unos cascos puestos y sentado en frente del escritorio, como si se la hubiera sacado ahora mismo mientras jugaba.
 	HallyHealer07: Ahora tú uwu
-	-> Enviar la foto__0
+	-> Enviar la foto__r:0
 		<<set $foto to true>>
 		Viendo que Hally ya me había mandado la foto, me sentía un poco culpable al no hacer lo mismo. 
 		Así que volví a abrir la cámara del ordenador y me saqué una foto sonriendo. 
 		HallyHealer07: ¿Ves? ¡Súper guap@!
-	-> No enviar la foto__1
+	-> No enviar la foto__r:1
 		<<set $foto to false>>
 		User: No puedo, me da  mucha verguenza...
 		HallyHealer07: No pasa nada.
@@ -388,7 +388,7 @@ HallyHealer07: Si quieres desahogarte estoy aqui para lo que sea.
 Cuando Hally me dijo eso, tuve una sensación extraña en ese momento. 
 ¿Debería contarle a un desconocido cosas de mi vida privada?
 
--> Contarle__0
+-> Contarle__r:0
 	<<set $contar to true>>
 	Al fin y al cabo, es Hally. 
 	Durante estos días ha sido muy bueno conmigo y gracias a él, estoy de mucho mejor humor. 
@@ -415,7 +415,7 @@ Cuando Hally me dijo eso, tuve una sensación extraña en ese momento.
 	HallyHealer07: [name], muchas gracias por contármelo. 
 	HallyHealer07: Siento mucho todo lo que te está pasando.
 	HallyHealer07: Pero no olvides que no estás sola, ahora me tienes a mí :))
--> No contarle__1
+-> No contarle__r:1
 	A pesar de que Hally me había contado uno de sus scretos, no me veía capaz de hacer lo mismo. 
 	Es cierto que ahora le puedo poner rostro, pero eso no significa que sepa suficiente sobre él. 
 	<<if $foto is true>>
@@ -435,7 +435,7 @@ Cuando Hally me dijo eso, tuve una sensación extraña en ese momento.
 	HallyHealer07: Así que no quiero verte pasarlo mal. 
 	HallyHealer07: Me gustaría ayudar si pudiera...
 	User: ...
-	-> Contarle__0
+	-> Contarle__r:0
 		<<set $contar to true>>
 		User: Muchas gracias Hally. 
 		User: La verdad es que yo tampoco tengo muchos amigos...
@@ -455,7 +455,7 @@ Cuando Hally me dijo eso, tuve una sensación extraña en ese momento.
 		HallyHealer07: Jo...
 		HallyHealer07: Siento mucho lo que te está pasando [name].
 		HallyHealer07: Sé que no puedo hacer gran cosa y sólo ayudarte...
-	-> No contarle__1
+	-> No contarle__r:1
 		<<set $contar to false>>
 		User: Hally de verdad, muchísimas gracias. 
 		User: Yo también te considero un amigo. 
