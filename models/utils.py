@@ -1,4 +1,5 @@
 from typing import List, Dict, Tuple
+import pickle
 
 import numpy as np
 import pandas as pd
@@ -8,8 +9,9 @@ import random
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import matthews_corrcoef, mean_squared_error
+import networkx as nx
 
-from simulator import YarnSimulator
+from simulator import YarnSimulator, Simulator
 
 
 # Labels for the actions
@@ -144,17 +146,17 @@ def load_data(
     """
 
     # Get data from simulator
+    # todo use graph directly
     graph = YarnSimulator(dataset_path, jump_as_choice=True, text_unk_macro="").get_decision_graph()[0]
 
     states = []
     actions = []
     rewards = []
     for p, _, attr in graph.edges(data=True):
-        #todo change extras
         if not attr['extras']:
             continue
         states.append(graph.nodes[p]['text'].strip())
-        actions.append(attr['action'])
+        actions.append(attr['action'].strip())
         rewards.append(float(attr['extras'][reward_key]))
 
     # Shuffle the data
@@ -188,6 +190,27 @@ def load_data(
         shuffle=idx == 0,
         drop_last=drop_last,
     ) for idx, k in enumerate(datasets))
+
+
+# todo use graph directly
+def transform_graph_model(dataset_path: str, model, save_path:str = "./graph_transformed.pickle"):
+    # runs the model over all the network and save the corresponding extra
+    graph = YarnSimulator(dataset_path, jump_as_choice=True, text_unk_macro="").get_decision_graph()[0]
+
+    # get predicted attributes for all edges
+    pred = {}
+    for p, n, attr in graph.edges(data=True):
+        pred[(p,n)] = model.run(
+            states=[graph.nodes[p]['text'].strip()],
+            actions=[attr['action'].strip()],
+        )[0,0].cpu().detach().item()
+    
+    # save them to a graph
+    nx.set_edge_attributes(graph, pred, 'pred')
+
+    # save picle
+    save_pickle(graph, save_path)
+    return graph
 
 
 class ConfusionMatrix:
@@ -319,6 +342,25 @@ class Accuracy:
         return (self.correct / self.samples).item()
 
 
+def save_pickle(obj, save_path:str):
+    """
+    Saves an object with pickle
+    :param obj: object to be saved
+    :param save_path: path to the file where it will be saved
+    """
+    with open(save_path, 'wb') as f:
+        pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+def load_pickle(path:str):
+    """
+    Loads an object with pickle from a file
+    :param path: path to the file where the object is stored
+    """
+    with open(path, 'rb') as f:
+        return pickle.load(f)
+
+
 def save_dict(d: Dict, path: str) -> None:
     """
     Saves a dictionary to a file in plain text
@@ -354,17 +396,18 @@ def set_seed(seed: int) -> None:
 
     # set seed and deterministic algorithms for torch
     torch.manual_seed(seed)
-    # torch.use_deterministic_algorithms(True)
+    torch.use_deterministic_algorithms(True)
 
     # Ensure all operations are deterministic on GPU
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
         torch.cuda.manual_seed_all(seed)
-        # torch.backends.cudnn.determinstic = True
-        # torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.determinstic = True
+        torch.backends.cudnn.benchmark = False
 
         # for deterministic behavior on cuda >= 10.2
-        # os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
+        import os
+        os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
 
 
 def load_list(path: str) -> List:
