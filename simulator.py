@@ -10,6 +10,7 @@ import dominate
 import graphviz
 import networkx as nx
 from dominate.tags import *
+from models.utils import load_pickle, save_pickle
 
 from yarnPygame.src.yarn import YarnController
 
@@ -111,6 +112,32 @@ class GraphSimulator(Simulator):
     @overrides
     def is_finished(self) -> bool:
         self.graph.out_degree[self.current] == 0
+
+
+# todo finish this
+def load_simulator_yarn(
+    yarn: Union[str, List[Dict]] = 'yarnScripts',
+    force:bool = False,
+    graph_file_sfx = '_graph.pickle', 
+    **kwargs
+) -> GraphSimulator:
+    """
+    Loads a `GraphSimulator` from yarn files, checking if there is a graph saved already
+
+    :param yarn: 
+    :param force:
+    :param graph_file_sfx:
+
+    :return: a `GraphSimulator` of the yarn files
+    """
+    graph_file = yarn + graph_file_sfx
+    if isinstance(yarn,str) and not force:
+        graph = load_pickle(graph_file)
+    else:
+        graph = None
+        save_pickle(graph, graph_file)
+    
+    return GraphSimulator(graph)
 
 
 class YarnSimulator(Simulator):
@@ -265,6 +292,7 @@ def create_bondage_html(simulator: YarnSimulator, file_name: str):
         file.write(d.render())
 
 
+# todo fix this
 def create_graph_html(graph: nx.DiGraph, folder_path: str):
     """
     Creates a html folder with the html files required to play the game
