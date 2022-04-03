@@ -1,10 +1,13 @@
 import pathlib
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict, Tuple, Optional, Union, overload
 
 import torch
+from overrides import overrides
+from torch import device, dtype, Tensor
+from torch.nn.modules.module import T
 from transformers import BertConfig, BertTokenizerFast, BertModel
 
-from models.utils import load_dict, save_dict
+from helper.helper import load_dict, save_dict
 
 
 class StateActionModel(torch.nn.Module):
@@ -184,6 +187,7 @@ class StateActionModel(torch.nn.Module):
         :param max_sequence_length: maximum sequence length
         """
         super().__init__()
+        self.device = torch.device('cpu')
 
         # tokenizer
         self.tokenizer = BertTokenizerFast.from_pretrained(bert_name, padding_side='left')
@@ -225,7 +229,25 @@ class StateActionModel(torch.nn.Module):
         if not self.lstm_model:
             self.shared.freeze_bert(freeze)
 
-    def predict(self, states: List[str], actions: List[str], device=None, threshold: float = 0.5) -> torch.Tensor:
+    @overload
+    def to(self: T, device: Optional[Union[int, device]] = ..., dtype: Optional[Union[dtype, str]] = ...,
+           non_blocking: bool = ...) -> T:
+        ...
+
+    @overload
+    def to(self: T, dtype: Union[dtype, str], non_blocking: bool = ...) -> T:
+        ...
+
+    @overload
+    def to(self: T, tensor: Tensor, non_blocking: bool = ...) -> T:
+        ...
+
+    @overrides
+    def to(self, *args, **kwargs):
+        self.device = args[0]
+        return super().to(*args, **kwargs)
+
+    def predict(self, states: List[str], actions: List[str], threshold: float = 0.5) -> torch.Tensor:
         """
         Predicts the output given the states and actions
         :param states: list of states
@@ -234,9 +256,9 @@ class StateActionModel(torch.nn.Module):
         :param threshold: level of certainty to output a 1 (if result > threshold -> 1, otherwise 0)
         :return: torch tensor with the predictions
         """
-        return (self.run(states, actions, device=device, return_percentages=True) > threshold).float()
+        return (self.run(states, actions, return_percentages=True) > threshold).float()
 
-    def run(self, states: List[str], actions: List[str], device=None, return_percentages: bool = False) -> torch.Tensor:
+    def run(self, states: List[str], actions: List[str], return_percentages: bool = False) -> torch.Tensor:
         """
         Runs the model given a list of states and actions and returns the output of the model
         (before sigmoid, THESE VALUES ARE NOT PERCENTAGES).
@@ -250,9 +272,8 @@ class StateActionModel(torch.nn.Module):
                                 return_tensors='pt', padding='max_length', max_length=self.max_sequence_length)
         actions = self.tokenizer([k[-self.max_sequence_length:].split('\n', 1)[-1] for k in actions],
                                  return_tensors='pt', padding='max_length', max_length=self.max_sequence_length)
-        if device is not None:
-            states = {k: v.to(device) for k, v in states.items()}
-            actions = {k: v.to(device) for k, v in actions.items()}
+        states = {k: v.to(self.device) for k, v in states.items()}
+        actions = {k: v.to(self.device) for k, v in actions.items()}
         return self(states, actions) if not return_percentages else torch.sigmoid(self(states, actions))
 
     def forward(self, state: Dict[str, torch.Tensor], action: Dict[str, torch.Tensor]) -> torch.Tensor:

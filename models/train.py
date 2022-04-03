@@ -1,20 +1,24 @@
 from os import path
-from typing import Dict
+from pathlib import Path
+from typing import Dict, List, Union
 
+import networkx as nx
 import numpy as np
 import torch
 import torch.utils.tensorboard as tb
-from tqdm.auto import trange
+from tqdm.auto import trange, tqdm
 
+from game.simulator import load_simulator_yarn
+from helper.helper import save_dict, save_pickle
 from .models import StateActionModel, save_model, load_model
-from .utils import ConfusionMatrix, load_data, save_dict
+from .utils import ConfusionMatrix, load_data
 
 
 def train(
         model: StateActionModel,
         dict_model: Dict,
+        graph: nx.DiGraph,
         log_dir: str = './models/logs',
-        data_path: str = './yarnScripts',
         save_path: str = './models/saved',
         lr: float = 1e-3,
         optimizer_name: str = "adamw",
@@ -23,7 +27,8 @@ def train(
         num_workers: int = 0,
         scheduler_mode: str = 'max_val_acc',
         debug_mode: bool = False,
-        steps_validate: int = 1,
+        device=None,
+        steps_save: int = 1,
         use_cpu: bool = False,
         freeze_bert: bool = True,
         balanced_actions: bool = False,
@@ -34,7 +39,7 @@ def train(
     :param model: model that will be trained
     :param dict_model: dictionary of model parameters
     :param log_dir: directory where the tensorboard log should be saved
-    :param data_path: directory where the data can be found
+    :param graph: graph for the game
     :param save_path: directory where the model will be saved
     :param lr: learning rate for the training
     :param optimizer_name: optimizer used for training. Can be `adam, adamw, sgd`
@@ -44,14 +49,16 @@ def train(
     :param scheduler_mode: scheduler mode to use for the learning rate scheduler. Can be `min_loss, max_acc, max_val_acc, max_val_mcc`
     :param use_cpu: whether to use the CPU for training
     :param debug_mode: whether to use debug mode (cpu and 0 workers)
-    :param steps_validate: number of epoch after which to validate and save model (if conditions met)
+    :param device: if not none, device to use ignoring other parameters. If none, the device will be used depending on `use_cpu` and `debug_mode` parameters
+    :param steps_save: number of epoch after which to validate and save model (if conditions met)
     :param freeze_bert: whether to freeze BERT during training
     :param balanced_actions: parameter for `utils.StateActionDataset`
     """
 
     # cpu or gpu used for training if available (gpu much faster)
-    device = torch.device('cuda' if torch.cuda.is_available() and not (use_cpu or debug_mode) else 'cpu')
-    print(device)
+    if device is None:
+        device = torch.device('cuda' if torch.cuda.is_available() and not (use_cpu or debug_mode) else 'cpu')
+    # print(device)
 
     # num_workers 0 if debug_mode
     if debug_mode:
@@ -67,10 +74,6 @@ def train(
         'scheduler_mode',
         'balanced_actions',
     ]}
-    # dict_param.update(dict(
-    #     train_self_loop=dataset.add_self_loop,
-    #     train_drop_edges=dataset.drop_edges,
-    # ))
     # dictionary to set model name
     name_dict = dict_model.copy()
     name_dict.update(dict_param)
@@ -78,6 +81,7 @@ def train(
     name_model = '/'.join([
         str(name_dict)[1:-1].replace(',', '/').replace("'", '').replace(' ', '').replace(':', '='),
     ])
+
     # train_logger = tb.SummaryWriter(path.join(log_dir, 'train', name_model), flush_secs=1)
     # valid_logger = tb.SummaryWriter(path.join(log_dir, 'valid', name_model), flush_secs=1)
     train_logger = tb.SummaryWriter(path.join(log_dir, name_model), flush_secs=1)
@@ -85,25 +89,26 @@ def train(
 
     # Model
     dict_model.update(dict_param)
-    dict_model.update(dict(
-        # metrics
-        train_loss=None,
-        train_acc=0,
-        val_acc=0,
-        epoch=0,
-    ))
+    # dict_model.update(dict(
+    #     # metrics
+    #     train_loss=None,
+    #     train_acc=0,
+    #     val_acc=0,
+    #     epoch=0,
+    # ))
     model = model.to(device)
 
     # Loss
     loss = torch.nn.BCEWithLogitsLoss().to(device)  # sigmoid + BCELoss (good for 2 classes classification)
 
     # load train and test data
+    # todo random seed 123
     loader_train, loader_valid, _ = load_data(
-        dataset_path=data_path,
+        graph=graph,
         num_workers=num_workers,
         batch_size=batch_size,
         drop_last=False,
-        random_seed=123,
+        random_seed=4444,
         tokenizer=model.tokenizer,
         device=device,
         balanced_actions=balanced_actions,
@@ -118,10 +123,13 @@ def train(
     else:
         raise Exception("Optimizer not configured")
 
+    # :param scheduler_patience: value used as patience for the learning rate scheduler
     if scheduler_mode == "min_loss":
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=10 if not balanced_actions else 480)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min',
+                                                               patience=10 if not balanced_actions else 480)
     elif scheduler_mode in ["max_acc", "max_val_acc", "max_val_mcc"]:
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'max', patience=10 if not balanced_actions else 480)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'max',
+                                                               patience=10 if not balanced_actions else 480)
     else:
         raise Exception("Optimizer not configured")
 
@@ -160,16 +168,31 @@ def train(
         train_loss = np.mean(train_loss)
         train_acc = train_cm.global_accuracy
         val_acc = val_cm.global_accuracy
+        val_mcc = val_cm.matthews_corrcoef
 
         # Step the scheduler to change the learning rate
+        is_better = False
         if scheduler_mode == "min_loss":
-            scheduler.step(train_loss)
+            met = train_loss
+            if (best_met := dict_model.get('train_loss', None)) is not None:
+                is_better = met <= best_met
         elif scheduler_mode == "max_acc":
-            scheduler.step(train_acc)
+            met = train_cm.global_accuracy
+            if (best_met := dict_model.get('train_acc', None)) is not None:
+                is_better = met >= best_met
         elif scheduler_mode == "max_val_acc":
-            scheduler.step(val_acc)
+            met = val_cm.global_accuracy
+            if (best_met := dict_model.get('val_acc', None)) is not None:
+                is_better = met >= best_met
         elif scheduler_mode == 'max_val_mcc':
-            scheduler.step(val_cm.matthews_corrcoef)
+            met = val_cm.matthews_corrcoef
+            if (best_met := dict_model.get('val_mcc', None)) is not None:
+                is_better = met >= best_met
+        else:
+            met = None
+
+        if met is not None:
+            scheduler.step(met)
 
         global_step += 1
         if train_logger is not None:
@@ -179,18 +202,27 @@ def train(
             # validation log
             suffix = 'val'
             log_confussion_matrix(valid_logger, val_cm, global_step, suffix=suffix)
+            # lr
             train_logger.add_scalar('lr', optimizer.param_groups[0]['lr'], global_step=global_step)
 
         # Save the model
-        # todo save every x epochs
-        if (epoch % steps_validate == steps_validate - 1) and (True or (val_acc >= dict_model["val_acc"])):
+        if (epoch % steps_save == steps_save - 1) or is_better:
+            d = dict_model if is_better else dict_model.copy()
+
             # print(f"Best val acc {epoch}: {val_acc}")
-            dict_model["train_loss"] = train_loss
-            dict_model["train_acc"] = train_acc
-            dict_model["val_acc"] = val_acc
-            dict_model["epoch"] = epoch
-            name_path = name_model.replace('/', '_')
-            save_model(model, save_path, name_path, param_dicts=dict_model)
+            d["epoch"] = epoch + 1
+            # metrics
+            d["train_loss"] = train_loss
+            d["train_acc"] = train_cm.global_accuracy
+            d["val_acc"] = val_cm.global_accuracy
+            d["val_mcc"] = val_cm.matthews_corrcoef
+
+            name_path = str(list(name_dict.values()))[1:-1].replace(',', '_').replace("'", '').replace(' ', '')
+            # name_path = f"{d['val_acc']:.2f}_{name_path}"
+            # if periodic save, then include epoch
+            if not is_better:
+                name_path = f"{name_path}_{epoch + 1}"
+            save_model(model, save_path, name_path, param_dicts=d)
 
 
 def log_confussion_matrix(logger, confussion_matrix: ConfusionMatrix, global_step: int, suffix=''):
@@ -208,7 +240,7 @@ def log_confussion_matrix(logger, confussion_matrix: ConfusionMatrix, global_ste
 
 
 def test(
-        data_path: str = './yarnScripts',
+        graph: nx.DiGraph,
         save_path: str = './models/saved',
         n_runs: int = 1,
         batch_size: int = 8,
@@ -217,12 +249,12 @@ def test(
         use_cpu: bool = False,
         save: bool = True,
         verbose: bool = False,
-) -> None:
+) -> list[dict[str, Union[dict, list[ConfusionMatrix]]]]:
     """
     Calculates the metric on the test set of the model given in args.
     Prints the result and saves it in the dictionary files.
 
-    :param data_path: directory where the data can be found
+    :param graph: graph for the game
     :param save_path: directory where the model will be saved
     :param n_runs: number of runs from which to take the mean
     :param batch_size: size of batches to use
@@ -232,6 +264,7 @@ def test(
     :param save: whether to save the results in the model dict
     :param verbose: whether to print results
     """
+
     def print_v(s):
         if verbose:
             print(s)
@@ -246,8 +279,8 @@ def test(
 
     # get model names from folder
     model = None
-    best_dict = None
-    best_acc = 0.0
+    # best_dict = None
+    # best_acc = 0.0
     list_all = []
     paths = list(Path(save_path).glob('*'))
     for folder_path in tqdm(paths):
@@ -258,7 +291,7 @@ def test(
         model, dict_model = load_model(folder_path)
         model = model.to(device).eval()
         loader_train, loader_valid, loader_test = load_data(
-            dataset_path=data_path,
+            graph=graph,
             num_workers=num_workers,
             batch_size=batch_size,
             drop_last=False,
@@ -293,7 +326,7 @@ def test(
                     test_run_cm.add(preds=(pred > 0).float(), labels=reward)
 
             print_v(f"Run {k}: {test_run_cm.global_accuracy}")
-            
+
             train_cm.append(train_run_cm)
             val_cm.append(val_run_cm)
             test_cm.append(test_run_cm)
@@ -321,16 +354,16 @@ def test(
             test_cm=test_cm,
         ))
 
-        # save if best
-        if best_acc < (test_acc := dict_model['test_acc']):
-            best_acc = test_acc
-            best_dict = dict_model
+        # # save if best
+        # if best_acc < (test_acc := dict_model['test_acc']):
+        #     best_acc = test_acc
+        #     best_dict = dict_model
 
-    return best_dict, best_acc, list_all
+    return list_all
 
 
 def show_examples(
-        data_path: str = './yarnScripts',
+        graph: nx.DiGraph,
         save_path: str = './models/saved',
         num_examples: int = 20,
         num_workers: int = 0,
@@ -340,7 +373,7 @@ def show_examples(
     """
     Show examples from the test set
 
-    :param data_path: directory where the data can be found
+    :param graph: graph for the game
     :param save_path: directory where the model will be saved
     :param num_examples: number of examples to show
     :param num_workers: number of workers (processes) to use for data loading
@@ -366,7 +399,7 @@ def show_examples(
         model, dict_model = load_model(folder_path)
         model = model.to(device).eval()
         _, _, loader_test = load_data(
-            dataset_path=data_path,
+            graph=graph,
             num_workers=num_workers,
             batch_size=1,
             drop_last=False,
@@ -382,7 +415,7 @@ def show_examples(
                 if len(examples) >= num_examples:
                     break
                 # get predicted percentages
-                pred = model.run(state, action, return_percentages=True, device=device)[:, 0]
+                pred = model.run(state, action, return_percentages=True)[:, 0]
                 examples.append((state, action, reward, pred.cpu().detach().numpy()))
 
         # write in file
@@ -397,9 +430,35 @@ def show_examples(
                 k += 1
 
 
+def transform_graph_model(graph: nx.DiGraph, model: StateActionModel, save_path: str = "./graph_transformed.pickle",
+                          use_cpu: bool = False):
+    """
+    Runs the given model through the given graph and stores the predictions in it. Then it saves it in a file.
+    :param graph: graph over which the model will be run
+    :param model: model to use for predictions
+    :param save_path: path where graph with the predictions will be saved
+    :param use_cpu: whether to use cpu for predictions or cuda
+    :return: the graph with the predictions
+    """
+    # runs the model over all the network and save the corresponding extra
+    model = model.eval().to(torch.device('cuda' if torch.cuda.is_available() and not use_cpu else 'cpu'))
+    for p, n, attr in tqdm(graph.edges(data=True)):
+        graph.edges[(p, n)]['pred'] = model.run(
+            states=[graph.nodes[p]['text'].strip()],
+            actions=[attr['action'].strip()],
+            return_percentages=True,
+        )[0, 0].cpu().detach().item()
+
+    # save picle
+    save_pickle(graph, save_path)
+    return graph
+
+
 if __name__ == '__main__':
     from argparse import ArgumentParser
     args_parser = ArgumentParser()
+
+    args_parser.add_argument()
 
     args_parser.add_argument('-t', '--test', type=int, default=None,
                              help='the number of test runs that will be averaged to give the test result,'
@@ -415,6 +474,11 @@ if __name__ == '__main__':
         )
     elif args.show_examples is not None:
         show_examples(num_examples=args.show_examples)
+    # elif args.
+    #     transform_graph_model(
+    #         graph=load_simulator_yarn(yarn='./yarnScripts', text_unk_macro="", jump_as_choice=True).graph,
+    #         model=load_model(Path('./models/tmp/saved_good/adamw_max_val_acc_8_False_125,[20],[20]_0.001'))[0]
+    #     )
     else:
         # Model
         bert_dict_model = dict(
@@ -450,94 +514,89 @@ if __name__ == '__main__':
             num_workers=0,
             scheduler_mode='max_val_acc',
             debug_mode=False,
-            steps_validate=1,
+            steps_save=1,
             use_cpu=False,
             freeze_bert=True,
             balanced_actions=True,
         )
 
+    # # Model
+    # bert_dict_model = dict(
+    #     shared_out_dim=125,
+    #     state_layers=[30],
+    #     action_layers=[30],
+    #     out_features=1,
+    #     lstm_model=False,
+    #     bert_name="bert-base-multilingual-cased",
+    # )
+    # # lstm_dict_model = dict(
+    # #     shared_out_dim=50,
+    # #     state_layers=[30],
+    # #     action_layers=[30],
+    # #     out_features=1,
+    # #     lstm_model=True,
+    # #     bert_name="bert-base-multilingual-cased",
+    # # )
+    # dict_model = bert_dict_model
+    # model = StateActionModel(**dict_model)
 
+    # # Training hyperparameters
+    # train(
+    #     model=model,
+    #     dict_model=dict_model,
+    #     log_dir='./models/logs',
+    #     data_path='./yarnScripts',
+    #     save_path='./models/saved',
+    #     lr=1e-3,
+    #     optimizer_name="adamw",
+    #     n_epochs=30,
+    #     batch_size=8,
+    #     num_workers=0,
+    #     scheduler_mode='max_val_acc',
+    #     debug_mode=False,
+    #     steps_validate=1,
+    #     use_cpu=False,
+    #     freeze_bert=True,
+    #     balanced_actions=True,
+    # )
 
+    # # other
+    # # Model
+    # bert_dict_model = dict(
+    #     shared_out_dim=125,
+    #     state_layers=[20],
+    #     action_layers=[20],
+    #     out_features=1,
+    #     lstm_model=False,
+    #     bert_name="bert-base-multilingual-cased",
+    # )
+    # # lstm_dict_model = dict(
+    # #     shared_out_dim=50,
+    # #     state_layers=[30],
+    # #     action_layers=[30],
+    # #     out_features=1,
+    # #     lstm_model=True,
+    # #     bert_name="bert-base-multilingual-cased",
+    # # )
+    # dict_model = bert_dict_model
+    # model = StateActionModel(**dict_model)
 
-
-        # # Model
-        # bert_dict_model = dict(
-        #     shared_out_dim=125,
-        #     state_layers=[30],
-        #     action_layers=[30],
-        #     out_features=1,
-        #     lstm_model=False,
-        #     bert_name="bert-base-multilingual-cased",
-        # )
-        # # lstm_dict_model = dict(
-        # #     shared_out_dim=50,
-        # #     state_layers=[30],
-        # #     action_layers=[30],
-        # #     out_features=1,
-        # #     lstm_model=True,
-        # #     bert_name="bert-base-multilingual-cased",
-        # # )
-        # dict_model = bert_dict_model
-        # model = StateActionModel(**dict_model)
-
-        # # Training hyperparameters
-        # train(
-        #     model=model,
-        #     dict_model=dict_model,
-        #     log_dir='./models/logs',
-        #     data_path='./yarnScripts',
-        #     save_path='./models/saved',
-        #     lr=1e-3,
-        #     optimizer_name="adamw",
-        #     n_epochs=30,
-        #     batch_size=8,
-        #     num_workers=0,
-        #     scheduler_mode='max_val_acc',
-        #     debug_mode=False,
-        #     steps_validate=1,
-        #     use_cpu=False,
-        #     freeze_bert=True,
-        #     balanced_actions=True,
-        # )
-
-
-        # # other
-        # # Model
-        # bert_dict_model = dict(
-        #     shared_out_dim=125,
-        #     state_layers=[20],
-        #     action_layers=[20],
-        #     out_features=1,
-        #     lstm_model=False,
-        #     bert_name="bert-base-multilingual-cased",
-        # )
-        # # lstm_dict_model = dict(
-        # #     shared_out_dim=50,
-        # #     state_layers=[30],
-        # #     action_layers=[30],
-        # #     out_features=1,
-        # #     lstm_model=True,
-        # #     bert_name="bert-base-multilingual-cased",
-        # # )
-        # dict_model = bert_dict_model
-        # model = StateActionModel(**dict_model)
-
-        # # Training hyperparameters
-        # train(
-        #     model=model,
-        #     dict_model=dict_model,
-        #     log_dir='./models/logs2',
-        #     data_path='./yarnScripts',
-        #     save_path='./models/saved2',
-        #     lr=1e-3,
-        #     optimizer_name="adamw",
-        #     n_epochs=30,
-        #     batch_size=8,
-        #     num_workers=0,
-        #     scheduler_mode='max_val_acc',
-        #     debug_mode=False,
-        #     steps_validate=1,
-        #     use_cpu=False,
-        #     freeze_bert=True,
-        #     balanced_actions=True,
-        # )
+    # # Training hyperparameters
+    # train(
+    #     model=model,
+    #     dict_model=dict_model,
+    #     log_dir='./models/logs2',
+    #     data_path='./yarnScripts',
+    #     save_path='./models/saved2',
+    #     lr=1e-3,
+    #     optimizer_name="adamw",
+    #     n_epochs=30,
+    #     batch_size=8,
+    #     num_workers=0,
+    #     scheduler_mode='max_val_acc',
+    #     debug_mode=False,
+    #     steps_validate=1,
+    #     use_cpu=False,
+    #     freeze_bert=True,
+    #     balanced_actions=True,
+    # )

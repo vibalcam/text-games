@@ -1,6 +1,7 @@
 from typing import List, Dict, Tuple
 import pickle
 
+import networkx
 import numpy as np
 import pandas as pd
 import torch
@@ -11,10 +12,12 @@ import seaborn as sns
 from sklearn.metrics import matthews_corrcoef, mean_squared_error
 import networkx as nx
 
-from simulator import YarnSimulator, Simulator
+from game.simulator import YarnSimulator, Simulator
 
 
 # Labels for the actions
+from helper.helper import save_pickle
+
 LABELS = ['bad', 'good']
 
 
@@ -119,12 +122,12 @@ class StateActionDataset(Dataset):
 
 
 def load_data(
-    dataset_path: str = '../yarnScripts',
+    graph: networkx.DiGraph,
     num_workers=0,
     batch_size=4,
     drop_last=False,
     lengths=(0.8, 0.1, 0.1),
-    random_seed: int = 123,
+    random_seed: int = 4444,
     reward_key:str='r',
     balanced_actions:bool = False,
     **kwargs
@@ -132,7 +135,9 @@ def load_data(
     """
     Method used to load the dataset. It retrives the data with random shuffle
 
-    :param dataset_path: path to the dataset
+    :param graph: graph for the game. It must at least have the following attributes:
+        - Node: `text,`
+        - Edge: `action,extras`
     :param random_seed: seed to randomly shuffle data
     :param num_workers: how many subprocesses to use for data loading.
                         0 means that the data will be loaded in the main process
@@ -146,8 +151,7 @@ def load_data(
     """
 
     # Get data from simulator
-    # todo use graph directly
-    graph = YarnSimulator(dataset_path, jump_as_choice=True, text_unk_macro="").get_decision_graph()[0]
+    # graph = YarnSimulator(dataset_path, jump_as_choice=True, text_unk_macro="").get_decision_graph()[0]
 
     states = []
     actions = []
@@ -190,27 +194,6 @@ def load_data(
         shuffle=idx == 0,
         drop_last=drop_last,
     ) for idx, k in enumerate(datasets))
-
-
-# todo use graph directly
-def transform_graph_model(dataset_path: str, model, save_path:str = "./graph_transformed.pickle"):
-    # runs the model over all the network and save the corresponding extra
-    graph = YarnSimulator(dataset_path, jump_as_choice=True, text_unk_macro="").get_decision_graph()[0]
-
-    # get predicted attributes for all edges
-    pred = {}
-    for p, n, attr in graph.edges(data=True):
-        pred[(p,n)] = model.run(
-            states=[graph.nodes[p]['text'].strip()],
-            actions=[attr['action'].strip()],
-        )[0,0].cpu().detach().item()
-    
-    # save them to a graph
-    nx.set_edge_attributes(graph, pred, 'pred')
-
-    # save picle
-    save_pickle(graph, save_path)
-    return graph
 
 
 class ConfusionMatrix:
@@ -342,54 +325,12 @@ class Accuracy:
         return (self.correct / self.samples).item()
 
 
-def save_pickle(obj, save_path:str):
-    """
-    Saves an object with pickle
-    :param obj: object to be saved
-    :param save_path: path to the file where it will be saved
-    """
-    with open(save_path, 'wb') as f:
-        pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
-
-
-def load_pickle(path:str):
-    """
-    Loads an object with pickle from a file
-    :param path: path to the file where the object is stored
-    """
-    with open(path, 'rb') as f:
-        return pickle.load(f)
-
-
-def save_dict(d: Dict, path: str) -> None:
-    """
-    Saves a dictionary to a file in plain text
-    :param d: dictionary to save
-    :param path: path of the file where the dictionary will be saved
-    """
-    with open(path, 'w', encoding="utf-8") as file:
-        file.write(str(d))
-
-
-def load_dict(path: str) -> Dict:
-    """
-    Loads a dictionary from a file in plain text
-    :param path: path where the dictionary was saved
-    :return: the loaded dictionary
-    """
-    with open(path, 'r', encoding="utf-8") as file:
-        from ast import literal_eval
-        loaded = dict(literal_eval(file.read()))
-    return loaded
-
-
 def set_seed(seed: int) -> None:
     """
     This function sets a seed and ensure a deterministic behavior
 
     :param seed: seed for the random generators
     """
-    # todo delete all calls to set seed except this one
     # set seed in numpy and random
     np.random.seed(seed)
     random.seed(seed)
@@ -410,18 +351,7 @@ def set_seed(seed: int) -> None:
         os.environ["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
 
 
-def load_list(path: str) -> List:
-    """
-    Loads a list from a file in plain text
-    :param path: path where the list was saved
-    :return: the loaded list
-    """
-    with open(path, 'r', encoding="utf-8") as file:
-        from ast import literal_eval
-        loaded = list(literal_eval(file.read()))
-    return loaded
-
-
-if __name__ == '__main__':
-    pass
-# todo load dataset and check length
+# if __name__ == '__main__':
+#     s = YarnSimulator(text_unk_macro="", yarn='../yarnScripts')
+#     g = s.get_decision_graph[0]
+#     print("Done")
