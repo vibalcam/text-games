@@ -1,5 +1,5 @@
-from agent import RandomAgent
-from simulator import YarnSimulator
+from game.agent import RandomAgent
+from game.simulator import YarnSimulator
 
 n_runs = 1
 

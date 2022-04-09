@@ -41,10 +41,12 @@ class Simulator(ABC, EnforceOverrides):
     @abstractmethod
     def get_current_path(self) -> List[str]:
         """Get the current path taken (history of choices taken)"""
-        raise NotImplementedError()
+        pass
 
+    @abstractmethod
     def get_current_node_attr(self) -> Dict[str, str]:
-        return {}
+        """Get the current node attributes"""
+        pass
 
     @abstractmethod
     def is_finished(self) -> bool:
@@ -63,7 +65,11 @@ class GraphSimulator(Simulator):
         - Node: `text, attr, title`
         - Edge: `action, extras`
     """
+    # node attributes
     ATTR_TEXT = 'text'
+    ATTR_TITLE = 'title'
+    ATTR_ATTR = 'attr'
+    # edge attributes
     ATTR_ACTION = 'action'
     ATTR_EXTRAS = 'extras'
 
@@ -119,6 +125,13 @@ class GraphSimulator(Simulator):
     @overrides
     def get_current_path(self) -> List[str]:
         return self.choices_history
+
+    @overrides
+    def get_current_node_attr(self) -> Dict[str, str]:
+        n = self.graph.nodes(data=True)[self.current]
+        d = n[self.ATTR_ATTR].copy()
+        d[self.ATTR_TITLE] = n[self.ATTR_TITLE]
+        return d
 
     @overrides
     def is_finished(self) -> bool:
@@ -240,7 +253,7 @@ class YarnSimulator(Simulator):
 
     @overrides
     def get_current_node_attr(self) -> Dict[str, str]:
-        return self.controller.state.attr
+        return self.controller.state.attr if self.controller.state.attr is not None else {}
 
     @overrides
     def transition(self, choice: Union[int, str]) -> Tuple[str, List, Dict[str, str]]:
@@ -298,8 +311,8 @@ class YarnSimulator(Simulator):
             self,
             graph: nx.DiGraph = nx.DiGraph(),
             dot: graphviz.Digraph = graphviz.Digraph(),
-            nodes_visited: Set = set(),
-            prev_path: List = [],
+            nodes_visited=None,
+            prev_path=None,
             parent_node_title=None,
             simplified=False,
     ) -> Tuple[nx.DiGraph, graphviz.Digraph]:
@@ -319,7 +332,12 @@ class YarnSimulator(Simulator):
         :param simplified: if true it uses as node id the node's title (the story line),
                             if false it uses just the title with variables (complete decision graph)
         """
-        # todo make generic for simulator
+        # default arguments
+        if nodes_visited is None:
+            nodes_visited = set()
+        if prev_path is None:
+            prev_path = []
+
         (text, cur_actions, extras) = self.read()
         curr_node = self.controller.state
         curr_node_title_vars = f"{curr_node.title}_{self.controller.get_game_locals()}".replace(":", '=')
@@ -343,15 +361,10 @@ class YarnSimulator(Simulator):
             # move controller to the current state
             if self.get_current_path() != prev_path:
                 self.restart()
-                (_, actions, _) = self.read()
-                # curr_path.clear()
+                self.read()
                 for act in prev_path:
-                    # curr_path.append(act)
                     self.transition(act)
-                    # (_, actions, _) = simulator.read()
 
-            # (_, actions, _) = simulator.read()
-            # curr_path.append(choice)
             self.transition(choice)
             self._dfs(graph, dot, nodes_visited, self.get_current_path().copy(), curr_node_title,
                       simplified=simplified)
@@ -437,9 +450,9 @@ def get_content_from_yarn(path: str) -> List[Dict]:
     return data
 
 
-def yarn_to_json(simulator: YarnSimulator, json_file: str):
-    with open(json_file, 'w', encoding='utf-8') as f:
-        json.dump(simulator.data, f, ensure_ascii=True, indent=4)
+# def yarn_to_json(simulator: YarnSimulator, json_file: str):
+#     with open(json_file, 'w', encoding='utf-8') as f:
+#         json.dump(simulator.data, f, ensure_ascii=True, indent=4)
 
 
 if __name__ == '__main__':

@@ -279,8 +279,6 @@ def test(
 
     # get model names from folder
     model = None
-    # best_dict = None
-    # best_acc = 0.0
     list_all = []
     paths = list(Path(save_path).glob('*'))
     for folder_path in tqdm(paths):
@@ -353,11 +351,6 @@ def test(
             val_cm=val_cm,
             test_cm=test_cm,
         ))
-
-        # # save if best
-        # if best_acc < (test_acc := dict_model['test_acc']):
-        #     best_acc = test_acc
-        #     best_dict = dict_model
 
     return list_all
 

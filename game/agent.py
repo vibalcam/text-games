@@ -26,7 +26,7 @@ class Agent(ABC):
 
 
 class RandomAgent(Agent):
-    def __init__(self, seed: int = 4444):
+    def __init__(self, seed: int = None):
         random.seed(seed)
 
     @overrides(check_signature=False)
@@ -151,7 +151,7 @@ if __name__ == '__main__':
     simulator = load_simulator_yarn()
 
     # agent
-    # agent = RandomAgent(15)
+    # agent = RandomAgent(4444)
     agent = TorchRAgent(
         model_path=Path('./models/tmp/saved_good/adamw_max_val_acc_8_False_125,[20],[20]_0.001'),
         rand=0,
