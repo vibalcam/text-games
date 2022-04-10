@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Sequence, TypeVar, List
 
 import torch
-from overrides import overrides
+from overrides import EnforceOverrides, overrides
 
 from models.models import load_model
 
@@ -17,14 +17,6 @@ class Agent(ABC):
         pass
 
 
-# class LabelPredictor(ABC):
-#     pass
-#
-#
-# class DecisionMaker(ABC):
-#     pass
-
-
 class RandomAgent(Agent):
     def __init__(self, seed: int = None):
         random.seed(seed)
@@ -34,68 +26,72 @@ class RandomAgent(Agent):
         return random.choice(actions)
 
 
-class TorchAgent(Agent):
-    """
-    Agent that uses a Pytorch model for decision taking.
-    """
+class LabelPredictor(ABC):
+    @abstractmethod
+    def predict_label(self, state:str, actions: List[str]) -> torch.Tensor:
+        """
+        Predicts the labels from the state and actions given
+        """
+        pass
 
+
+class DecisionMaker(ABC):
+    @abstractmethod
+    def decide(self, pred: torch.Tensor, **kwargs) -> int:
+        pass
+
+
+class LabelDecisorAgent (Agent):
+    def __init__(self, label_predictor: LabelPredictor, decisor: DecisionMaker):
+        self.label_predictor = label_predictor
+        self.decisor = decisor
+
+    @overrides(check_signature=False)
+    def act(self, state:str, actions: List[str], **kwargs):
+        return self.decisor.decide(self.label_predictor.predict_label(state=state, actions=actions), **kwargs)
+
+
+# class GraphLabelLoader(LabelPredictor):
+#     def __init__(self) -> None:
+#         super().__init__()
+
+
+class TorchLabelPredictor(LabelPredictor):
     def __init__(self, model_path: Path, use_cpu: bool = False) -> None:
         """
-        Initialize model
+        Uses a Pytorch model for predicting the labels
+
         :param model_path: path to the pytorch model to be used
         :param use_cpu: whether to use the cpu for the model predictions
-        :param seed: seed to use for the random generator
         """
         self.device = torch.device('cuda' if torch.cuda.is_available() and not use_cpu else 'cpu')
         self.model = load_model(model_path)[0].eval().to(self.device)
 
-    def _predict_label(self, state:str, actions: List[str]) -> torch.Tensor:
-        """
-        Predicts the labels from the state and actions given
-        """
-        # get percentages of certainty of action with good result
+    @overrides
+    def predict_label(self, state:str, actions: List[str]) -> torch.Tensor:
+        # get percentages of certainty of action
         # model run outputs B,1 -> pred B
         return self.model.run([state] * len(actions), actions, return_percentages=True).cpu().detach()[:,0]
 
-    @abstractmethod
-    def _decide(self, pred: torch.Tensor, **kwargs) -> int:
+
+class RDecisionMaker(DecisionMaker):
+    def __init__(self, rand: float = 0, seed: int = 4444) -> None:
         """
-        Decides which action to take from the set of labels per action
-        """
-        pass
+        It chooses the action that provides a higher percentage of certainty of being a good decision.
+        It tries to maximize:
 
-    def act(self, state:str, actions: List[str], **kwargs) -> int:
-        pred = self._predict_label(state=state, actions=actions)
-        pred = self._decide(pred, **kwargs)
-        return pred
+        `certainty = rand * random(0,1) + (1-rand) * predicted`
 
-
-class TorchRAgent(TorchAgent):
-    """
-    Agent that uses a Pytorch model for decision taking.
-
-    It chooses the action that provides a higher percentage of certainty of being a good decision.
-    It tries to maximize: 
-    
-    `certainty = rand * random(0,1) + (1-rand) * predicted`
-    """
-
-    def __init__(self, model_path: Path, rand: float = 0, use_cpu: bool = False, seed: int = 4444) -> None:
-        """
-        Initialize model
-        :param model_path: path to the pytorch model to be used
         :param rand: importance of the random value. Should be a value between 0 and 1.
-        :param use_cpu: whether to use the cpu for the model predictions
         :param seed: seed to use for the random generator
         """
         if not (0 <= rand <= 1):
             raise Exception("Rand must be a value between 0 and 1")
-
-        super().__init__(model_path=model_path, use_cpu=use_cpu)
         self.rand = rand
         self.generator = torch.Generator().manual_seed(seed)
 
-    def _decide(self, pred:torch.Tensor, **kwargs) -> int:
+    @overrides
+    def decide(self, pred:torch.Tensor, **kwargs) -> int:
         # add randomness to prediction
         pred = self.rand * torch.rand(pred.shape, generator=self.generator, dtype=torch.float) + (1 - self.rand) * pred
         # choose option with highest certainty of good result
@@ -152,9 +148,15 @@ if __name__ == '__main__':
 
     # agent
     # agent = RandomAgent(4444)
-    agent = TorchRAgent(
-        model_path=Path('./models/tmp/saved_good/adamw_max_val_acc_8_False_125,[20],[20]_0.001'),
-        rand=0,
+    agent = LabelDecisorAgent(
+        label_predictor=TorchLabelPredictor(
+            model_path=Path('./models/tmp/saved_good/adamw_max_val_acc_8_False_125,[20],[20]_0.001'),
+            use_cpu=True,
+        ),
+        decisor=RDecisionMaker(
+            rand=0,
+            seed=4444,
+        )
     )
 
     # run game

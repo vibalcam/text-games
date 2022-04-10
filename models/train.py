@@ -423,8 +423,12 @@ def show_examples(
                 k += 1
 
 
-def transform_graph_model(graph: nx.DiGraph, model: StateActionModel, save_path: str = "./graph_transformed.pickle",
-                          use_cpu: bool = False):
+def transform_graph_model(
+    graph: nx.DiGraph, 
+    model: StateActionModel, 
+    save_path: str = "./graph_transformed.pickle",
+    use_cpu: bool = False
+):
     """
     Runs the given model through the given graph and stores the predictions in it. Then it saves it in a file.
     :param graph: graph over which the model will be run
