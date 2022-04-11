@@ -8,7 +8,7 @@ import torch
 import torch.utils.tensorboard as tb
 from tqdm.auto import trange, tqdm
 
-from game.simulator import load_simulator_yarn
+from game.simulator import load_simulator_yarn, GraphSimulator
 from helper.helper import save_dict, save_pickle
 from .models import StateActionModel, save_model, load_model
 from .utils import ConfusionMatrix, load_data
@@ -166,9 +166,9 @@ def train(
                 val_cm.add((pred > 0).float(), reward)
 
         train_loss = np.mean(train_loss)
-        train_acc = train_cm.global_accuracy
-        val_acc = val_cm.global_accuracy
-        val_mcc = val_cm.matthews_corrcoef
+        # train_acc = train_cm.global_accuracy
+        # val_acc = val_cm.global_accuracy
+        # val_mcc = val_cm.matthews_corrcoef
 
         # Step the scheduler to change the learning rate
         is_better = False
@@ -440,11 +440,12 @@ def transform_graph_model(
     # runs the model over all the network and save the corresponding extra
     model = model.eval().to(torch.device('cuda' if torch.cuda.is_available() and not use_cpu else 'cpu'))
     for p, n, attr in tqdm(graph.edges(data=True)):
-        graph.edges[(p, n)]['pred'] = model.run(
+        pred = model.run(
             states=[graph.nodes[p]['text'].strip()],
             actions=[attr['action'].strip()],
             return_percentages=True,
         )[0, 0].cpu().detach().item()
+        graph.edges[(p, n)][GraphSimulator.ATTR_EXTRAS]['pred'] = pred
 
     # save picle
     save_pickle(graph, save_path)
