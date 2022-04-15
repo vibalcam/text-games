@@ -26,12 +26,12 @@ class Simulator(ABC, EnforceOverrides):
         pass
 
     @abstractmethod
-    def read(self) -> Tuple[str, List, Dict[str, str]]:
+    def read(self) -> Tuple[str, List, Dict]:
         """Returns the text, state, and the choices available and the extras (if any)"""
         pass
 
     @abstractmethod
-    def transition(self, choice: Union[int, str]) -> Tuple[str, List, Dict[str, str]]:
+    def transition(self, choice: Union[int, str]) -> Tuple[str, List, Dict]:
         """
         Transitions the story with the given choice
         :param choice: choice taken
@@ -44,7 +44,7 @@ class Simulator(ABC, EnforceOverrides):
         pass
 
     @abstractmethod
-    def get_current_node_attr(self) -> Dict[str, str]:
+    def get_current_node_attr(self) -> Dict:
         """Get the current node attributes"""
         pass
 
@@ -72,6 +72,8 @@ class GraphSimulator(Simulator):
     # edge attributes
     ATTR_ACTION = 'action'
     ATTR_EXTRAS = 'extras'
+    # extras attributes
+    ATTR_PRED = 'pred'
 
     def __init__(self, graph: nx.DiGraph):
         super().__init__()
@@ -95,7 +97,7 @@ class GraphSimulator(Simulator):
         self._get_actions()
 
     @overrides
-    def read(self) -> Tuple[str, List, Dict[str, str]]:
+    def read(self) -> Tuple[str, List, Dict]:
         # get node data
         data = self.graph.nodes(data=True)[self.current]
         # get possible actions
@@ -104,7 +106,7 @@ class GraphSimulator(Simulator):
         return data[self.ATTR_TEXT], self.showed_actions, self.last_extra
 
     @overrides
-    def transition(self, choice: Union[int, str]) -> Tuple[str, List, Dict[str, str]]:
+    def transition(self, choice: Union[int, str]) -> Tuple[str, List, Dict]:
         # if given as int transform to str
         if type(choice) == int:
             choice = self.showed_actions[choice]
@@ -127,7 +129,7 @@ class GraphSimulator(Simulator):
         return self.choices_history
 
     @overrides
-    def get_current_node_attr(self) -> Dict[str, str]:
+    def get_current_node_attr(self) -> Dict:
         n = self.graph.nodes(data=True)[self.current]
         d = n[self.ATTR_ATTR].copy()
         d[self.ATTR_TITLE] = n[self.ATTR_TITLE]
@@ -236,11 +238,11 @@ class YarnSimulator(Simulator):
         # last extras received
         self.last_extras = {}
 
-    def _parse_extras_dict(self, s: str) -> Dict[str, str]:
+    def _parse_extras_dict(self, s: str) -> Dict:
         return dict([k.split(self.extras_separator_key) for k in s.split(self.extras_separator)])
 
     @overrides
-    def read(self) -> Tuple[str, List, Dict[str, str]]:
+    def read(self) -> Tuple[str, List, Dict]:
         # create dict of choices and tuple of (choice full name, extras as dictionary of key values)
         self.choices = {k[0]: (self.extras_separator.join(k),
                                self._parse_extras_dict(k[1].strip()) if len(k) > 1 else {})
@@ -252,11 +254,11 @@ class YarnSimulator(Simulator):
         return self.controller.message(), self.last_choices_list, self.last_extras
 
     @overrides
-    def get_current_node_attr(self) -> Dict[str, str]:
+    def get_current_node_attr(self) -> Dict:
         return self.controller.state.attr if self.controller.state.attr is not None else {}
 
     @overrides
-    def transition(self, choice: Union[int, str]) -> Tuple[str, List, Dict[str, str]]:
+    def transition(self, choice: Union[int, str]) -> Tuple[str, List, Dict]:
         """
         Transitions the story with the given choice
         :param choice: choice taken

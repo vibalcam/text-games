@@ -7,6 +7,7 @@ import torch
 from overrides import EnforceOverrides, overrides
 
 from models.models import load_model
+from game.simulator import GraphSimulator
 
 T = TypeVar('T')
 
@@ -51,9 +52,15 @@ class LabelDecisorAgent (Agent):
         return self.decisor.decide(self.label_predictor.predict_label(state=state, actions=actions), **kwargs)
 
 
-# class GraphLabelLoader(LabelPredictor):
-#     def __init__(self) -> None:
-#         super().__init__()
+class GraphLabelLoader(LabelPredictor):
+    def __init__(self, simulator: GraphSimulator) -> None:
+        super().__init__()
+        self.simulator = simulator
+
+    @overrides
+    def predict_label(self, **kwargs) -> torch.Tensor:
+        extras = self.simulator.read()[2]
+        return torch.as_tensor([extras[GraphSimulator.ATTR_PRED]],dtype=torch.float)
 
 
 class TorchLabelPredictor(LabelPredictor):
@@ -141,7 +148,7 @@ class RDecisionMaker(DecisionMaker):
 
 
 if __name__ == '__main__':
-    from game.simulator import load_simulator_yarn
+    from game.simulator import load_simulator_yarn, GraphSimulator
 
     # simulator
     simulator = load_simulator_yarn()

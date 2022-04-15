@@ -445,7 +445,7 @@ def transform_graph_model(
             actions=[attr['action'].strip()],
             return_percentages=True,
         )[0, 0].cpu().detach().item()
-        graph.edges[(p, n)][GraphSimulator.ATTR_EXTRAS]['pred'] = pred
+        graph.edges[(p, n)][GraphSimulator.ATTR_EXTRAS][GraphSimulator.ATTR_PRED] = pred
 
     # save picle
     save_pickle(graph, save_path)
@@ -453,78 +453,82 @@ def transform_graph_model(
 
 
 if __name__ == '__main__':
-    from argparse import ArgumentParser
-    args_parser = ArgumentParser()
+    simulator = load_simulator_yarn()
+    model = load_model('./tmp/adamw_max_val_acc_8_False_125,[20],[20]_0.001')[0]
+    transform_graph_model(simulator.graph, model, use_cpu=True)
 
-    args_parser.add_argument()
+    # from argparse import ArgumentParser
+    # args_parser = ArgumentParser()
 
-    args_parser.add_argument('-t', '--test', type=int, default=None,
-                             help='the number of test runs that will be averaged to give the test result,'
-                                  'if None, training mode')
-    args_parser.add_argument('-ex', '--show_examples', type=int, default=None)
+    # args_parser.add_argument()
 
-    args = args_parser.parse_args()
+    # args_parser.add_argument('-t', '--test', type=int, default=None,
+    #                          help='the number of test runs that will be averaged to give the test result,'
+    #                               'if None, training mode')
+    # args_parser.add_argument('-ex', '--show_examples', type=int, default=None)
 
-    if args.test is not None:
-        test(
-            n_runs=args.test,
-            save_path="./models/saved_good"
-        )
-    elif args.show_examples is not None:
-        show_examples(num_examples=args.show_examples)
-    # elif args.
-    #     transform_graph_model(
-    #         graph=load_simulator_yarn(yarn='./yarnScripts', text_unk_macro="", jump_as_choice=True).graph,
-    #         model=load_model(Path('./models/tmp/saved_good/adamw_max_val_acc_8_False_125,[20],[20]_0.001'))[0]
+    # args = args_parser.parse_args()
+
+    # if args.test is not None:
+    #     test(
+    #         n_runs=args.test,
+    #         save_path="./models/saved_good"
     #     )
-    else:
-        # Model
-        bert_dict_model = dict(
-            shared_out_dim=125,
-            state_layers=[20],
-            action_layers=[20],
-            out_features=1,
-            lstm_model=False,
-            bert_name="bert-base-multilingual-cased",
-        )
-        # lstm_dict_model = dict(
-        #     shared_out_dim=50,
-        #     state_layers=[30],
-        #     action_layers=[30],
-        #     out_features=1,
-        #     lstm_model=True,
-        #     bert_name="bert-base-multilingual-cased",
-        # )
-        dict_model = bert_dict_model
-        model = StateActionModel(**dict_model)
+    # elif args.show_examples is not None:
+    #     show_examples(num_examples=args.show_examples)
+    # # elif args.
+    # #     transform_graph_model(
+    # #         graph=load_simulator_yarn(yarn='./yarnScripts', text_unk_macro="", jump_as_choice=True).graph,
+    # #         model=load_model(Path('./models/tmp/saved_good/adamw_max_val_acc_8_False_125,[20],[20]_0.001'))[0]
+    # #     )
+    # else:
+    #     # Model
+    #     bert_dict_model = dict(
+    #         shared_out_dim=125,
+    #         state_layers=[20],
+    #         action_layers=[20],
+    #         out_features=1,
+    #         lstm_model=False,
+    #         bert_name="bert-base-multilingual-cased",
+    #     )
+    #     # lstm_dict_model = dict(
+    #     #     shared_out_dim=50,
+    #     #     state_layers=[30],
+    #     #     action_layers=[30],
+    #     #     out_features=1,
+    #     #     lstm_model=True,
+    #     #     bert_name="bert-base-multilingual-cased",
+    #     # )
+    #     dict_model = bert_dict_model
+    #     model = StateActionModel(**dict_model)
 
-        # Training hyperparameters
-        train(
-            model=model,
-            dict_model=dict_model,
-            log_dir='./models/logs',
-            data_path='./yarnScripts',
-            save_path='./models/saved',
-            lr=1e-3,
-            optimizer_name="adamw",
-            n_epochs=30,
-            batch_size=8,
-            num_workers=0,
-            scheduler_mode='max_val_acc',
-            debug_mode=False,
-            steps_save=1,
-            use_cpu=False,
-            freeze_bert=True,
-            balanced_actions=True,
-        )
+    #     # Training hyperparameters
+    #     train(
+    #         model=model,
+    #         dict_model=dict_model,
+    #         log_dir='./models/logs',
+    #         data_path='./yarnScripts',
+    #         save_path='./models/saved',
+    #         lr=1e-3,
+    #         optimizer_name="adamw",
+    #         n_epochs=30,
+    #         batch_size=8,
+    #         num_workers=0,
+    #         scheduler_mode='max_val_acc',
+    #         debug_mode=False,
+    #         steps_save=1,
+    #         use_cpu=False,
+    #         freeze_bert=True,
+    #         balanced_actions=True,
+    #     )
 
-    # # Model
-    # bert_dict_model = dict(
-    #     shared_out_dim=125,
-    #     state_layers=[30],
-    #     action_layers=[30],
-    #     out_features=1,
-    #     lstm_model=False,
+    # # # Model
+    # # bert_dict_model = dict(
+    # #     shared_out_dim=125,
+    # #     state_layers=[30],
+    # #     action_layers=[30],
+    # #     out_features=1,
+    # #     lstm_model=False,
     #     bert_name="bert-base-multilingual-cased",
     # )
     # # lstm_dict_model = dict(
