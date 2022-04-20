@@ -454,8 +454,8 @@ def transform_graph_model(
 
 if __name__ == '__main__':
     simulator = load_simulator_yarn()
-    model = load_model('./tmp/adamw_max_val_acc_8_False_125,[20],[20]_0.001')[0]
-    transform_graph_model(simulator.graph, model, use_cpu=True)
+    model = load_model('./models/tmp/saved_good/adamw_max_val_acc_8_False_125,[20],[20]_0.001')[0]
+    transform_graph_model(simulator.graph, model, use_cpu=False)
 
     # from argparse import ArgumentParser
     # args_parser = ArgumentParser()

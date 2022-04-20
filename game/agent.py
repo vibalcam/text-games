@@ -1,7 +1,7 @@
 import random
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Sequence, TypeVar, List
+from typing import Sequence, TypeVar, List, Optional
 
 import torch
 from overrides import EnforceOverrides, overrides
@@ -57,10 +57,10 @@ class GraphLabelLoader(LabelPredictor):
         super().__init__()
         self.simulator = simulator
 
-    @overrides
+    @overrides(check_signature=False)
     def predict_label(self, **kwargs) -> torch.Tensor:
-        extras = self.simulator.read()[2]
-        return torch.as_tensor([extras[GraphSimulator.ATTR_PRED]],dtype=torch.float)
+        preds = [self.simulator.actions[k][GraphSimulator.ATTR_EXTRAS][GraphSimulator.ATTR_PRED] for k in self.simulator.showed_actions]
+        return torch.as_tensor(preds, dtype=torch.float)
 
 
 class TorchLabelPredictor(LabelPredictor):
@@ -82,7 +82,7 @@ class TorchLabelPredictor(LabelPredictor):
 
 
 class RDecisionMaker(DecisionMaker):
-    def __init__(self, rand: float = 0, seed: int = 4444) -> None:
+    def __init__(self, rand: float = 0, seed: Optional[int] = 4444) -> None:
         """
         It chooses the action that provides a higher percentage of certainty of being a good decision.
         It tries to maximize:
@@ -95,7 +95,11 @@ class RDecisionMaker(DecisionMaker):
         if not (0 <= rand <= 1):
             raise Exception("Rand must be a value between 0 and 1")
         self.rand = rand
-        self.generator = torch.Generator().manual_seed(seed)
+        self.generator = torch.Generator()
+        if seed is None:
+            self.generator.seed()
+        else:    
+            self.generator = self.generator.manual_seed(seed)
 
     @overrides
     def decide(self, pred:torch.Tensor, **kwargs) -> int:

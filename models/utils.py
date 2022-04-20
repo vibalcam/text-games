@@ -157,6 +157,7 @@ def load_data(
     actions = []
     rewards = []
     for p, _, attr in graph.edges(data=True):
+        # todo use appropiate names
         if not attr['extras']:
             continue
         states.append(graph.nodes[p]['text'].strip())
