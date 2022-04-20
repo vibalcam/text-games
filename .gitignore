@@ -1,1 +1,11 @@
 /venv/
+**/tmp/
+**/__pycache__/
+**/.ipynb_checkpoints/
+examples/html/
+
+# Temp
+.idea/
+**/logs*/
+**/saved*/
+**/tmp*/

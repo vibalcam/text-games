@@ -2,6 +2,7 @@ title: MaloAmanda
 tags: 
 colorID: 0
 position: 0,0 
+final:0
 ---
 
 A pesar de la vergüenza que sentía por dentro se me hacía insoportable, sabía que se lo tenía que contar a alguien. 
@@ -56,7 +57,7 @@ Amanda: Contándoselo a tus padres, para que denuncien a Hally.
 	[[MaloAmigos]]
 <<endif>>
 
--> Darle la razón__1 <<if $mamaTrust is true>>
+-> Darle la razón__r:1 <<if $mamaTrust is true>>
 	User: ...
 	User: Tienes razón Amanda. 
 	User: Pero... me da muchísimo miedo. 
@@ -107,7 +108,7 @@ Amanda: Contándoselo a tus padres, para que denuncien a Hally.
 	<<set $silencio to false>>
 	<<SetEnding @ Malo_4>>
 	[[Final]]
--> Negarse__0 <<if $mamaTrust is true>>
+-> Negarse__r:0 <<if $mamaTrust is true>>
 	[[MaloAmigos]]
 
 ===

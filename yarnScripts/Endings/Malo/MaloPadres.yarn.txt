@@ -2,6 +2,7 @@ title: MaloPadres
 tags: 
 colorID: 0
 position: 0,0 
+final:0
 ---
 User: ...
 Tenía mucho miedo de contárselo. 

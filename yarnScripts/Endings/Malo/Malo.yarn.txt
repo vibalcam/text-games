@@ -2,6 +2,7 @@ title: Malo
 tags: 
 colorID: 0
 position: 0,0
+final:0
 ---
 <<Scene @ habitacion>>
 <<Act @ User, user, center,center,grey>>
@@ -142,9 +143,9 @@ Amanda: ¿Estás bien?
 	[[MaloFinal]]
 <<endif>>
 
--> Contarle a Amanda__1 <<if $amandaTrust is true>>
+-> Contarle a Amanda__r:1 <<if $amandaTrust is true>>
 	[[MaloAmanda]]
--> No contarle a Amanda__0 <<if $amandaTrust is true>>
+-> No contarle a Amanda__r:0 <<if $amandaTrust is true>>
 	[[MaloFinal]]
 
 
