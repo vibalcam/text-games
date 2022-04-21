@@ -13,13 +13,27 @@ T = TypeVar('T')
 
 
 class Agent(ABC):
+    """
+    Interface for agent (player)
+    """
+    
     @abstractmethod
     def act(self, state:str, **kwargs):
+        """
+        Takes a certain action
+
+        :param str state: text description for the state (context)
+        """
         pass
 
 
 class RandomAgent(Agent):
     def __init__(self, seed: int = None):
+        """
+        An agent that takes decisions randomly
+
+        :param int seed: seed of the random agent, defaults to None
+        """
         random.seed(seed)
 
     @overrides(check_signature=False)
@@ -32,6 +46,10 @@ class LabelPredictor(ABC):
     def predict_label(self, state:str, actions: List[str]) -> torch.Tensor:
         """
         Predicts the labels from the state and actions given
+
+        :param str state: text description for the state (context)
+        :param List[str] actions: list of actions that can be taken
+        :return torch.Tensor: tensor with the predicted labels for decision making
         """
         pass
 
@@ -39,11 +57,23 @@ class LabelPredictor(ABC):
 class DecisionMaker(ABC):
     @abstractmethod
     def decide(self, pred: torch.Tensor, **kwargs) -> int:
+        """
+        Decides which action to take given a set of predicted labels
+
+        :param torch.Tensor pred: predicted labels
+        :return int: the action to take
+        """
         pass
 
 
-class LabelDecisorAgent (Agent):
+class LabelDecisorAgent(Agent):
     def __init__(self, label_predictor: LabelPredictor, decisor: DecisionMaker):
+        """
+        Agent that takes decision by extracting a set of labels and taking decisions with them
+
+        :param LabelPredictor label_predictor: label predictor that extracts the labels
+        :param DecisionMaker decisor: decisor that takes decisions from a set of labels
+        """
         self.label_predictor = label_predictor
         self.decisor = decisor
 
@@ -54,6 +84,11 @@ class LabelDecisorAgent (Agent):
 
 class GraphLabelLoader(LabelPredictor):
     def __init__(self, simulator: GraphSimulator) -> None:
+        """
+        Extracts the predicted set of labels from the graph in the simulator
+
+        :param GraphSimulator simulator: simulator of the game environment
+        """
         super().__init__()
         self.simulator = simulator
 

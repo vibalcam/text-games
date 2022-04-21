@@ -34,6 +34,7 @@ class Simulator(ABC, EnforceOverrides):
     def transition(self, choice: Union[int, str]) -> Tuple[str, List, Dict]:
         """
         Transitions the story with the given choice
+
         :param choice: choice taken
         """
         pass
@@ -52,6 +53,7 @@ class Simulator(ABC, EnforceOverrides):
     def is_finished(self) -> bool:
         """
         Returns true if the simulation has finished
+        
         :return: bool
         """
         pass
@@ -62,8 +64,8 @@ class GraphSimulator(Simulator):
     Simulator that uses a graph to run
 
     :param graph: graph that contains the game to run. It must at least have the following attributes:
-        - Node: `text, attr, title`
-        - Edge: `action, extras`
+        - Node: `text: str, attr: Dict, title:str`
+        - Edge: `action: str, extras: Dict`
     """
     # node attributes
     ATTR_TEXT = 'text'
@@ -147,9 +149,9 @@ class GraphSimulator(Simulator):
     def get_graphviz(self):
         dot = graphviz.Digraph()
         for n, attr in self.graph.nodes(data=True):
-            dot.node(n, label=attr['title'])
+            dot.node(n, label=attr[self.ATTR_TITLE])
         for p, n, attr in self.graph.edges(data=True):
-            dot.edge(p, n, label=attr['action'])
+            dot.edge(p, n, label=attr[self.ATTR_ACTION])
         return dot
 
 

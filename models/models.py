@@ -299,8 +299,12 @@ def save_model(model: torch.nn.Module, folder: str, model_name: str, param_dicts
     # create folder if it does not exist
     folder_path = f"{folder}/{model_name}"
     pathlib.Path(folder_path).mkdir(parents=True, exist_ok=True)
-    # save model
-    torch.save(model.state_dict(), f"{folder_path}/{model_name}.th")
+
+    # save model using TorchScript
+    # torch.save(model.state_dict(), f"{folder_path}/{model_name}.th")
+    model_scripted = torch.jit.script(model) # Export to TorchScript
+    model_scripted.save(f"{folder_path}/{model_name}.th") # Save
+
     # save dict
     if param_dicts is not None:
         save_dict(param_dicts, f"{folder_path}/{model_name}.dict")
@@ -316,16 +320,12 @@ def load_model(folder_path: Union[pathlib.Path,str]) -> Tuple[StateActionModel, 
     if isinstance(folder_path, str):
         folder_path = pathlib.Path(folder_path)
     path = f"{folder_path.absolute()}/{folder_path.name}"
+    # load dict
     dict_model = load_dict(f"{path}.dict")
-    return load_model_data(StateActionModel(download_bert=False, **dict_model), f"{path}.th"), dict_model
 
-
-def load_model_data(model: torch.nn.Module, model_path: str) -> torch.nn.Module:
-    """
-    Loads a model than has been previously saved
-    :param model_path: path from where to load model
-    :param model: model into which to load the saved model
-    :return: the loaded model
-    """
-    model.load_state_dict(torch.load(model_path, map_location='cpu'))
-    return model
+    # model = StateActionModel(download_bert=False, **dict_model)
+    # model.load_state_dict(torch.load(f"{path}.th", map_location='cpu'))
+    
+    # load model using TorchScript
+    model = torch.jit.load(f"{path}.th")
+    return model, dict_model
