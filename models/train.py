@@ -32,6 +32,8 @@ def train(
         use_cpu: bool = False,
         freeze_bert: bool = True,
         balanced_actions: bool = False,
+        augment_negative:bool = False,
+        scheduler_patience:int = 10,
 ):
     """
     Method that trains a given model
@@ -52,7 +54,9 @@ def train(
     :param device: if not none, device to use ignoring other parameters. If none, the device will be used depending on `use_cpu` and `debug_mode` parameters
     :param steps_save: number of epoch after which to validate and save model (if conditions met)
     :param freeze_bert: whether to freeze BERT during training
-    :param balanced_actions: parameter for `utils.StateActionDataset`
+    :param balanced_actions: if true, it will ensure that the actions returned are balanced
+    :param augment_negative: if true, it will add a negated version of all the samples by adding "No" in front of all actions
+    :param scheduler_patience: patience for the learning rate scheduler
     """
 
     # cpu or gpu used for training if available (gpu much faster)
@@ -73,6 +77,8 @@ def train(
         'batch_size',
         'scheduler_mode',
         'balanced_actions',
+        'augment_negative',
+        'scheduler_patience',
     ]}
     # dictionary to set model name
     name_dict = dict_model.copy()
@@ -112,6 +118,7 @@ def train(
         tokenizer=model.tokenizer,
         device=device,
         balanced_actions=balanced_actions,
+        augment_negative=augment_negative,
     )
 
     if optimizer_name == "sgd":
@@ -126,16 +133,16 @@ def train(
     # :param scheduler_patience: value used as patience for the learning rate scheduler
     if scheduler_mode == "min_loss":
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min',
-                                                               patience=10 if not balanced_actions else 480)
+                                                               patience=scheduler_patience)
     elif scheduler_mode in ["max_acc", "max_val_acc", "max_val_mcc"]:
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'max',
-                                                               patience=10 if not balanced_actions else 480)
+                                                               patience=scheduler_patience)
     else:
         raise Exception("Optimizer not configured")
 
     # print(f"{log_dir}/{name_model}")
     for epoch in (p_bar := trange(n_epochs)):
-        p_bar.set_description(f"{name_model} -> {dict_model['val_acc']}")
+        p_bar.set_description(f"{name_model} -> {dict_model.get('val_acc', 0)}")
         # print(epoch)
         train_loss = []
         train_cm = ConfusionMatrix(size=2, name='train')

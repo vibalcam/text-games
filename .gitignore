@@ -2,7 +2,7 @@
 **/tmp/
 **/__pycache__/
 **/.ipynb_checkpoints/
-examples/html/
+*.html
 
 # Temp
 .idea/

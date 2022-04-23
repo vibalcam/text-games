@@ -12,7 +12,7 @@ import seaborn as sns
 from sklearn.metrics import matthews_corrcoef, mean_squared_error
 import networkx as nx
 
-from game.simulator import YarnSimulator, Simulator
+from game.simulator import GraphSimulator, YarnSimulator, Simulator
 
 
 # Labels for the actions
@@ -36,17 +36,19 @@ class StateActionDataset(Dataset):
             max_length: int = None,
             device=None,
             balanced_actions:bool = False,
+            augment_negative:bool = False,
     ):
         """
         Initializer for the dataset
         :param states: list of states (L)
         :param actions: list of actions (L)
-        :param rewards: list of rewards (L)
+        :param rewards: list of rewards (L) (0 or 1)
         :param tokenize: whether to tokenize the input
         :param tokenizer: tokenizer. Only used if tokenize is true.
         :param max_length: max length for tokenization. Only used if tokenize is true
         :param device: the desired device of returned data. Only used if tokenize is true
         :param balanced_actions: if true, it will ensure that the actions returned are balanced
+        :param augment_negative: if true, it will add a negated version of all the samples by adding "No" in front of all actions
         """
         # Check correct parameters
         if tokenize and tokenizer is None:
@@ -55,6 +57,12 @@ class StateActionDataset(Dataset):
         self.device = device
         self.tokenize = tokenize
         self.rewards = torch.as_tensor(rewards, dtype=torch.float)
+
+        # augment with the negative version of the actions by adding "No"
+        if augment_negative:
+            actions.extend([f"No {k[0].lower()}{k[1:]}" for k in actions])
+            states.extend(states.copy())
+            rewards.extend([1-k for k in rewards])
 
         self.balanced_actions = balanced_actions
         if balanced_actions:
@@ -126,10 +134,11 @@ def load_data(
     num_workers=0,
     batch_size=4,
     drop_last=False,
-    lengths=(0.8, 0.1, 0.1),
+    lengths=(0.75, 0.15, 0.1),
     random_seed: int = 4444,
     reward_key:str='r',
     balanced_actions:bool = False,
+    augment_negative:bool = False,
     **kwargs
 ) -> Tuple[DataLoader, ...]:
     """
@@ -146,6 +155,7 @@ def load_data(
     :param lengths: tuple with percentage of train, validation and test samples
     :param reward_key: attribute key for the reward
     :param balanced_actions: if true, it will ensure that the actions returned are balanced
+    :param augment_negative: if true, it will add a negated version of all the samples by adding "No" in front of all actions
 
     :return: tuple of dataloader (same length as parameter lengths)
     """
@@ -157,12 +167,11 @@ def load_data(
     actions = []
     rewards = []
     for p, _, attr in graph.edges(data=True):
-        # todo use appropiate names
-        if not attr['extras']:
+        if not attr[GraphSimulator.ATTR_EXTRAS]:
             continue
-        states.append(graph.nodes[p]['text'].strip())
-        actions.append(attr['action'].strip())
-        rewards.append(float(attr['extras'][reward_key]))
+        states.append(graph.nodes[p][GraphSimulator.ATTR_TEXT].strip())
+        actions.append(attr[GraphSimulator.ATTR_ACTION].strip())
+        rewards.append(float(attr[GraphSimulator.ATTR_EXTRAS][reward_key]))
 
     # Shuffle the data
     data = list(zip(states, actions, rewards))
@@ -177,6 +186,7 @@ def load_data(
                                     actions[:lengths[0]],
                                     rewards[:lengths[0]],
                                     balanced_actions=balanced_actions,
+                                    augment_negative=augment_negative,
                                     **kwargs)]
     datasets.extend([StateActionDataset(states[lengths[k]:lengths[k + 1]],
                                         actions[lengths[k]:lengths[k + 1]],
@@ -228,7 +238,7 @@ class ConfusionMatrix:
         self.name = name
 
     def __repr__(self) -> str:
-        return self.matrix.numpy().__repr__
+        return self.matrix.numpy().__repr__()
 
     def add(self, preds: torch.Tensor, labels: torch.Tensor) -> None:
         """

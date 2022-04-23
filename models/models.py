@@ -124,7 +124,9 @@ class StateActionModel(torch.nn.Module):
             :param x: dict of torch.Tensor(B,sequence_length), output of the tokenizer
             :return: torch.Tensor(B,out_features)
             """
-            z = self.bert(**x)
+            # z = self.bert(**x)
+            z = self.bert(input_ids=x['input_ids'], token_type_ids=x['token_type_ids'],
+            attention_mask=x['attention_mask'])
             return self.net(z['pooler_output'])
 
     class IndividualBlock(torch.nn.Module):
@@ -229,19 +231,6 @@ class StateActionModel(torch.nn.Module):
         if not self.lstm_model:
             self.shared.freeze_bert(freeze)
 
-    @overload
-    def to(self: T, device: Optional[Union[int, device]] = ..., dtype: Optional[Union[dtype, str]] = ...,
-           non_blocking: bool = ...) -> T:
-        ...
-
-    @overload
-    def to(self: T, dtype: Union[dtype, str], non_blocking: bool = ...) -> T:
-        ...
-
-    @overload
-    def to(self: T, tensor: Tensor, non_blocking: bool = ...) -> T:
-        ...
-
     @overrides
     def to(self, *args, **kwargs):
         self.device = args[0]
@@ -288,6 +277,9 @@ class StateActionModel(torch.nn.Module):
         return self.output(torch.concat((state, action), 1))
 
 
+FOLDER_PATH_KEY = 'path_name'
+
+
 def save_model(model: torch.nn.Module, folder: str, model_name: str, param_dicts: Dict = None) -> None:
     """
     Saves the model so it can be loaded after
@@ -300,10 +292,10 @@ def save_model(model: torch.nn.Module, folder: str, model_name: str, param_dicts
     folder_path = f"{folder}/{model_name}"
     pathlib.Path(folder_path).mkdir(parents=True, exist_ok=True)
 
+    torch.save(model.state_dict(), f"{folder_path}/{model_name}.th")
     # save model using TorchScript
-    # torch.save(model.state_dict(), f"{folder_path}/{model_name}.th")
-    model_scripted = torch.jit.script(model) # Export to TorchScript
-    model_scripted.save(f"{folder_path}/{model_name}.th") # Save
+    # model_scripted = torch.jit.script(model) # Export to TorchScript
+    # model_scripted.save(f"{folder_path}/{model_name}.th") # Save
 
     # save dict
     if param_dicts is not None:
@@ -323,9 +315,12 @@ def load_model(folder_path: Union[pathlib.Path,str]) -> Tuple[StateActionModel, 
     # load dict
     dict_model = load_dict(f"{path}.dict")
 
-    # model = StateActionModel(download_bert=False, **dict_model)
-    # model.load_state_dict(torch.load(f"{path}.th", map_location='cpu'))
+    # set folder path
+    dict_model[FOLDER_PATH_KEY] = str(folder_path.absolute())
+
+    model = StateActionModel(download_bert=False, **dict_model)
+    model.load_state_dict(torch.load(f"{path}.th", map_location='cpu'))
     
     # load model using TorchScript
-    model = torch.jit.load(f"{path}.th")
+    # model = torch.jit.load(f"{path}.th")
     return model, dict_model
