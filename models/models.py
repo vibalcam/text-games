@@ -316,7 +316,7 @@ def load_model(folder_path: Union[pathlib.Path,str]) -> Tuple[StateActionModel, 
     dict_model = load_dict(f"{path}.dict")
 
     # set folder path
-    dict_model[FOLDER_PATH_KEY] = str(folder_path.absolute())
+    dict_model[FOLDER_PATH_KEY] = str(folder_path)
 
     model = StateActionModel(download_bert=False, **dict_model)
     model.load_state_dict(torch.load(f"{path}.th", map_location='cpu'))
