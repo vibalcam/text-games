@@ -178,6 +178,7 @@ def train(
         # val_mcc = val_cm.matthews_corrcoef
 
         # Step the scheduler to change the learning rate
+        # todo arreglar el save best
         is_better = False
         if scheduler_mode == "min_loss":
             met = train_loss

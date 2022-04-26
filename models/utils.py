@@ -56,7 +56,6 @@ class StateActionDataset(Dataset):
 
         self.device = device
         self.tokenize = tokenize
-        self.rewards = torch.as_tensor(rewards, dtype=torch.float)
 
         # augment with the negative version of the actions by adding "No"
         if augment_negative:
@@ -73,6 +72,7 @@ class StateActionDataset(Dataset):
             # choose randomly one of those indices
             self.act_perm = [np.random.permutation(m).tolist() for m in self.act_idx]
 
+        self.rewards = torch.as_tensor(rewards, dtype=torch.float)
         # if no tokenize, save lists
         if not tokenize:
             self.states = states
