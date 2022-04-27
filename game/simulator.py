@@ -27,7 +27,7 @@ class Simulator(ABC, EnforceOverrides):
 
     @abstractmethod
     def read(self) -> Tuple[str, List, Dict]:
-        """Returns the text, state, and the choices available and the extras (if any)"""
+        """Returns the text, state, and the choices available and the extras of the last decision taken (if any)"""
         pass
 
     @abstractmethod
