@@ -1,12 +1,12 @@
 import random
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Sequence, TypeVar, List, Optional
+from typing import List, Optional, Sequence, TypeVar
 
 import torch
+from models.models import load_model
 from overrides import EnforceOverrides, overrides
 
-from models.models import load_model
 from game.simulator import GraphSimulator
 
 T = TypeVar('T')
@@ -39,6 +39,33 @@ class RandomAgent(Agent):
     @overrides(check_signature=False)
     def act(self, state:str, actions: Sequence[T], **kwargs) -> T:
         return random.choice(actions)
+
+
+class SimpleCombinedAgent(Agent):
+    def __init__(self, agents: List[Agent], p_transition:List[float], seed:int = None) -> None:
+        """
+        Agent that combines multiple agents and changes from one to the next given a certain probability
+
+        :param List[Agent] agents: list of agents
+        :param List[float] p_transition: list of transition probabilities 
+                                        (probability of transitioning to another gent)
+        :param int seed: seed for reproducibility
+        """
+        if len(agent) != len(p_transition):
+            raise Exception("Length of agents and transitions must be the same")
+
+        self.agents = agents
+        self.p_transitions = p_transition
+        self.current = 0
+
+    @overrides(check_signature=True)
+    def act(self, state: str, **kwargs):
+        res = self.agents[self.current].act(state, **kwargs)
+        if self.p_transitions[self.current] <= random.random():
+            self.current += 1
+            if self.current == len(self.agents):
+                self.current = 0
+        return res
 
 
 class LabelPredictor(ABC):
@@ -187,7 +214,7 @@ class RDecisionMaker(DecisionMaker):
 
 
 if __name__ == '__main__':
-    from game.simulator import load_simulator_yarn, GraphSimulator
+    from game.simulator import GraphSimulator, load_simulator_yarn
 
     # simulator
     simulator = load_simulator_yarn()

@@ -1,11 +1,21 @@
 import pandas as pd
 from tqdm.auto import trange
 
+from typing import Optional
+
+from helper.helper import save_pickle
 from game.agent import Agent
 from game.simulator import GraphSimulator, Simulator
 
 
-def run(get_agent, simulator: Simulator, n_runs=100, reward_key:str = 'r', ending_key:str = 'final'):
+def run(get_agent, 
+    simulator: Simulator, 
+    n_runs=100, 
+    reward_key:str = 'r', 
+    ending_key:str = 'final', 
+    filename:Optional[str] = None,
+    **kwargs
+):
     """
     Runs the agent on the simulation for a certain number of runs and obtains the endings and decisions taken
 
@@ -14,6 +24,8 @@ def run(get_agent, simulator: Simulator, n_runs=100, reward_key:str = 'r', endin
     :param int n_runs: number of runs, defaults to 100
     :param str reward_key: extras attribute key for the reward, defaults to 'r'
     :param str ending_key: node attribute key for the type of ending, defaults to 'final'
+    :param filename: if not None, the filename of the file where to save the results
+    :param kwargs: other parameters for the `get_agent` function
     """
     
 # :param reward_key: attribute key for the reward
@@ -23,7 +35,7 @@ def run(get_agent, simulator: Simulator, n_runs=100, reward_key:str = 'r', endin
     for k in trange(int(n_runs)):
         # reset simulator and agent
         simulator.restart()
-        agent = get_agent()
+        agent = get_agent(**kwargs)
 
         final = None
         # run simulator
@@ -44,7 +56,11 @@ def run(get_agent, simulator: Simulator, n_runs=100, reward_key:str = 'r', endin
 
     df_endings = pd.DataFrame(data=endings, columns=['title', 'kind'])
     df_decisions = pd.DataFrame(data=decisions, columns=['decision'])
-    return dict(
+    res = dict(
         endings=df_endings, 
         decisions=df_decisions,
     )
+
+    if filename is not None:
+        save_pickle(res, filename)
+    return res
