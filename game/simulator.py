@@ -91,14 +91,14 @@ class GraphSimulator(Simulator):
         self.showed_actions = None
         self.restart()
 
-    @overrides
+    @overrides(check_signature=False)
     def restart(self):
         self.current = self.root
         self.choices_history = []
         self.last_extra = {}
         self._get_actions()
 
-    @overrides
+    @overrides(check_signature=False)
     def read(self) -> Tuple[str, List, Dict]:
         # get node data
         data = self.graph.nodes(data=True)[self.current]
@@ -107,7 +107,7 @@ class GraphSimulator(Simulator):
 
         return data[self.ATTR_TEXT], self.showed_actions, self.last_extra
 
-    @overrides
+    @overrides(check_signature=False)
     def transition(self, choice: Union[int, str]) -> Tuple[str, List, Dict]:
         # if given as int transform to str
         if type(choice) == int:
@@ -126,18 +126,18 @@ class GraphSimulator(Simulator):
                         for k, v in self.graph[self.current].items()}
         self.showed_actions = list(self.actions.keys())
 
-    @overrides
+    @overrides(check_signature=False)
     def get_current_path(self) -> List[str]:
         return self.choices_history
 
-    @overrides
+    @overrides(check_signature=False)
     def get_current_node_attr(self) -> Dict:
         n = self.graph.nodes(data=True)[self.current]
         d = n[self.ATTR_ATTR].copy()
         d[self.ATTR_TITLE] = n[self.ATTR_TITLE]
         return d
 
-    @overrides
+    @overrides(check_signature=False)
     def is_finished(self) -> bool:
         return self.graph.out_degree[self.current] == 0
 
@@ -226,7 +226,7 @@ class YarnSimulator(Simulator):
         self.choices_history = None
         self.restart()
 
-    @overrides
+    @overrides(check_signature=False)
     def restart(self):
         self._controller = YarnController(None, False, content=self.data,
                                           jump_as_choice=self.jump_as_choice,
@@ -243,7 +243,7 @@ class YarnSimulator(Simulator):
     def _parse_extras_dict(self, s: str) -> Dict:
         return dict([k.split(self.extras_separator_key) for k in s.split(self.extras_separator)])
 
-    @overrides
+    @overrides(check_signature=False)
     def read(self) -> Tuple[str, List, Dict]:
         # create dict of choices and tuple of (choice full name, extras as dictionary of key values)
         self.choices = {k[0]: (self.extras_separator.join(k),
@@ -255,11 +255,11 @@ class YarnSimulator(Simulator):
 
         return self.controller.message(), self.last_choices_list, self.last_extras
 
-    @overrides
+    @overrides(check_signature=False)
     def get_current_node_attr(self) -> Dict:
         return self.controller.state.attr if self.controller.state.attr is not None else {}
 
-    @overrides
+    @overrides(check_signature=False)
     def transition(self, choice: Union[int, str]) -> Tuple[str, List, Dict]:
         """
         Transitions the story with the given choice
@@ -281,11 +281,11 @@ class YarnSimulator(Simulator):
     def controller(self):
         return self._controller
 
-    @overrides
+    @overrides(check_signature=False)
     def get_current_path(self) -> List[str]:
         return self.choices_history
 
-    @overrides
+    @overrides(check_signature=False)
     def is_finished(self) -> bool:
         return self.controller.finished
 

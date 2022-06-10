@@ -231,7 +231,7 @@ class StateActionModel(torch.nn.Module):
         if not self.lstm_model:
             self.shared.freeze_bert(freeze)
 
-    @overrides
+    @overrides(check_signature=False)
     def to(self, *args, **kwargs):
         self.device = args[0]
         return super().to(*args, **kwargs)

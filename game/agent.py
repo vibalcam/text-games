@@ -1,16 +1,22 @@
 import random
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import List, Optional, Sequence, TypeVar
+from typing import List, Optional, Sequence, TypeVar, Tuple, Union, Callable
 
+import numpy as np
 import torch
+import torch.nn.functional as F
 from models.models import load_model
 from overrides import EnforceOverrides, overrides
+import pydtmc
+from numpy.random import default_rng
 
 from game.simulator import GraphSimulator
 
 T = TypeVar('T')
 
+
+######## AGENTS INTERFACE ########
 
 class Agent(ABC):
     """
@@ -27,6 +33,33 @@ class Agent(ABC):
         pass
 
 
+class LabelPredictor(ABC):
+    @abstractmethod
+    def predict_label(self, state:str, actions: List[str]) -> torch.Tensor:
+        """
+        Predicts the labels from the state and actions given
+
+        :param str state: text description for the current state/context
+        :param List[str] actions: list of actions that can be taken
+        :return torch.Tensor: tensor (actions, labels) with the predicted labels for each action used for decision making
+        """
+        pass
+
+
+class DecisionMaker(ABC):
+    @abstractmethod
+    def decide(self, pred: torch.Tensor, **kwargs) -> int:
+        """
+        Decides which action to take given a set of predicted labels
+
+        :param torch.Tensor pred: tensor (actions, labels) with predicted labels for decision making
+        :return int: the action to take
+        """
+        pass
+
+
+######## AGENTS ########
+
 class RandomAgent(Agent):
     def __init__(self, seed: int = None):
         """
@@ -41,73 +74,46 @@ class RandomAgent(Agent):
         return random.choice(actions)
 
 
-class SimpleCombinedAgent(Agent):
-    def __init__(self, agents: List[Agent], p_transition:List[float], seed:int = None) -> None:
+class MarkovChainAgent(Agent):
+    def __init__(self, transitions: np.array, agents: List[Agent], initial_agent:int = 0, seed:int = None):
         """
-        Agent that combines multiple agents and changes from one to the next given a certain probability
+        Markov Chain of agents
 
-        :param List[Agent] agents: list of agents
-        :param List[float] p_transition: list of transition probabilities 
-                                        (probability of transitioning to another gent)
+        :param np.array transitions: matrix of transition probabilities. 
+            Element (i,j) is the probability that, being in state i, the agent will transition to state j
+        :param List[Agent] agents: list of agents. Each agent is a state of the Markov Chain of agents
+        :param int initial_agent: initial agent/state, defaults to 0
         :param int seed: seed for reproducibility
         """
-        if len(agent) != len(p_transition):
-            raise Exception("Length of agents and transitions must be the same")
+        super().__init__()
+        self.mc = pydtmc.MarkovChain(p=transitions, states=agents)
+        self.current = agents[initial_agent]
+        self.seed = seed
 
-        self.agents = agents
-        self.p_transitions = p_transition
-        self.current = 0
-
-    @overrides(check_signature=True)
-    def act(self, state: str, **kwargs):
-        res = self.agents[self.current].act(state, **kwargs)
-        if self.p_transitions[self.current] <= random.random():
-            self.current += 1
-            if self.current == len(self.agents):
-                self.current = 0
+    @overrides(check_signature=False)
+    def act(self, state:str, **kwargs):
+        res = self.current.act(state, **kwargs)
+        self.current = self.mc.next_state(initial_state=self.current, seed=self.seed)
         return res
 
 
-class LabelPredictor(ABC):
-    @abstractmethod
-    def predict_label(self, state:str, actions: List[str]) -> torch.Tensor:
-        """
-        Predicts the labels from the state and actions given
-
-        :param str state: text description for the state (context)
-        :param List[str] actions: list of actions that can be taken
-        :return torch.Tensor: tensor with the predicted labels for decision making
-        """
-        pass
-
-
-class DecisionMaker(ABC):
-    @abstractmethod
-    def decide(self, pred: torch.Tensor, **kwargs) -> int:
-        """
-        Decides which action to take given a set of predicted labels
-
-        :param torch.Tensor pred: predicted labels
-        :return int: the action to take
-        """
-        pass
-
-
 class LabelDecisorAgent(Agent):
-    def __init__(self, label_predictor: LabelPredictor, decisor: DecisionMaker):
+    def __init__(self, label_predictor: LabelPredictor, decision_maker: DecisionMaker):
         """
         Agent that takes decision by extracting a set of labels and taking decisions with them
 
         :param LabelPredictor label_predictor: label predictor that extracts the labels
-        :param DecisionMaker decisor: decisor that takes decisions from a set of labels
+        :param DecisionMaker decision_maker: decision_maker that takes decisions from a set of labels
         """
         self.label_predictor = label_predictor
-        self.decisor = decisor
+        self.decision_maker = decision_maker
 
     @overrides(check_signature=False)
     def act(self, state:str, actions: List[str], **kwargs):
-        return self.decisor.decide(self.label_predictor.predict_label(state=state, actions=actions), **kwargs)
+        return self.decision_maker.decide(self.label_predictor.predict_label(state=state, actions=actions), **kwargs)
 
+
+######## LABEL PREDICTORS ########
 
 class GraphLabelLoader(LabelPredictor):
     def __init__(self, simulator: GraphSimulator) -> None:
@@ -121,6 +127,11 @@ class GraphLabelLoader(LabelPredictor):
 
     @overrides(check_signature=False)
     def predict_label(self, **kwargs) -> torch.Tensor:
+        """
+        Obtains the predicted labels from the graph simulator
+
+        :return torch.Tensor: predicted labels (actions, labels)
+        """
         preds = [self.simulator.actions[k][GraphSimulator.ATTR_EXTRAS][GraphSimulator.ATTR_PRED] for k in self.simulator.showed_actions]
         return torch.as_tensor(preds, dtype=torch.float)
 
@@ -135,17 +146,27 @@ class TorchLabelPredictor(LabelPredictor):
         """
         self.device = torch.device('cuda' if torch.cuda.is_available() and not use_cpu else 'cpu')
         self.model = load_model(model_path)[0].eval().to(self.device)
+        self._last_probs = torch.as_tensor(0, dtype=torch.float)
 
-    @overrides
+    @property
+    def last_probs(self) -> torch.Tensor:
+        return self._last_probs
+
+    @overrides(check_signature=False)
     def predict_label(self, state:str, actions: List[str]) -> torch.Tensor:
         # get percentages of certainty of action
-        # model run outputs B,1 -> pred B
-        return self.model.run([state] * len(actions), actions, return_percentages=True).cpu().detach()[:,0]
+        # model run outputs B,labels -> pred B,labels
+        self._last_probs = self.model.run([state] * len(actions), actions, return_percentages=True).cpu().detach()
+        return self.last_probs
 
+
+######## DECISION MAKERS ########
 
 class RDecisionMaker(DecisionMaker):
     def __init__(self, rand: float = 0, seed: Optional[int] = 4444) -> None:
         """
+        WARNING: ONLY USED FOR GOOD/BAD DECISIONS WITH LABELS DIMENSION OF (actions, 1)
+
         It chooses the action that provides a higher percentage of certainty of being a good decision.
         It tries to maximize:
 
@@ -159,11 +180,13 @@ class RDecisionMaker(DecisionMaker):
         self.rand = rand
         self.generator = torch.Generator()
         if seed is None:
+            # random seed
             self.generator.seed()
-        else:    
+        else:
+            # given seed
             self.generator = self.generator.manual_seed(seed)
 
-    @overrides
+    @overrides(check_signature=False)
     def decide(self, pred:torch.Tensor, **kwargs) -> int:
         # add randomness to prediction
         pred = self.rand * torch.rand(pred.shape, generator=self.generator, dtype=torch.float) + (1 - self.rand) * pred
@@ -171,46 +194,49 @@ class RDecisionMaker(DecisionMaker):
         return pred.argmax().item()
 
 
-# class TorchFuncAgent(TorchAgent):
-#     """
-#     Agent that uses a Pytorch model for decision taking.
-#     """
-#
-#     def __init__(self,
-#         model_path: Path,
-#         alpha: torch.Tensor,
-#         beta: torch.Tensor,
-#         use_cpu: bool = False,
-#         seed: int = 123
-#     ) -> None:
-#         super().__init__(model_path=model_path, use_cpu=use_cpu, seed=seed)
-#
-#         self.alpha = alpha
-#         self.beta = beta
-#         self.past_dec = None
-#
-#     def _func_labels(self, labels):
-#         pass
-#
-#     def _decide(self, labels) -> int:
-#         if self.past_dec is None:
-#             p = self._func_labels(labels)
-#         else:
-#             p = (1 - self.beta - self.alpha) * self._func_labels(labels) + \
-#                 self.alpha * self.past_dec + \
-#                 self.beta * (1 - self.past_dec)
-#
-#         """
-#          todo: no es un unico label, sino por accion
-#          solucion posible
-#          - calcular p para cada accion
-#          - normalizar sobre 1 y obtener probabilidades acumuladas por opcion
-#          - uniforme de 0 a 1
-#          - elegir aquella eleccion donde la uniforme haya caido (tramo donde haya caido)
-#         """
-#
-#         self.past_dec = p.argmax(0)
-#         return self.past_dec
+class BehavioralDecisionMaker(DecisionMaker):
+    def __init__(self, weight_funcs: List[Callable[[torch.Tensor], float]], memory_steps:int = 0, seed:int = None):
+        """
+        Decision maker with a certain behavior profile and memory-aware.
+
+        Calculates the probability of taking a certain action according to the personality traits/labels of the action and
+        its behavior profile. This probability is computed by weighting the predicted labels. These weights are obtained 
+        taking into account past decisions and using a given function.
+
+        Note that, if weight w for label r is w>0, it encourages this behavior; w=0, does not care; w<0, discourages this behavior
+
+        :param List[Callable[[List[torch.Tensor]], float]] weight_funcs: list of functions to obtain the weights for each label. 
+            The number of functions must equal the number of labels. The weight for label `r` given function `f`, will be obtained
+            by computing `f(1,r_1, r_2,...,r_n)` with r_n being the value of label r in t-n and n being memory_steps. This function
+            must return a float like value (float, numpy or tensor).
+        :param int memory_steps: number of timesteps to use for the memory, defaults to 0
+        :param seed: seed to use for the random generator
+        """
+        super().__init__()
+        self.weight_funcs = weight_funcs
+        self.memory = torch.ones(memory_steps + 1, len(weight_funcs)) # first row is always 1, the rest shift and update
+        self.seed = seed
+        self._p = torch.as_tensor(0, dtype=torch.float)
+
+    @property
+    def p(self) -> torch.Tensor:
+        return self._p
+
+    @overrides(check_signature=False)
+    def decide(self, pred:torch.Tensor, **kwargs) -> int:
+        # obtain weights for labels
+        w = torch.as_tensor([f(self.memory[:,idx]) for idx,f in enumerate(self.weight_funcs)], dtype=torch.float)
+        # obtain scores and convert them to probabilities using softmax
+        self._p = F.softmax((pred * w[None, :]).sum(1)) # (actions, labels) -> (actions)
+        # choose the action to take
+        res = default_rng(self.seed).choice(pred.shape[0], size=1, p=self.p.numpy()).item()
+        
+        # update memory
+        if self.memory.shape[0] > 1:
+            self.memory[2:,...] = self.memory[1:-1,...]
+            self.memory[1,...] = pred[res,...]
+
+        return res
 
 
 if __name__ == '__main__':
@@ -223,7 +249,7 @@ if __name__ == '__main__':
     # agent = RandomAgent(4444)
     agent = LabelDecisorAgent(
         label_predictor=TorchLabelPredictor(
-            model_path=Path('./models/tmp/saved_good/adamw_max_val_acc_8_False_125,[20],[20]_0.001'),
+            model_path=Path('./notebooks/saved_bert/200_[20]_[30]_1_False_bert-base-multilingual-cased_0.001_adamw_8_max_val_mcc_False_False_100'),
             use_cpu=True,
         ),
         decisor=RDecisionMaker(

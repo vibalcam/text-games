@@ -11,8 +11,7 @@ tensorboard
 tqdm
 win10toast
 pandas
-tqdm
-mpire
 seaborn
 scikit-learn
 overrides
+PyDTMC
