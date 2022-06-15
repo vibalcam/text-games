@@ -138,6 +138,7 @@ def load_data(
     random_seed: int = 4444,
     reward_key:str='r',
     balanced_actions:bool = False,
+    balanced_actions_test:bool = False,
     augment_negative:bool = False,
     **kwargs
 ) -> Tuple[DataLoader, ...]:
@@ -154,7 +155,8 @@ def load_data(
     :param drop_last: whether to drop the last batch if it is smaller than batch_size
     :param lengths: tuple with percentage of train, validation and test samples
     :param reward_key: attribute key for the reward
-    :param balanced_actions: if true, it will ensure that the actions returned are balanced
+    :param balanced_actions: if true, it will ensure that, during training, the actions returned are balanced
+    :param balanced_actions_test: if true, it will ensure that, during validation and testing, the actions returned are balanced
     :param augment_negative: if true, it will add a negated version of all the samples by adding "No" in front of all actions
 
     :return: tuple of dataloader (same length as parameter lengths)
@@ -191,10 +193,12 @@ def load_data(
     datasets.extend([StateActionDataset(states[lengths[k]:lengths[k + 1]],
                                         actions[lengths[k]:lengths[k + 1]],
                                         rewards[lengths[k]:lengths[k + 1]],
+                                        balanced_actions=balanced_actions_test,
                                         **kwargs) for k in range(len(lengths) - 1)])
     datasets.append(StateActionDataset(states[lengths[-1]:],
                                         actions[lengths[-1]:],
                                         rewards[lengths[-1]:],
+                                        balanced_actions=balanced_actions_test,
                                         **kwargs))
 
     # Return DataLoaders for the datasets
@@ -205,6 +209,17 @@ def load_data(
         shuffle=idx == 0,
         drop_last=drop_last,
     ) for idx, k in enumerate(datasets))
+
+
+def get_certainty(pred: np.array) -> np.array:
+    """
+    Calculates the certainty of the decisions given the predictions
+
+    :param np.array pred: the predictions
+    :return np.array: the certainty of the decisions
+    """
+    chosen = (pred > 0).astype(float)
+    return (np.abs(chosen-1+pred) * 100)
 
 
 class ConfusionMatrix:

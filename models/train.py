@@ -4,6 +4,7 @@ from typing import Dict, List, Union
 
 import networkx as nx
 import numpy as np
+import pandas as pd
 import torch
 import torch.utils.tensorboard as tb
 from tqdm.auto import trange, tqdm
@@ -268,6 +269,7 @@ def test(
         use_cpu: bool = False,
         save: bool = True,
         verbose: bool = False,
+        balanced_actions:bool = False,
 ) -> list[dict[str, Union[dict, list[ConfusionMatrix]]]]:
     """
     Calculates the metric on the test set of the model given in args.
@@ -282,6 +284,7 @@ def test(
     :param debug_mode: whether to use debug mode (cpu and 0 workers)
     :param save: whether to save the results in the model dict
     :param verbose: whether to print results
+    :param balanced_actions: if true, it will ensure that the actions returned are balanced
     """
 
     def print_v(s):
@@ -315,38 +318,66 @@ def test(
             random_seed=123,
             tokenizer=model.tokenizer,
             device=device,
+            balanced_actions=balanced_actions,
+            balanced_actions_test=balanced_actions,
         )
 
         # start testing
         train_cm = []
+        train_values_list = []
         val_cm = []
+        val_values_list = []
         test_cm = []
+        test_values_list = []
         for k in range(n_runs):
             train_run_cm = ConfusionMatrix(size=2, name='train')
+            train_values = [[], []]
             val_run_cm = ConfusionMatrix(size=2, name='val')
+            val_values = [[], []]
             test_run_cm = ConfusionMatrix(size=2, name='test')
+            test_values = [[], []]
 
             with torch.no_grad():
                 # train
                 for state, action, reward in loader_train:
                     pred = model(state, action)[:, 0]
                     train_run_cm.add(preds=(pred > 0).float(), labels=reward)
+                    train_values[0].extend(reward.cpu().detach().numpy().tolist())
+                    train_values[1].extend(torch.sigmoid(pred).cpu().detach().numpy().tolist())
 
                 # valid
                 for state, action, reward in loader_valid:
                     pred = model(state, action)[:, 0]
                     val_run_cm.add(preds=(pred > 0).float(), labels=reward)
+                    val_values[0].extend(reward.cpu().detach().numpy().tolist())
+                    val_values[1].extend(torch.sigmoid(pred).cpu().detach().numpy().tolist())
 
                 # test
                 for state, action, reward in loader_test:
                     pred = model(state, action)[:, 0]
                     test_run_cm.add(preds=(pred > 0).float(), labels=reward)
+                    test_values[0].extend(reward.cpu().detach().numpy().tolist())
+                    test_values[1].extend(torch.sigmoid(pred).cpu().detach().numpy().tolist())
 
             print_v(f"Run {k}: {test_run_cm.global_accuracy}")
 
+            # Make dataframe calculations for chosen and certainty
+            train_df = pd.DataFrame(data=list(zip(*train_values)), columns=['true', 'pred'])
+            train_df['chosen'] = (train_df.pred > 0.5).astype(float)
+            train_df['cert'] = (train_df.chosen-1+train_df.pred).abs() * 100
+            val_df = pd.DataFrame(data=list(zip(*val_values)), columns=['true', 'pred'])
+            val_df['chosen'] = (val_df.pred > 0.5).astype(float)
+            val_df['cert'] = (val_df.chosen-1+val_df.pred).abs() * 100
+            test_df = pd.DataFrame(data=list(zip(*test_values)), columns=['true', 'pred'])
+            test_df['chosen'] = (test_df.pred > 0.5).astype(float)
+            test_df['cert'] = (test_df.chosen-1+test_df.pred).abs() * 100
+
             train_cm.append(train_run_cm)
+            train_values_list.append(train_df)
             val_cm.append(val_run_cm)
+            val_values_list.append(val_df)
             test_cm.append(test_run_cm)
+            test_values_list.append(test_df)
 
         dict_result = {
             "train_mcc": np.mean([k.matthews_corrcoef for k in train_cm]),
@@ -369,6 +400,9 @@ def test(
             train_cm=train_cm,
             val_cm=val_cm,
             test_cm=test_cm,
+            train_values = train_values_list,
+            val_values = val_values_list,
+            test_values = test_values_list,
         ))
 
     return list_all
@@ -463,7 +497,7 @@ def transform_graph_model(
             states=[graph.nodes[p]['text'].strip()],
             actions=[attr['action'].strip()],
             return_percentages=True,
-        )[0, 0].cpu().detach().item()
+        )[0,...].cpu().detach().tolist()
         graph.edges[(p, n)][GraphSimulator.ATTR_EXTRAS][GraphSimulator.ATTR_PRED] = pred
 
     # save picle
@@ -473,151 +507,5 @@ def transform_graph_model(
 
 if __name__ == '__main__':
     simulator = load_simulator_yarn()
-    model = load_model('./models/tmp/saved_good/adamw_max_val_acc_8_False_125,[20],[20]_0.001')[0]
+    model = load_model('./notebooks/saved_bert/200_[20]_[30]_1_False_bert-base-multilingual-cased_0.001_adamw_8_max_val_mcc_False_False_100')[0]
     transform_graph_model(simulator.graph, model, use_cpu=False)
-
-    # from argparse import ArgumentParser
-    # args_parser = ArgumentParser()
-
-    # args_parser.add_argument()
-
-    # args_parser.add_argument('-t', '--test', type=int, default=None,
-    #                          help='the number of test runs that will be averaged to give the test result,'
-    #                               'if None, training mode')
-    # args_parser.add_argument('-ex', '--show_examples', type=int, default=None)
-
-    # args = args_parser.parse_args()
-
-    # if args.test is not None:
-    #     test(
-    #         n_runs=args.test,
-    #         save_path="./models/saved_good"
-    #     )
-    # elif args.show_examples is not None:
-    #     show_examples(num_examples=args.show_examples)
-    # # elif args.
-    # #     transform_graph_model(
-    # #         graph=load_simulator_yarn(yarn='./yarnScripts', text_unk_macro="", jump_as_choice=True).graph,
-    # #         model=load_model(Path('./models/tmp/saved_good/adamw_max_val_acc_8_False_125,[20],[20]_0.001'))[0]
-    # #     )
-    # else:
-    #     # Model
-    #     bert_dict_model = dict(
-    #         shared_out_dim=125,
-    #         state_layers=[20],
-    #         action_layers=[20],
-    #         out_features=1,
-    #         lstm_model=False,
-    #         bert_name="bert-base-multilingual-cased",
-    #     )
-    #     # lstm_dict_model = dict(
-    #     #     shared_out_dim=50,
-    #     #     state_layers=[30],
-    #     #     action_layers=[30],
-    #     #     out_features=1,
-    #     #     lstm_model=True,
-    #     #     bert_name="bert-base-multilingual-cased",
-    #     # )
-    #     dict_model = bert_dict_model
-    #     model = StateActionModel(**dict_model)
-
-    #     # Training hyperparameters
-    #     train(
-    #         model=model,
-    #         dict_model=dict_model,
-    #         log_dir='./models/logs',
-    #         data_path='./yarnScripts',
-    #         save_path='./models/saved',
-    #         lr=1e-3,
-    #         optimizer_name="adamw",
-    #         n_epochs=30,
-    #         batch_size=8,
-    #         num_workers=0,
-    #         scheduler_mode='max_val_acc',
-    #         debug_mode=False,
-    #         steps_save=1,
-    #         use_cpu=False,
-    #         freeze_bert=True,
-    #         balanced_actions=True,
-    #     )
-
-    # # # Model
-    # # bert_dict_model = dict(
-    # #     shared_out_dim=125,
-    # #     state_layers=[30],
-    # #     action_layers=[30],
-    # #     out_features=1,
-    # #     lstm_model=False,
-    #     bert_name="bert-base-multilingual-cased",
-    # )
-    # # lstm_dict_model = dict(
-    # #     shared_out_dim=50,
-    # #     state_layers=[30],
-    # #     action_layers=[30],
-    # #     out_features=1,
-    # #     lstm_model=True,
-    # #     bert_name="bert-base-multilingual-cased",
-    # # )
-    # dict_model = bert_dict_model
-    # model = StateActionModel(**dict_model)
-
-    # # Training hyperparameters
-    # train(
-    #     model=model,
-    #     dict_model=dict_model,
-    #     log_dir='./models/logs',
-    #     data_path='./yarnScripts',
-    #     save_path='./models/saved',
-    #     lr=1e-3,
-    #     optimizer_name="adamw",
-    #     n_epochs=30,
-    #     batch_size=8,
-    #     num_workers=0,
-    #     scheduler_mode='max_val_acc',
-    #     debug_mode=False,
-    #     steps_validate=1,
-    #     use_cpu=False,
-    #     freeze_bert=True,
-    #     balanced_actions=True,
-    # )
-
-    # # other
-    # # Model
-    # bert_dict_model = dict(
-    #     shared_out_dim=125,
-    #     state_layers=[20],
-    #     action_layers=[20],
-    #     out_features=1,
-    #     lstm_model=False,
-    #     bert_name="bert-base-multilingual-cased",
-    # )
-    # # lstm_dict_model = dict(
-    # #     shared_out_dim=50,
-    # #     state_layers=[30],
-    # #     action_layers=[30],
-    # #     out_features=1,
-    # #     lstm_model=True,
-    # #     bert_name="bert-base-multilingual-cased",
-    # # )
-    # dict_model = bert_dict_model
-    # model = StateActionModel(**dict_model)
-
-    # # Training hyperparameters
-    # train(
-    #     model=model,
-    #     dict_model=dict_model,
-    #     log_dir='./models/logs2',
-    #     data_path='./yarnScripts',
-    #     save_path='./models/saved2',
-    #     lr=1e-3,
-    #     optimizer_name="adamw",
-    #     n_epochs=30,
-    #     batch_size=8,
-    #     num_workers=0,
-    #     scheduler_mode='max_val_acc',
-    #     debug_mode=False,
-    #     steps_validate=1,
-    #     use_cpu=False,
-    #     freeze_bert=True,
-    #     balanced_actions=True,
-    # )

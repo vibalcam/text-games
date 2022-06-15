@@ -12,7 +12,7 @@ from helper.helper import load_dict, save_dict
 
 class StateActionModel(torch.nn.Module):
     """
-    Model to be used to make decisions given a state and action
+    Model to be used to extract the personality traits labels given a state and action
     """
 
     class LSTMSharedBlock(torch.nn.Module):

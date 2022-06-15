@@ -24,7 +24,7 @@ class Agent(ABC):
     """
     
     @abstractmethod
-    def act(self, state:str, **kwargs):
+    def act(self, state:str, **kwargs) -> Union[int,str]:
         """
         Takes a certain action
 
@@ -41,7 +41,7 @@ class LabelPredictor(ABC):
 
         :param str state: text description for the current state/context
         :param List[str] actions: list of actions that can be taken
-        :return torch.Tensor: tensor (actions, labels) with the predicted labels for each action used for decision making
+        :return torch.Tensor: tensor (actions, labels) with the predicted probabilities of the labels for each action used for decision making
         """
         pass
 
@@ -52,7 +52,7 @@ class DecisionMaker(ABC):
         """
         Decides which action to take given a set of predicted labels
 
-        :param torch.Tensor pred: tensor (actions, labels) with predicted labels for decision making
+        :param torch.Tensor pred: tensor (actions, labels) with the predicted probabilities of the labels
         :return int: the action to take
         """
         pass
