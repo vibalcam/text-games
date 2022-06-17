@@ -1,14 +1,14 @@
 import pandas as pd
 from tqdm.auto import trange
 
-from typing import Optional
+from typing import Callable, Optional
 
 from helper.helper import save_pickle
 from game.agent import Agent
 from game.simulator import GraphSimulator, Simulator
 
 
-def run(get_agent, 
+def run(get_agent: Callable[..., Agent], 
     simulator: Simulator, 
     n_runs=100, 
     reward_key:str = 'r', 
@@ -28,7 +28,6 @@ def run(get_agent,
     :param kwargs: other parameters for the `get_agent` function
     """
     
-# :param reward_key: attribute key for the reward
     endings = []
     decisions = []
 
@@ -38,24 +37,30 @@ def run(get_agent,
         agent = get_agent(**kwargs)
 
         final = None
+        dec_count = 0
         # run simulator
         state, choices, extras = simulator.read()
         while not simulator.is_finished():
             # get ending
             if (tmp := simulator.get_current_node_attr().get(ending_key, None)) is not None:
-                final = (simulator.get_current_node_attr()[GraphSimulator.ATTR_TITLE], tmp)
+                final = (k, simulator.get_current_node_attr()[GraphSimulator.ATTR_TITLE], tmp)
 
             choice = agent.act(state=state, actions=choices)
+            choice_num = choice if isinstance(choice, int) else choices.index(choice)
             state, choices, extras = simulator.transition(choice)
 
-            # get extras from decision taken
-            if (dec := extras.get(reward_key, None)) is not None:
-                decisions.append(float(dec))
+            # get decisions taken
+            if (label := extras.get(reward_key, None)):
+                label = float(label)
+            decisions.append((k, dec_count, choice_num, label))
+            dec_count += 1
 
-        endings.append(final)
 
-    df_endings = pd.DataFrame(data=endings, columns=['title', 'kind'])
-    df_decisions = pd.DataFrame(data=decisions, columns=['decision'])
+        if final is not None:
+            endings.append(final)
+
+    df_endings = pd.DataFrame(data=endings, columns=['run', 'title', 'kind'])
+    df_decisions = pd.DataFrame(data=decisions, columns=['run', 'num', 'choice', 'label'])
     res = dict(
         endings=df_endings, 
         decisions=df_decisions,

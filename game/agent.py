@@ -214,7 +214,12 @@ class BehavioralDecisionMaker(DecisionMaker):
         """
         super().__init__()
         self.weight_funcs = weight_funcs
-        self.memory = torch.ones(memory_steps + 1, len(weight_funcs)) # first row is always 1, the rest shift and update
+        
+        # todo memory should not be one in the beginning, only first row
+
+        self.memory = torch.zeros(memory_steps + 1, len(weight_funcs)) # first row is always 1, the rest shift and update
+        # self.memory[0,:] = 1
+
         self.seed = seed
         self._p = torch.as_tensor(0, dtype=torch.float)
 
@@ -228,11 +233,13 @@ class BehavioralDecisionMaker(DecisionMaker):
         w = torch.as_tensor([f(self.memory[:,idx]) for idx,f in enumerate(self.weight_funcs)], dtype=torch.float)
         # obtain scores and convert them to probabilities using softmax
         self._p = F.softmax((pred * w[None, :]).sum(1)) # (actions, labels) -> (actions)
+        # todo test that value should be dim=0
         # choose the action to take
         res = default_rng(self.seed).choice(pred.shape[0], size=1, p=self.p.numpy()).item()
         
         # update memory
         if self.memory.shape[0] > 1:
+            # torch.roll(memory,shift=1,dims=0)
             self.memory[2:,...] = self.memory[1:-1,...]
             self.memory[1,...] = pred[res,...]
 

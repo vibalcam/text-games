@@ -402,8 +402,8 @@ def create_graph_html(graph: nx.DiGraph, folder_path: str, name: str = 'Game'):
         with open(f"{full_path}/{str(node).lower()}.html", "w") as file:
             file.write(d.render())
 
-    d = dominate.document(title='index')
-    d += a('Start the game', href=f"{html_folder}/start.html")
+    d = dominate.document(title=name)
+    d += a('Start the Game', href=f"{html_folder}/start.html")
     with open(f"{folder_path}/index.html", "w") as file:
         file.write(d.render())
 
