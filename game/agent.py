@@ -195,7 +195,7 @@ class RDecisionMaker(DecisionMaker):
 
 
 class BehavioralDecisionMaker(DecisionMaker):
-    def __init__(self, weight_funcs: List[Callable[[torch.Tensor], float]], memory_steps:int = 0, seed:int = None):
+    def __init__(self, weight_funcs: List[Callable[[torch.Tensor], float]], memory_steps:int = 0, seed:int = None, deterministic:bool = False):
         """
         Decision maker with a certain behavior profile and memory-aware.
 
@@ -211,17 +211,22 @@ class BehavioralDecisionMaker(DecisionMaker):
             must return a float like value (float, numpy or tensor).
         :param int memory_steps: number of timesteps to use for the memory, defaults to 0
         :param seed: seed to use for the random generator
+        :param bool deterministic:
         """
         super().__init__()
         self.weight_funcs = weight_funcs
-        
-        # todo memory should not be one in the beginning, only first row
 
         self.memory = torch.zeros(memory_steps + 1, len(weight_funcs)) # first row is always 1, the rest shift and update
-        # self.memory[0,:] = 1
+        self.memory[0,:] = 1
 
         self.seed = seed
+        self.deterministic = deterministic
+        self._w = torch.as_tensor(0, dtype=torch.float)
         self._p = torch.as_tensor(0, dtype=torch.float)
+
+    @property
+    def w(self) -> torch.Tensor:
+        return self._w
 
     @property
     def p(self) -> torch.Tensor:
@@ -230,12 +235,14 @@ class BehavioralDecisionMaker(DecisionMaker):
     @overrides(check_signature=False)
     def decide(self, pred:torch.Tensor, **kwargs) -> int:
         # obtain weights for labels
-        w = torch.as_tensor([f(self.memory[:,idx]) for idx,f in enumerate(self.weight_funcs)], dtype=torch.float)
+        self._w = torch.as_tensor([f(self.memory) for f in self.weight_funcs], dtype=torch.float)
         # obtain scores and convert them to probabilities using softmax
-        self._p = F.softmax((pred * w[None, :]).sum(1)) # (actions, labels) -> (actions)
-        # todo test that value should be dim=0
+        self._p = F.softmax((pred * self.w[None, :]).sum(1), dim=0) # (actions, labels) -> (actions)
         # choose the action to take
-        res = default_rng(self.seed).choice(pred.shape[0], size=1, p=self.p.numpy()).item()
+        if self.deterministic:
+            res = self.p.argmax().item()
+        else:
+            res = default_rng(self.seed).choice(pred.shape[0], size=1, p=self.p.numpy()).item()
         
         # update memory
         if self.memory.shape[0] > 1:

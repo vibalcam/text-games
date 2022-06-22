@@ -169,7 +169,7 @@ def load_data(
     actions = []
     rewards = []
     for p, _, attr in graph.edges(data=True):
-        if not attr[GraphSimulator.ATTR_EXTRAS]:
+        if reward_key not in attr[GraphSimulator.ATTR_EXTRAS]:
             continue
         states.append(graph.nodes[p][GraphSimulator.ATTR_TEXT].strip())
         actions.append(attr[GraphSimulator.ATTR_ACTION].strip())
