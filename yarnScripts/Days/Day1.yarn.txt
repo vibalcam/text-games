@@ -81,10 +81,10 @@ Mamá: Lo que tu padre te quiere decir es que no vamos a estar vigilándote.
 Mamá: Estos últimos meses nos has demostrado lo responsable que eres y sabemos que no vas a tener ningún problema
 Mamá: De todas formas, ten mucho cuidado
  
--> No te preocupes mamá, seré responsable
+-> No te preocupes mamá, seré responsable__q:1
    	Mamá: Lo sé, [name].
  
--> ¿Eso significa que dentro de poco tendré un móvil?
+-> ¿Eso significa que dentro de poco tendré un móvil?__q:1
    	Papá: Bueno, tampoco te pases. Ya veremos. 
  
 // <<Act @ Mamá, mama-smile>>
@@ -162,12 +162,12 @@ User: Sí, mamá.
 // <<Move @ Mamá, right, center, 0.25>>
 <<Hide @ Mamá>> 
 
--> Seguir jugando__r:0
+-> Seguir jugando__r:0__q:2
    	<<set $jugarTarde to true>>
    	Cuando mi madre cerró la puerta, me puse el pijama y me tumbé en la cama con el portátil
    	Para simular que estaba durmiendo, apagué las luces y seguí jugando a oscuras con los auriculares
    	No fue hasta la madrugada cuando me empezaron a doler los ojos y me fui a dormir.
--> Ir a dormir__r:1
+-> Ir a dormir__r:1__q:2
    	<<set $jugarTarde to false>>
    	Mi madre tenía razón, mañana iba a estar muy cansada
 	Guardé la partida y cerré el ordenador.

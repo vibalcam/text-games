@@ -264,13 +264,13 @@ Pasando por mi lado, el jugador se lanzó sobre el enemigo que tenía yo en fren
 Al ver al otro jugador enzarzado en la lucha, me alejé un poco.
 Sin embargo, me di cuenta de que le quedaba poca vida y el enemigo estaba a punto de matarle. 
 
--> Ayudarle
+-> Ayudarle__q:3
 	<<set $ayudaHally to true>>
 	Decidí intervenir en la batalla y ayudarle. Podría perder todo el progreso que había conseguido hasta ahora. 
 	Gracias a mis intervención, pudimos derrotarlo entre los dos y recogimos las recompensas de la misión.
 	HallyHealer07: ¡¡¡Muchas gracias!!! ^.^
 
--> No ayudarle
+-> No ayudarle__q:3
 	<<set $ayudaHally to false>>
 	Por mucho que quisiese ayudarle, no quería entrometerme en su batalla. 
 	Me dediqué a atacar a otros enemigos que se acercaban al lugar de batalla. 

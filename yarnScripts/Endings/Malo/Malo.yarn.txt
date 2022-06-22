@@ -143,9 +143,9 @@ Amanda: ¿Estás bien?
 	[[MaloFinal]]
 <<endif>>
 
--> Contarle a Amanda__r:1 <<if $amandaTrust is true>>
+-> Contarle a Amanda__r:1__q:14 <<if $amandaTrust is true>>
 	[[MaloAmanda]]
--> No contarle a Amanda__r:0 <<if $amandaTrust is true>>
+-> No contarle a Amanda__r:0__q:14 <<if $amandaTrust is true>>
 	[[MaloFinal]]
 
 

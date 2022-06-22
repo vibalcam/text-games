@@ -32,10 +32,10 @@ Mamá: Rápido baja a saludarle.
 <<endif>>
 
 
--> Contarles lo que ha pasado__r:1 <<if $mamaTrust is true>>
+-> Contarles lo que ha pasado__r:1__q:17 <<if $mamaTrust is true>>
 	[[MaloPadres]]
 
--> No decir nada__r:0 <<if $mamaTrust is true>>
+-> No decir nada__r:0__q:17 <<if $mamaTrust is true>>
 	[[MaloSilencio]]
 
 

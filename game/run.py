@@ -12,6 +12,7 @@ def run(get_agent: Callable[..., Agent],
     simulator: Simulator, 
     n_runs=100, 
     reward_key:str = 'r', 
+    question_id_key:str = 'q',
     ending_key:str = 'final', 
     filename:Optional[str] = None,
     **kwargs
@@ -23,6 +24,7 @@ def run(get_agent: Callable[..., Agent],
     :param Simulator simulator: simulator for the game
     :param int n_runs: number of runs, defaults to 100
     :param str reward_key: extras attribute key for the reward, defaults to 'r'
+    :param str question_id_key: extras attribute key for the question key, defaults to 'q'
     :param str ending_key: node attribute key for the type of ending, defaults to 'final'
     :param filename: if not None, the filename of the file where to save the results
     :param kwargs: other parameters for the `get_agent` function
@@ -52,7 +54,7 @@ def run(get_agent: Callable[..., Agent],
             # get decisions taken
             if (label := extras.get(reward_key, None)):
                 label = float(label)
-            decisions.append((k, dec_count, choice_num, label))
+            decisions.append((k, dec_count, float(extras.get(question_id_key, -1)), choice_num, label))
             dec_count += 1
 
 
@@ -60,7 +62,7 @@ def run(get_agent: Callable[..., Agent],
             endings.append(final)
 
     df_endings = pd.DataFrame(data=endings, columns=['run', 'title', 'kind'])
-    df_decisions = pd.DataFrame(data=decisions, columns=['run', 'num', 'choice', 'label'])
+    df_decisions = pd.DataFrame(data=decisions, columns=['run', 'num', 'qid', 'choice', 'label'])
     res = dict(
         endings=df_endings, 
         decisions=df_decisions,

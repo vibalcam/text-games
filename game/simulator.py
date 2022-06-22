@@ -176,8 +176,8 @@ def load_simulator_yarn(
         graph = load_pickle(graph_f)
     else:
         graph = YarnSimulator(yarn=yarn, file_type='yarn', **kwargs).get_decision_graph(simplified=False)[0]
-        save_pickle(graph, graph_f)
-
+    
+    save_pickle(graph, graph_f)
     return GraphSimulator(graph)
 
 
@@ -460,18 +460,23 @@ def get_content_from_yarn(path: str) -> List[Dict]:
 
 
 if __name__ == '__main__':
-    os.environ["PATH"] += os.pathsep + 'C:\\Program Files\\Graphviz\\bin\\'
+    # os.environ["PATH"] += os.pathsep + 'C:\\Program Files\\Graphviz\\bin\\'
 
     s = load_simulator_yarn(yarn='./yarnScripts', text_unk_macro="", jump_as_choice=True)
     s.create_html('./examples/')
-    s.get_graphviz().render(filename='graph_decision', directory='./examples/', view=True,
-                            cleanup=True, format='svg')
+    # s.get_graphviz().render(filename='graph_decision', directory='./examples/', view=True,
+    #                         cleanup=True, format='svg')
+    
+    # Graph in multiple pages
+    s.get_graphviz().save(filename='dot', directory='./examples/')
+    # dot -Gpage="8,12" -Gsize="220,6" -Tps -o dot.ps  dot
 
-    s2 = YarnSimulator(text_unk_macro="", yarn='./yarnScripts', jump_as_choice=True)
-    s2.get_decision_graph(simplified=True)[1].render(filename='graph_narrative', directory='./examples/', view=True,
-                                                     cleanup=True, format='svg')
+    # s2 = YarnSimulator(text_unk_macro="", yarn='./yarnScripts', jump_as_choice=True)
+    # s2.get_decision_graph(simplified=True)[1].render(filename='graph_narrative', directory='./examples/', view=True,
+    #                                                  cleanup=True, format='svg')
 
     print("Done")
+    
 
     # shortest_paths = BiDict(nx.single_source_shortest_path_length(graph,'Final'))
     #

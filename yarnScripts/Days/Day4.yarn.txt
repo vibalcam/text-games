@@ -95,7 +95,7 @@ Amanda: Han abierto una heladería nueva enfrente del parque y quiero probarla.
 Amanda: Sé que te encantan los helados...
 
 Era bastante tentadora la oferta de Amanda, pero estaba agotada y la cabeza me estaba matando. 
--> Dar una vuelta con Amanda__r:1
+-> Dar una vuelta con Amanda__r:1__q:9
 	<<set $amandaTrust to true>>
 	Pero hacía mucho que no estaba sol@ con Amanda y…
 	Además, si de verdad quería tener amigos, debo dar primero el paso para conseguirlo. 
@@ -135,7 +135,7 @@ Era bastante tentadora la oferta de Amanda, pero estaba agotada y la cabeza me e
 	User: Ah hola mamá. 
 	User: Sí hemos ido a tomar un helado. 
 	User: Qué pronto has llegado ¿no?
--> Irse a casa__r:0
+-> Irse a casa__r:0__q:9
 	<<set $amandaTrust to false>>
 	User: Lo siento Amanda, no me encuentro muy bien. 
 	User: Quizás otro día. 
@@ -168,7 +168,7 @@ Mamá: ¿Te apetece celebrarlo?
 Mamá: ¿Qué te parece si vemos una peli y hacemos palomitas?
 Mamá: Pasar algo de tiempo madre e hija. 
 
--> Quedarse__r:1
+-> Quedarse__r:1__q:10
 	<<set $mamaTrust to true>>
 	User: ¡Sí!
 	Me alegré muchísimo cuando vi que mi madre quería pasar tiempo conmigo.
@@ -216,7 +216,7 @@ Mamá: Pasar algo de tiempo madre e hija.
 	<<SceneChange @ habitacion>>
 	Cuando entré a la habitación, me puse rápidamente el pijama y me conecté a Dungeons. 
 	Al entrar, pude ver que Hally ya estaba conectado. 
--> Ir al cuarto__r:0
+-> Ir al cuarto__r:0__q:10
 	<<set $mamaTrust to false>>
 	User: Hoy estoy un poco cansada mamá, ¿vemos la peli otro día?
 	Mamá: Oh...
@@ -348,7 +348,7 @@ Me extrañó que dijese eso.
 Estos últimos días hemos estado jugando hasta la madrugada. 
 Me pregunté qué padres tan liberales tenía que dejaban a su hijo usar su ordenador tan tarde, encima en su despacho.
 
--> Preguntar__r:1
+-> Preguntar__r:1__q:11
 	User: ¿Tus padres te dejan jugar tan tarde?
 	HallyHealer07: ¿Eh?
 	User: Has dicho que usas el despacho de tu padre...
@@ -357,7 +357,7 @@ Me pregunté qué padres tan liberales tenía que dejaban a su hijo usar su orde
 	HallyHealer07: Hago que me voy a dormir y luego me conecto a escondidas
 	HallyHealer07: Jajaja
 	HallyHealer07: No se lo digas o cambiará su contraseña
--> No preguntar__r:0
+-> No preguntar__r:0__q:11
 	Me pareció algo curioso, pero a lo mejor sus padres son como los míos y no están tanto tiempo en casa. 
 	A lo mejor ni se dan cuenta de que lo está usando.
 
