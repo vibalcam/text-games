@@ -507,5 +507,5 @@ def transform_graph_model(
 
 if __name__ == '__main__':
     simulator = load_simulator_yarn()
-    model = load_model('./notebooks/saved_bert/200_[20]_[30]_1_False_bert-base-multilingual-cased_0.001_adamw_8_max_val_mcc_False_False_100')[0]
+    model = load_model('./notebooks/saved_bert/125_[30]_[20]_1_False_bert-base-multilingual-cased_0.001_adamw_8_max_val_mcc_False_False_100')[0]
     transform_graph_model(simulator.graph, model, use_cpu=False)
