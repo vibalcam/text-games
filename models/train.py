@@ -109,7 +109,6 @@ def train(
     loss = torch.nn.BCEWithLogitsLoss().to(device)  # sigmoid + BCELoss (good for 2 classes classification)
 
     # load train and test data
-    # todo random seed 123
     loader_train, loader_valid, _ = load_data(
         graph=graph,
         num_workers=num_workers,

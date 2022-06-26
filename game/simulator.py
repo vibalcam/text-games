@@ -4,6 +4,7 @@ import os
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List, Dict, Union, Tuple, Set, Optional
+from tqdm.auto import tqdm
 
 import dominate
 import graphviz
@@ -387,7 +388,7 @@ def create_graph_html(graph: nx.DiGraph, folder_path: str, name: str = 'Game'):
     full_path = f'{folder_path}/{html_folder}'
     Path(full_path).mkdir(parents=True, exist_ok=True)
 
-    for node in graph.nodes:
+    for node in tqdm(graph.nodes):
         title = graph.nodes[node]['title']
         text = graph.nodes[node]['text']
 
