@@ -195,29 +195,35 @@ class RDecisionMaker(DecisionMaker):
 
 
 class BehavioralDecisionMaker(DecisionMaker):
-    def __init__(self, weight_funcs: List[Callable[[torch.Tensor], float]], memory_steps:int = 0, seed:int = None, deterministic:bool = False):
+    def __init__(self, weight_funcs: List[Callable[[torch.Tensor, torch.Tensor], float]], memory_steps:int = 0, seed:int = None, deterministic:bool = False):
         """
         Decision maker with a certain behavior profile and memory-aware.
 
-        Calculates the probability of taking a certain action according to the personality traits/labels of the action and
+        Calculates the probability of taking a certain action according to the alignment between the personality traits/labels of the action and
         its behavior profile. This probability is computed by weighting the predicted labels. These weights are obtained 
-        taking into account past decisions and using a given function.
+        taking into account past decisions and using a given function that characterizes the behavior profile.
 
         Note that, if weight w for label r is w>0, it encourages this behavior; w=0, does not care; w<0, discourages this behavior
 
-        :param List[Callable[[List[torch.Tensor]], float]] weight_funcs: list of functions to obtain the weights for each label. 
-            The number of functions must equal the number of labels. The weight for label `r` given function `f`, will be obtained
-            by computing `f(1,r_1, r_2,...,r_n)` with r_n being the value of label r in t-n and n being memory_steps. This function
-            must return a float like value (float, numpy or tensor).
-        :param int memory_steps: number of timesteps to use for the memory, defaults to 0
-        :param seed: seed to use for the random generator
-        :param bool deterministic:
+        :param List[Callable[[List[torch.Tensor, torch.Tensor]], float]] weight_funcs: list of functions to obtain the weights for each label. 
+            The number of functions must equal the number of labels. The weight for label `r` given function `f_r`, will be obtained
+            by computing `f(M,S)` with `M` being the memory matrix and `S` being the steps matrix. This function must return a float value.
+            `M` is a matrix (memory_steps x len(weight_funcs)) where the first row is 1 and the rest of rows `i` are the labels of the 
+            action taken `i-1` steps ago.
+            `S` is a column vector (memory_steps, 1) where row `i` is 1 if an action has been taken for step `i-1`, and 0 otherwise. This matrix gives
+            information about which rows in the memory matrix are valid.
+        :param int memory_steps: number of steps to use for the memory, defaults to 0
+        :param seed: seed to use for the random generator (None to ), defaults to None
+        :param bool deterministic: if true it will always choose the highest probability action, otherwise it will use a weighted random
         """
         super().__init__()
         self.weight_funcs = weight_funcs
 
         self.memory = torch.zeros(memory_steps + 1, len(weight_funcs)) # first row is always 1, the rest shift and update
         self.memory[0,:] = 1
+
+        self.steps = torch.zeros(memory_steps + 1, 1)
+        self.steps[0,:] = 1
 
         self.seed = seed
         self.deterministic = deterministic
@@ -235,7 +241,7 @@ class BehavioralDecisionMaker(DecisionMaker):
     @overrides(check_signature=False)
     def decide(self, pred:torch.Tensor, **kwargs) -> int:
         # obtain weights for labels
-        self._w = torch.as_tensor([f(self.memory) for f in self.weight_funcs], dtype=torch.float)
+        self._w = torch.as_tensor([f(self.memory, self.steps) for f in self.weight_funcs], dtype=torch.float)
         # obtain scores and convert them to probabilities using softmax
         self._p = F.softmax((pred * self.w[None, :]).sum(1), dim=0) # (actions, labels) -> (actions)
         # choose the action to take
@@ -246,9 +252,11 @@ class BehavioralDecisionMaker(DecisionMaker):
         
         # update memory
         if self.memory.shape[0] > 1:
-            # torch.roll(memory,shift=1,dims=0)
             self.memory[2:,...] = self.memory[1:-1,...]
             self.memory[1,...] = pred[res,...]
+
+            self.steps = self.steps.roll(shifts=1, dims=0)
+            self.steps[0,...] = 1
 
         return res
 
