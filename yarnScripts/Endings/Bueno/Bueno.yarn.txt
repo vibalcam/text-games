@@ -133,7 +133,7 @@ Al día siguiente, mamá y yo estábamos desayunando junt@s.
 	Amanda: ¿Qué hubieras hecho si hubiese subido esa foto a Internet?
 	Amanda: De verdad [name], no me gusta nada, tendríamos que decírselo
 	User: ...
-	-> No decir nada__r:0
+	-> No decir nada__r:0__q:13
 		<<set $silencio to true>>
 		User: Amanda de verdad no hace falta.
 		User: Al final no ha pasado nada y no tengo de qué preocuparme.
@@ -176,7 +176,7 @@ Al día siguiente, mamá y yo estábamos desayunando junt@s.
 		<<Hide @ Papá>>
 		<<Hide @ Amanda>>
 		[[BuenoAmanda]]
-	-> Hacer caso a Amanda__r:1
+	-> Hacer caso a Amanda__r:1__q:13
 		<<set $silencio to false>>
 		User: Tienes razón Amanda.
 		Amanda: ¿Verdad?

@@ -57,7 +57,7 @@ Amanda: Contándoselo a tus padres, para que denuncien a Hally.
 	[[MaloAmigos]]
 <<endif>>
 
--> Darle la razón__r:1 <<if $mamaTrust is true>>
+-> Darle la razón__r:1__q:15 <<if $mamaTrust is true>>
 	User: ...
 	User: Tienes razón Amanda. 
 	User: Pero... me da muchísimo miedo. 
@@ -108,7 +108,7 @@ Amanda: Contándoselo a tus padres, para que denuncien a Hally.
 	<<set $silencio to false>>
 	<<SetEnding @ Malo_4>>
 	[[Final]]
--> Negarse__r:0 <<if $mamaTrust is true>>
+-> Negarse__r:0__q:15 <<if $mamaTrust is true>>
 	[[MaloAmigos]]
 
 ===

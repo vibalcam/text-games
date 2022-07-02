@@ -286,7 +286,7 @@ HallyHealer07: Por eso te he enviado esa imagen.
 HallyHealer07: Para demostrarte que confio y en ti. 
 HallyHealer07: ¿Acaso tú no confias en mí?
 
--> Mandar foto__r:0
+-> Mandar foto__r:0__q:12
 	<<set $finalFoto to true>>
 	No pude contestar a Hally, porque todo lo que había dicho era cierto. 
 	Mientras abría la cámara del ordenador y me ponía en ropa interior, intentaba autoconvencerme de que estaba haciendo lo correcto. 
@@ -302,7 +302,7 @@ HallyHealer07: ¿Acaso tú no confias en mí?
 	HallyHealer07: Podemos estar todo lo que quieras. 
 	HallyHealer07: ^.^
 	<<Go @ Malo>>
--> No mandar foto__r:1 <<if $foto is false and $contar is false>>
+-> No mandar foto__r:1__q:12 <<if $foto is false and $contar is false>>
 	<<set $finalFoto to false>>
 	User: Hally no te voy a mandar una foto mía así. 
 	User: Quiero que dejes además de mandarme ese tipo de cosas, me incomodan mucho y no me gustan ese tema de conversación. 

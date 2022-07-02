@@ -4,6 +4,7 @@ import os
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List, Dict, Union, Tuple, Set, Optional
+from tqdm.auto import tqdm
 
 import dominate
 import graphviz
@@ -27,13 +28,14 @@ class Simulator(ABC, EnforceOverrides):
 
     @abstractmethod
     def read(self) -> Tuple[str, List, Dict]:
-        """Returns the text, state, and the choices available and the extras (if any)"""
+        """Returns the text, state, and the choices available and the extras of the last decision taken (if any)"""
         pass
 
     @abstractmethod
     def transition(self, choice: Union[int, str]) -> Tuple[str, List, Dict]:
         """
         Transitions the story with the given choice
+
         :param choice: choice taken
         """
         pass
@@ -52,6 +54,7 @@ class Simulator(ABC, EnforceOverrides):
     def is_finished(self) -> bool:
         """
         Returns true if the simulation has finished
+        
         :return: bool
         """
         pass
@@ -62,8 +65,8 @@ class GraphSimulator(Simulator):
     Simulator that uses a graph to run
 
     :param graph: graph that contains the game to run. It must at least have the following attributes:
-        - Node: `text, attr, title`
-        - Edge: `action, extras`
+        - Node: `text: str, attr: Dict, title:str`
+        - Edge: `action: str, extras: Dict`
     """
     # node attributes
     ATTR_TEXT = 'text'
@@ -89,14 +92,14 @@ class GraphSimulator(Simulator):
         self.showed_actions = None
         self.restart()
 
-    @overrides
+    @overrides(check_signature=False)
     def restart(self):
         self.current = self.root
         self.choices_history = []
         self.last_extra = {}
         self._get_actions()
 
-    @overrides
+    @overrides(check_signature=False)
     def read(self) -> Tuple[str, List, Dict]:
         # get node data
         data = self.graph.nodes(data=True)[self.current]
@@ -105,7 +108,7 @@ class GraphSimulator(Simulator):
 
         return data[self.ATTR_TEXT], self.showed_actions, self.last_extra
 
-    @overrides
+    @overrides(check_signature=False)
     def transition(self, choice: Union[int, str]) -> Tuple[str, List, Dict]:
         # if given as int transform to str
         if type(choice) == int:
@@ -124,18 +127,18 @@ class GraphSimulator(Simulator):
                         for k, v in self.graph[self.current].items()}
         self.showed_actions = list(self.actions.keys())
 
-    @overrides
+    @overrides(check_signature=False)
     def get_current_path(self) -> List[str]:
         return self.choices_history
 
-    @overrides
+    @overrides(check_signature=False)
     def get_current_node_attr(self) -> Dict:
         n = self.graph.nodes(data=True)[self.current]
         d = n[self.ATTR_ATTR].copy()
         d[self.ATTR_TITLE] = n[self.ATTR_TITLE]
         return d
 
-    @overrides
+    @overrides(check_signature=False)
     def is_finished(self) -> bool:
         return self.graph.out_degree[self.current] == 0
 
@@ -147,9 +150,9 @@ class GraphSimulator(Simulator):
     def get_graphviz(self):
         dot = graphviz.Digraph()
         for n, attr in self.graph.nodes(data=True):
-            dot.node(n, label=attr['title'])
+            dot.node(n, label=attr[self.ATTR_TITLE])
         for p, n, attr in self.graph.edges(data=True):
-            dot.edge(p, n, label=attr['action'])
+            dot.edge(p, n, label=attr[self.ATTR_ACTION])
         return dot
 
 
@@ -174,8 +177,8 @@ def load_simulator_yarn(
         graph = load_pickle(graph_f)
     else:
         graph = YarnSimulator(yarn=yarn, file_type='yarn', **kwargs).get_decision_graph(simplified=False)[0]
-        save_pickle(graph, graph_f)
-
+    
+    save_pickle(graph, graph_f)
     return GraphSimulator(graph)
 
 
@@ -224,7 +227,7 @@ class YarnSimulator(Simulator):
         self.choices_history = None
         self.restart()
 
-    @overrides
+    @overrides(check_signature=False)
     def restart(self):
         self._controller = YarnController(None, False, content=self.data,
                                           jump_as_choice=self.jump_as_choice,
@@ -241,7 +244,7 @@ class YarnSimulator(Simulator):
     def _parse_extras_dict(self, s: str) -> Dict:
         return dict([k.split(self.extras_separator_key) for k in s.split(self.extras_separator)])
 
-    @overrides
+    @overrides(check_signature=False)
     def read(self) -> Tuple[str, List, Dict]:
         # create dict of choices and tuple of (choice full name, extras as dictionary of key values)
         self.choices = {k[0]: (self.extras_separator.join(k),
@@ -253,11 +256,11 @@ class YarnSimulator(Simulator):
 
         return self.controller.message(), self.last_choices_list, self.last_extras
 
-    @overrides
+    @overrides(check_signature=False)
     def get_current_node_attr(self) -> Dict:
         return self.controller.state.attr if self.controller.state.attr is not None else {}
 
-    @overrides
+    @overrides(check_signature=False)
     def transition(self, choice: Union[int, str]) -> Tuple[str, List, Dict]:
         """
         Transitions the story with the given choice
@@ -279,11 +282,11 @@ class YarnSimulator(Simulator):
     def controller(self):
         return self._controller
 
-    @overrides
+    @overrides(check_signature=False)
     def get_current_path(self) -> List[str]:
         return self.choices_history
 
-    @overrides
+    @overrides(check_signature=False)
     def is_finished(self) -> bool:
         return self.controller.finished
 
@@ -385,7 +388,7 @@ def create_graph_html(graph: nx.DiGraph, folder_path: str, name: str = 'Game'):
     full_path = f'{folder_path}/{html_folder}'
     Path(full_path).mkdir(parents=True, exist_ok=True)
 
-    for node in graph.nodes:
+    for node in tqdm(graph.nodes):
         title = graph.nodes[node]['title']
         text = graph.nodes[node]['text']
 
@@ -400,8 +403,8 @@ def create_graph_html(graph: nx.DiGraph, folder_path: str, name: str = 'Game'):
         with open(f"{full_path}/{str(node).lower()}.html", "w") as file:
             file.write(d.render())
 
-    d = dominate.document(title='index')
-    d += a('Start the game', href=f"{html_folder}/start.html")
+    d = dominate.document(title=name)
+    d += a('Start the Game', href=f"{html_folder}/start.html")
     with open(f"{folder_path}/index.html", "w") as file:
         file.write(d.render())
 
@@ -458,18 +461,26 @@ def get_content_from_yarn(path: str) -> List[Dict]:
 
 
 if __name__ == '__main__':
-    os.environ["PATH"] += os.pathsep + 'C:\\Program Files\\Graphviz\\bin\\'
+    # os.environ["PATH"] += os.pathsep + 'C:\\Program Files\\Graphviz\\bin\\'
 
+    # Load and get html
     s = load_simulator_yarn(yarn='./yarnScripts', text_unk_macro="", jump_as_choice=True)
     s.create_html('./examples/')
-    s.get_graphviz().render(filename='graph_decision', directory='./examples/', view=True,
-                            cleanup=True, format='svg')
+    
+    
+    # Graph in multiple pages
+    # s.get_graphviz().save(filename='dot', directory='./examples/')
+    # dot -Gpage="8,12" -Gsize="220,6" -Tps -o dot.ps  dot
+    # s.get_graphviz().render(filename='graph_decision', directory='./examples/', view=True,
+    #                         cleanup=True, format='svg')
 
-    s2 = YarnSimulator(text_unk_macro="", yarn='./yarnScripts', jump_as_choice=True)
-    s2.get_decision_graph(simplified=True)[1].render(filename='graph_narrative', directory='./examples/', view=True,
-                                                     cleanup=True, format='svg')
+    # Narrative graph
+    # s2 = YarnSimulator(text_unk_macro="", yarn='./yarnScripts', jump_as_choice=True)
+    # s2.get_decision_graph(simplified=True)[1].render(filename='graph_narrative', directory='./examples/', view=True,
+    #                                                  cleanup=True, format='svg')
 
     print("Done")
+
 
     # shortest_paths = BiDict(nx.single_source_shortest_path_length(graph,'Final'))
     #
